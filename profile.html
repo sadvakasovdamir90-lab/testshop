@@ -34,23 +34,24 @@
         <div class="flex flex-col md:flex-row gap-4 md:gap-6">
             
             <aside class="w-full md:w-1/4 space-y-2">
-                <div class="bg-white rounded-xl shadow-sm p-3 md:p-4 border border-gray-100">
-                    <h3 class="text-gray-400 text-[10px] font-bold uppercase mb-3 px-3 italic">Личные данные</h3>
-                    <nav class="mobile-scroll md:space-y-1">
-                        <button onclick="showTab(event, 'tab-profile')" class="nav-btn w-full text-left px-3 py-2 rounded-lg bg-orange-50 text-orange-600 font-medium transition text-sm md:text-base">Редактор профиля</button>
-                        <button onclick="showTab(event, 'tab-orders')" class="nav-btn w-full text-left px-3 py-2 rounded-lg hover:bg-gray-100 transition text-sm md:text-base">Мои заказы</button>
-                        <button onclick="showTab(event, 'tab-coupons')" class="nav-btn w-full text-left px-3 py-2 rounded-lg hover:bg-gray-100 transition text-sm md:text-base">Купоны</button>
-                        <button onclick="showTab(event, 'tab-cart')" class="nav-btn w-full text-left px-3 py-2 rounded-lg hover:bg-gray-100 transition text-sm md:text-base">Корзина</button>
-                        <button onclick="showTab(event, 'tab-wishlist')" class="nav-btn w-full text-left px-3 py-2 rounded-lg hover:bg-gray-100 transition text-sm md:text-base italic">Должник</button>
-                    </nav>
+    <div class="bg-white rounded-xl shadow-sm p-3 md:p-4 border border-gray-100">
+        <h3 class="text-gray-400 text-[9px] md:text-[10px] font-bold uppercase mb-3 px-3 italic tracking-wider">Личные данные</h3>
+        
+        <nav class="mobile-scroll md:space-y-1 flex md:block pb-2 md:pb-0">
+            <button onclick="showTab(event, 'tab-profile')" class="nav-btn whitespace-nowrap w-auto md:w-full text-left px-4 py-2 rounded-lg bg-orange-50 text-orange-600 font-bold transition text-xs md:text-sm">Редактор профиля</button>
+            <button onclick="showTab(event, 'tab-orders')" class="nav-btn whitespace-nowrap w-auto md:w-full text-left px-4 py-2 rounded-lg hover:bg-gray-100 transition text-xs md:text-sm">Мои заказы</button>
+            <button onclick="showTab(event, 'tab-coupons')" class="nav-btn whitespace-nowrap w-auto md:w-full text-left px-4 py-2 rounded-lg hover:bg-gray-100 transition text-xs md:text-sm">Купоны</button>
+            <button onclick="showTab(event, 'tab-cart')" class="nav-btn whitespace-nowrap w-auto md:w-full text-left px-4 py-2 rounded-lg hover:bg-gray-100 transition text-xs md:text-sm">Корзина</button>
+            <button onclick="showTab(event, 'tab-wishlist')" class="nav-btn whitespace-nowrap w-auto md:w-full text-left px-4 py-2 rounded-lg hover:bg-gray-100 transition text-xs md:text-sm italic uppercase font-bold">Должник</button>
+        </nav>
 
-                    <h3 class="text-gray-400 text-[10px] font-bold uppercase mt-4 mb-3 px-3 italic">Безопасность</h3>
-                    <nav class="mobile-scroll md:space-y-1">
-                        <button onclick="showTab(event, 'tab-password')" class="nav-btn w-full text-left px-3 py-2 rounded-lg hover:bg-gray-100 transition text-sm md:text-base">Изменить пароль</button>
-                        <button onclick="showTab(event, 'tab-2fa')" class="nav-btn w-full text-left px-3 py-2 rounded-lg hover:bg-gray-100 transition text-sm md:text-base">Защита 2FA</button>
-                    </nav>
-                </div>
-            </aside>
+        <h3 class="text-gray-400 text-[9px] md:text-[10px] font-bold uppercase mt-4 mb-3 px-3 italic tracking-wider border-t md:border-none pt-3 md:pt-0">Безопасность</h3>
+        <nav class="mobile-scroll md:space-y-1 flex md:block pb-2 md:pb-0">
+            <button onclick="showTab(event, 'tab-password')" class="nav-btn whitespace-nowrap w-auto md:w-full text-left px-4 py-2 rounded-lg hover:bg-gray-100 transition text-xs md:text-sm">Изменить пароль</button>
+            <button onclick="showTab(event, 'tab-2fa')" class="nav-btn whitespace-nowrap w-auto md:w-full text-left px-4 py-2 rounded-lg hover:bg-gray-100 transition text-xs md:text-sm">Защита 2FA</button>
+        </nav>
+    </div>
+</aside>
 
             <section class="w-full md:w-3/4">
                 
@@ -96,43 +97,88 @@
                     <button onclick="location.href='index.html'" class="mt-4 bg-orange-600 text-white px-6 py-2 rounded-lg font-bold">В магазин</button>
                 </div>
 
-                <div id="tab-wishlist" class="tab-content hidden bg-white rounded-xl shadow-sm p-4 md:p-8 border border-gray-100">
-                    <div class="flex items-center gap-4 mb-8">
-                        <div class="bg-red-100 p-4 rounded-2xl text-red-600 shadow-sm">
-                            <i class="fas fa-hand-holding-dollar text-2xl"></i>
-                        </div>
-                        <div>
-                            <h2 class="text-2xl font-black italic text-gray-800 uppercase tracking-tight">Финансовый статус</h2>
-                            <p class="text-xs text-gray-400 italic">Информация о ваших задолженностях</p>
-                        </div>
-                    </div>
-                    <div class="max-w-2xl space-y-6">
-                        <div class="flex flex-col md:flex-row items-center justify-between p-6 bg-red-50 rounded-[2rem] border border-red-100 gap-6">
-                            <div class="text-center md:text-left">
-                                <p class="font-bold text-sm text-red-800 uppercase italic opacity-70">Общая сумма долга</p>
-                                <h3 class="text-4xl md:text-5xl font-black text-red-600 mt-1 italic">15 500 ₸</h3>
-                            </div>
-                            <button class="w-full md:w-auto bg-red-600 text-white px-10 py-4 rounded-2xl font-bold text-lg hover:bg-red-700 transition shadow-xl shadow-red-200 active:scale-95 uppercase tracking-wider">Погасить</button>
-                        </div>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div class="flex items-center gap-4 p-5 bg-gray-50 rounded-2xl border border-gray-100">
-                                <div class="bg-white p-3 rounded-xl text-gray-400"><i class="fas fa-hashtag"></i></div>
-                                <div><p class="text-[10px] text-gray-400 font-bold uppercase">Номер заказа</p><p class="font-bold text-gray-700 italic">#QS-774188</p></div>
-                            </div>
-                            <div class="flex items-center gap-4 p-5 bg-gray-50 rounded-2xl border border-gray-100">
-                                <div class="bg-white p-3 rounded-xl text-red-400"><i class="fas fa-calendar-day"></i></div>
-                                <div><p class="text-[10px] text-gray-400 font-bold uppercase">Срок оплаты до</p><p class="font-bold text-red-600 italic">25.05.2024</p></div>
-                            </div>
-                        </div>
-                        <div class="flex gap-4 p-5 border border-dashed border-gray-200 rounded-2xl bg-gray-50/50">
-                            <i class="fas fa-info-circle text-2xl text-orange-400"></i>
-                            <div>
-                                <p class="text-sm font-bold mb-1 italic text-gray-700 uppercase">Важное уведомление</p>
-                                <p class="text-xs text-gray-500 leading-relaxed italic">При неоплате задолженности в указанный срок, доступ к созданию новых заказов будет временно ограничен.</p>
-                            </div>
-                        </div>
-                    </div>
+               <div id="tab-wishlist" class="tab-content hidden bg-white rounded-xl shadow-sm p-4 md:p-8 border border-gray-100">
+    <div class="flex items-center gap-4 mb-8">
+        <div class="bg-red-100 p-4 rounded-2xl text-red-600 shadow-sm">
+            <i class="fas fa-hand-holding-dollar text-2xl"></i>
+        </div>
+        <div>
+            <h2 class="text-2xl font-black italic text-gray-800 uppercase tracking-tight">Финансовый статус</h2>
+            <p class="text-xs text-gray-400 italic">Информация о ваших задолженностях</p>
+        </div>
+    </div>
+
+    <div class="max-w-2xl space-y-6">
+        <div id="debt-card" class="flex flex-col md:flex-row items-center justify-between p-6 rounded-[2rem] border transition-all duration-500 gap-6">
+            <div class="text-center md:text-left">
+                <p id="debt-label" class="font-bold text-sm uppercase italic opacity-70">Общая сумма долга</p>
+                <h3 id="debt-amount" class="text-4xl md:text-5xl font-black mt-1 italic">15 500 ₸</h3>
+                <p id="debt-warning-text" class="text-[11px] mt-2 font-bold italic uppercase"></p>
+            </div>
+            <button onclick="openPayment()" id="pay-button" class="w-full md:w-auto text-white px-10 py-4 rounded-2xl font-bold text-lg transition shadow-xl active:scale-95 uppercase tracking-wider">Погасить</button>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="flex items-center gap-4 p-5 bg-gray-50 rounded-2xl border border-gray-100">
+                <div class="bg-white p-3 rounded-xl text-gray-400"><i class="fas fa-hashtag"></i></div>
+                <div>
+                    <p class="text-[10px] text-gray-400 font-bold uppercase">Номер заказа</p>
+                    <p class="font-bold text-gray-700 italic">#QS-774188</p>
                 </div>
+            </div>
+            <div class="flex items-center gap-4 p-5 bg-gray-50 rounded-2xl border border-gray-100">
+                <div class="bg-white p-3 rounded-xl text-orange-400"><i class="fas fa-calendar-day"></i></div>
+                <div>
+                    <p class="text-[10px] text-gray-400 font-bold uppercase">Дата возникновения</p>
+                    <p id="debt-start-date" class="font-bold text-gray-700 italic">2026-03-04</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="restriction-notice" class="hidden flex gap-4 p-5 border-2 border-red-500 rounded-2xl bg-red-50 animate-pulse">
+            <i class="fas fa-ban text-2xl text-red-600"></i>
+            <div>
+                <p class="text-sm font-bold mb-1 italic text-red-700 uppercase">АККАУНТ ОГРАНИЧЕН</p>
+                <p class="text-xs text-red-600 leading-relaxed italic font-bold">Доступ к новым заказам временно ограничен из-за просрочки более 3 месяцев.</p>
+            </div>
+        </div>
+
+        <div class="flex gap-4 p-5 border border-dashed border-gray-200 rounded-2xl bg-gray-50/50">
+            <i class="fas fa-info-circle text-2xl text-orange-400"></i>
+            <div>
+                <p class="text-sm font-bold mb-1 italic text-gray-700 uppercase">Важное уведомление</p>
+                <p class="text-xs text-gray-500 leading-relaxed italic">При неоплате задолженности в указанный срок, доступ к созданию новых заказов будет временно ограничен.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="payment-modal" class="hidden fixed inset-0 bg-black/60 z-[200] flex items-center justify-center p-4 backdrop-blur-sm">
+    <div class="bg-white rounded-[2.5rem] max-w-md w-full p-8 shadow-2xl relative border border-orange-100">
+        <button onclick="closePayment()" class="absolute top-6 right-6 text-gray-400 hover:text-black transition-transform hover:rotate-90">
+            <i class="fas fa-times text-xl"></i>
+        </button>
+        <h2 class="text-2xl font-black italic text-orange-600 mb-6 uppercase text-center">Оплата задолженности</h2>
+        <div class="space-y-4 mb-8">
+            <div class="p-4 bg-orange-50 rounded-2xl border border-orange-100 text-center">
+                <p class="text-[10px] text-orange-400 font-bold uppercase mb-1">Получатель:</p>
+                <p class="font-bold text-gray-800 italic uppercase">ИП "QulanShop - Sadvakasov"</p>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+                <a href="https://kaspi.kz" target="_blank" class="flex flex-col items-center p-5 border-2 border-gray-50 rounded-3xl hover:border-red-500 transition-all hover:bg-red-50 group">
+                    <img src="https://kaspi.kz/img/logo_main.png" class="h-6 mb-2 grayscale group-hover:grayscale-0" alt="Kaspi">
+                    <span class="text-[10px] font-black text-red-600 uppercase">Kaspi Pay</span>
+                </a>
+                <a href="https://halykbank.kz" target="_blank" class="flex flex-col items-center p-5 border-2 border-gray-50 rounded-3xl hover:border-green-500 transition-all hover:bg-green-50 group">
+                    <img src="https://halykbank.kz/storage/app/media/logos/halyk-logo.png" class="h-6 mb-2 grayscale group-hover:grayscale-0" alt="Halyk">
+                    <span class="text-[10px] font-black text-green-600 uppercase">Halyk Bank</span>
+                </a>
+            </div>
+        </div>
+        <p class="text-[11px] text-gray-400 text-center italic mb-6">После оплаты отправьте скриншот чека в чат поддержки. ИП зарегистрировано в с. Кулан.</p>
+        <button onclick="closePayment()" class="w-full bg-orange-600 text-white py-4 rounded-2xl font-bold hover:bg-orange-700 shadow-lg uppercase tracking-widest">Я оплатил(а)</button>
+    </div>
+</div>
 
                 <div id="tab-password" class="tab-content hidden bg-white rounded-xl shadow-sm p-4 md:p-6 border border-gray-100">
                     <h2 class="text-xl font-bold mb-6 italic">Безопасность и пароль</h2>
@@ -284,6 +330,208 @@
                 alert("Защита отключена!");
             }
         }
+
+function updateDebtStatus() {
+    const startDateText = document.getElementById('debt-start-date').innerText;
+    const startDate = new Date(startDateText);
+    const now = new Date();
+    
+    // Айырмашылықты аймен есептеу
+    const diffTime = Math.abs(now - startDate);
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    const diffMonths = diffDays / 30;
+
+    const card = document.getElementById('debt-card');
+    const text = document.getElementById('debt-warning-text');
+    const btn = document.getElementById('pay-button');
+    const notice = document.getElementById('restriction-notice');
+    const amount = document.getElementById('debt-amount');
+
+    if (diffMonths <= 1) {
+        // ЖАСЫЛ - 1 айға дейін
+        card.className = "flex flex-col md:flex-row items-center justify-between p-6 bg-green-50 rounded-[2rem] border border-green-200 gap-6";
+        text.innerText = "Срок оплаты в норме. Статус: Стабильный";
+        text.className = "text-[11px] mt-2 font-bold italic uppercase text-green-600";
+        btn.className = "w-full md:w-auto bg-green-600 text-white px-10 py-4 rounded-2xl font-bold text-lg hover:bg-green-700 transition shadow-xl shadow-green-100 uppercase tracking-wider";
+        amount.className = "text-4xl md:text-5xl font-black text-green-600 mt-1 italic";
+    } else if (diffMonths <= 2) {
+        // САРЫ - 2 айға дейін
+        card.className = "flex flex-col md:flex-row items-center justify-between p-6 bg-yellow-50 rounded-[2rem] border border-yellow-200 gap-6";
+        text.innerText = "Внимание! Идет второй месяц задолженности";
+        text.className = "text-[11px] mt-2 font-bold italic uppercase text-yellow-700";
+        btn.className = "w-full md:w-auto bg-yellow-500 text-white px-10 py-4 rounded-2xl font-bold text-lg hover:bg-yellow-600 transition shadow-xl shadow-yellow-100 uppercase tracking-wider";
+        amount.className = "text-4xl md:text-5xl font-black text-yellow-600 mt-1 italic";
+    } else {
+        // ҚЫЗЫЛ - 3 ай және одан көп
+        card.className = "flex flex-col md:flex-row items-center justify-between p-6 bg-red-50 rounded-[2rem] border border-red-200 gap-6";
+        text.innerText = "КРИТИЧЕСКИЙ СРОК! Срочно погасите долг";
+        text.className = "text-[11px] mt-2 font-bold italic uppercase text-red-600";
+        btn.className = "w-full md:w-auto bg-red-600 text-white px-10 py-4 rounded-2xl font-bold text-lg hover:bg-red-700 transition shadow-xl shadow-red-200 uppercase tracking-wider animate-bounce";
+        amount.className = "text-4xl md:text-5xl font-black text-red-600 mt-1 italic";
+        
+        if (diffMonths >= 3) {
+            notice.classList.remove('hidden');
+        }
+    }
+}
+
+function openPayment() { document.getElementById('payment-modal').classList.remove('hidden'); }
+function closePayment() { document.getElementById('payment-modal').classList.add('hidden'); }
+
+// Бет жүктелгенде бірден тексеру
+window.addEventListener('DOMContentLoaded', updateDebtStatus);
+
+
+// --- 1. ТАБТАР ЖҮЙЕСІ ---
+function showTab(event, tabId) {
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
+    document.querySelectorAll('.nav-btn').forEach(b => {
+        b.classList.remove('bg-orange-50', 'text-orange-600', 'font-medium');
+        b.classList.add('hover:bg-gray-100');
+    });
+    const activeTab = document.getElementById(tabId);
+    if (activeTab) activeTab.classList.remove('hidden');
+    event.currentTarget.classList.add('bg-orange-50', 'text-orange-600', 'font-medium');
+    event.currentTarget.classList.remove('hover:bg-gray-100');
+}
+
+// --- 2. GEMINI AI CHAT ENGINE ---
+const GEMINI_API_KEY = "AIzaSyBU1eWfKxsuIJshtMzUlR4YKucfuRTvWog"; 
+const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+
+function toggleAIChat() { 
+    document.getElementById('ai-chat-window').classList.toggle('hidden'); 
+}
+
+async function queryGemini(userMessage) {
+    const systemInstruction = `
+        Ты — Qulan AI, официальный помощник интернет-магазина QulanShop (село Кулан). 
+        Твоя задача: помогать клиентам. 
+        Информация о магазине: 
+        - График: 09:00 - 20:00 (ежедневно). 
+        - Доставка: по всему району Кулан. 
+        - Владелец: ИП "QulanShop - Sadvakasov".
+        - Оплата: Kaspi Pay, Halyk Bank.
+        Отвечай кратко, дружелюбно, используй эмодзи. 
+        Если клиент спрашивает на казахском, отвечай на казахском. Если на русском — на русском.
+        Текст пользователя: ${userMessage}
+    `;
+
+    try {
+        const response = await fetch(GEMINI_URL, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                contents: [{ parts: [{ text: systemInstruction }] }]
+            })
+        });
+        const data = await response.json();
+        return data.candidates[0].content.parts[0].text;
+    } catch (e) {
+        return "Кешіріңіз, байланыс үзілді. Қайта байқап көріңізші. 🛠️";
+    }
+}
+
+async function sendMessage() {
+    const input = document.getElementById('chat-input');
+    const container = document.getElementById('chat-messages');
+    const text = input.value.trim();
+    if (!text) return;
+
+    container.innerHTML += `
+        <div class="flex justify-end mb-2">
+            <div class="bg-orange-600 text-white p-3 rounded-2xl rounded-tr-none max-w-[85%] shadow-sm text-xs italic font-medium">
+                ${text}
+            </div>
+        </div>`;
+    input.value = "";
+    container.scrollTop = container.scrollHeight;
+
+    const typingId = "typing-" + Date.now();
+    container.innerHTML += `
+        <div id="${typingId}" class="flex justify-start mb-2">
+            <div class="bg-gray-200 text-gray-600 p-2 rounded-xl text-[10px] animate-pulse">
+                Qulan AI жауап жазуда...
+            </div>
+        </div>`;
+    
+    const aiReply = await queryGemini(text);
+    const typingElem = document.getElementById(typingId);
+    if(typingElem) typingElem.remove();
+
+    container.innerHTML += `
+        <div class="flex justify-start mb-2">
+            <div class="bg-white border border-gray-100 p-3 rounded-2xl rounded-tl-none max-w-[85%] shadow-md text-xs text-gray-700 italic">
+                ${aiReply}
+            </div>
+        </div>`;
+    container.scrollTop = container.scrollHeight;
+}
+
+// --- 3. ҚАРЫЗ СТАТУСЫН ЖАҢАРТУ (ТҮЗЕТІЛГЕН НҰСҚА) ---
+function updateDebtStatus() {
+    const startDateElem = document.getElementById('debt-start-date');
+    if (!startDateElem) return;
+
+    const startDateText = startDateElem.innerText;
+    const startDate = new Date(startDateText);
+    const now = new Date();
+    
+    const diffTime = Math.abs(now - startDate);
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    const diffMonths = diffDays / 30;
+
+    const card = document.getElementById('debt-card');
+    const text = document.getElementById('debt-warning-text');
+    const btn = document.getElementById('pay-button');
+    const amount = document.getElementById('debt-amount');
+    const notice = document.getElementById('restriction-notice');
+
+    if (diffMonths <= 1) {
+        // ЖАСЫЛ
+        card.className = "flex flex-col md:flex-row items-center justify-between p-6 bg-green-50 rounded-[2.5rem] border border-green-200 gap-6";
+        text.innerText = "Срок оплаты в норме. Статус: Стабильный";
+        text.className = "text-[10px] mt-2 font-bold uppercase text-green-600";
+        btn.className = "w-full md:w-auto bg-green-600 text-white px-10 py-4 rounded-2xl font-bold text-lg hover:bg-green-700 transition shadow-lg uppercase";
+        amount.className = "text-4xl md:text-5xl font-black text-green-600 mt-1 italic";
+    } else if (diffMonths <= 2) {
+        // САРЫ
+        card.className = "flex flex-col md:flex-row items-center justify-between p-6 bg-yellow-50 rounded-[2.5rem] border border-yellow-200 gap-6";
+        text.innerText = "Внимание! Идет второй месяц задолженности";
+        text.className = "text-[10px] mt-2 font-bold uppercase text-yellow-700";
+        btn.className = "w-full md:w-auto bg-yellow-500 text-white px-10 py-4 rounded-2xl font-bold text-lg hover:bg-yellow-600 transition shadow-lg uppercase";
+        amount.className = "text-4xl md:text-5xl font-black text-yellow-600 mt-1 italic";
+    } else {
+        // ҚЫЗЫЛ
+        card.className = "flex flex-col md:flex-row items-center justify-between p-6 bg-red-50 rounded-[2.5rem] border border-red-200 gap-6";
+        text.innerText = "КРИТИЧЕСКИЙ СРОК! Срочно погасите долг";
+        text.className = "text-[10px] mt-2 font-bold uppercase text-red-600";
+        btn.className = "w-full md:w-auto bg-red-600 text-white px-10 py-4 rounded-2xl font-bold text-lg hover:bg-red-700 transition shadow-lg animate-bounce uppercase";
+        amount.className = "text-4xl md:text-5xl font-black text-red-600 mt-1 italic";
+        if (diffMonths >= 3 && notice) notice.classList.remove('hidden');
+    }
+}
+
+function openPayment() { document.getElementById('payment-modal').classList.remove('hidden'); }
+
+function closePayment() {
+    document.getElementById('payment-modal').classList.add('hidden');
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('debt-start-date').innerText = today;
+    updateDebtStatus();
+    alert("Квитанция отправлена на проверку! Статус обновится скоро.");
+}
+
+// Бет жүктелгенде іске қосу
+window.addEventListener('DOMContentLoaded', updateDebtStatus);
+
+// Input-та Enter басса, хабарламаны жіберу
+document.getElementById('chat-input')?.addEventListener('keypress', function (e) {
+    if (e.key === 'Enter') {
+        sendMessage();
+    }
+});
+
     </script>
 </body>
 </html>
