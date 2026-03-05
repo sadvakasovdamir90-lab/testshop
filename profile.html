@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="images/favicon.ico" type="image/x-icon">
     <title>Личный кабинет | QulanShop</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -18,17 +19,32 @@
 </head>
 <body class="bg-gray-50 font-sans">
 
-    <header class="bg-white shadow-sm py-4 mb-4 md:mb-6 sticky top-0 z-50">
-        <div class="container mx-auto px-4 flex justify-between items-center">
-            <h1 class="text-xl font-bold text-orange-600 cursor-pointer" onclick="location.href='index.html'">QulanShop</h1>
-            <div class="flex items-center space-x-2 md:space-x-4">
-                <span class="text-xs md:text-sm font-medium text-gray-700">Садвакасов Дамир Бекзатович</span>
-                <button onclick="location.href='auth.html'" class="text-gray-400 hover:text-red-500 transition p-2">
-                    <i class="fas fa-sign-out-alt"></i>
-                </button>
-            </div>
+  <header class="bg-white shadow-sm py-4 mb-4 md:mb-6 sticky top-0 z-[1000] overflow-visible">
+    <div class="container mx-auto px-4 flex justify-between items-center relative">
+        
+        <div class="relative z-[1001] shrink-0">
+            <h1 class="text-xl font-bold text-orange-600 cursor-pointer p-2 -m-2" 
+                onclick="window.location.href='index.html'"
+                style="pointer-events: auto !important;">
+                QulanShop
+            </h1>
         </div>
-    </header>
+
+        <div class="flex-1 flex justify-end px-2 min-w-0 items-center">
+            <span class="text-[11px] sm:text-xs md:text-sm font-bold text-gray-800 leading-tight text-right whitespace-nowrap md:max-w-none overflow-hidden overflow-ellipsis">
+                Садвакасов Дамир Бекзатович
+            </span>
+        </div>
+
+        <div class="shrink-0 relative z-[1002]">
+            <a href="auth.html" 
+               class="text-gray-400 hover:text-red-500 transition-all p-3 -mr-3 flex items-center justify-center shrink-0"
+               style="display: flex !important; pointer-events: auto !important; cursor: pointer !important; -webkit-tap-highlight-color: transparent;">
+                <i class="fas fa-sign-out-alt text-lg md:text-xl"></i>
+            </a>
+        </div>
+    </div>
+</header>
 
     <main class="container mx-auto px-2 md:px-4 pb-20">
         <div class="flex flex-col md:flex-row gap-4 md:gap-6">
@@ -58,7 +74,7 @@
             <section class="w-full md:w-3/4">
                 
                 <div id="tab-profile" class="tab-content bg-white rounded-xl shadow-sm p-4 md:p-6 border border-gray-100">
-                    <h2 class="text-lg md:text-xl font-bold mb-6">Редактор профиля</h2>
+                    <h2 class="text-lg md:text-xl font-bold mb-6 italic">Редактор профиля</h2>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div class="md:col-span-2">
                             <label class="block text-xs text-gray-400 mb-1 font-bold italic">ФИО</label>
@@ -282,7 +298,7 @@
         </div>
     </div>
     
-  <div id="custom-toast" class="fixed top-5 left-1/2 -translate-x-1/2 md:left-auto md:right-5 md:translate-x-0 z-[300] pointer-events-none opacity-0 transform -translate-y-10 transition-all duration-500 w-[90%] md:w-auto">
+   <div id="custom-toast" class="fixed top-5 left-1/2 -translate-x-1/2 md:left-auto md:right-5 md:translate-x-0 z-[300] pointer-events-none opacity-0 transform -translate-y-10 transition-all duration-500 w-[90%] md:w-auto">
     <div class="bg-white border-l-4 border-orange-500 shadow-2xl rounded-2xl p-4 md:p-5 flex items-center gap-4 min-w-full md:min-w-[350px] pointer-events-auto">
         
         <div class="bg-orange-100 rounded-full shrink-0 w-10 h-10 md:w-12 md:h-12 flex items-center justify-center p-0">
@@ -315,6 +331,22 @@
 /* Осы класты біз JS арқылы қосамыз */
 .animate-modal {
     animation: modalShow 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+
+/* Toast және AI Chat батырмаларға кедергі жасамауы үшін */
+#custom-toast, #ai-chat-wrapper {
+    pointer-events: none !important;
+}
+
+/* Бірақ олардың ішіндегі батырмалар басылуы керек */
+#custom-toast button, #ai-chat-wrapper button, #ai-chat-window {
+    pointer-events: auto !important;
+}
+
+/* Header-дегі барлық басуға болатын элементтерді бетке шығару */
+header * {
+    pointer-events: auto !important;
 }
 
     </style>
@@ -672,5 +704,3 @@ function hideToast() {
     </script>
 </body>
 </html>
-
-
