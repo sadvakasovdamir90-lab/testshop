@@ -226,3 +226,34 @@ function sendMessage() {
         }
     }
 }
+
+
+// Парольді көрсету/жасыру функциясы
+function togglePass(inputId, btn) {
+    const input = document.getElementById(inputId);
+    const icon = btn.querySelector('i');
+    
+    if (input.type === "password") {
+        input.type = "text";
+        icon.classList.replace('fa-eye', 'fa-eye-slash');
+    } else {
+        input.type = "password";
+        icon.classList.replace('fa-eye-slash', 'fa-eye');
+    }
+}
+
+// Парольді ауыстыру логикасы
+function changePassword() {
+    const currentPass = document.getElementById('current-password');
+    const errorMsg = document.getElementById('error-msg');
+    
+    // Мысал үшін ескі пароль: 123456
+    if (currentPass.value !== "123456") {
+        errorMsg.classList.remove('hidden');
+        currentPass.classList.add('border-red-500');
+    } else {
+        errorMsg.classList.add('hidden');
+        currentPass.classList.remove('border-red-500');
+        alert("Пароль сәтті өзгертілді!");
+    }
+}
