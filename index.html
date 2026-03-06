@@ -29,8 +29,14 @@
             </div>
 
             <div class="flex-1 max-w-2xl relative hidden md:block">
-                <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400"><i class="fas fa-search"></i></span>
-                <input type="text" class="w-full border-2 border-gray-100 rounded-xl py-2 pl-10 pr-4 outline-none focus:border-orange-500 transition" placeholder="Поиск товаров...">
+    <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
+        <i class="fas fa-search"></i>
+    </span>
+    <input type="text" 
+           id="search-input" 
+           oninput="searchProducts(this.value)"
+           class="w-full border-2 border-gray-100 rounded-xl py-2 pl-10 pr-4 outline-none focus:border-orange-500 transition" 
+           placeholder="Поиск товаров...">
             </div>
 
             <div class="flex items-center space-x-2 md:space-x-8">
@@ -425,10 +431,51 @@ function addToCart(id, name, price, icon) {
     alert('Тауар себетке қосылды! ✅');
 }
 
-// Қолданылуы (батырмада):
-// <button onclick="addToCart(1, 'Наушники', 15000, 'fa-headphones')">Добавить</button>
+function searchProducts(query) {
+    // Жазылған мәтінді кіші әріпке айналдыру және бос орындарды алу
+    const searchTerm = query.toLowerCase().trim();
+    // Барлық тауар карточкаларын тауып алу
+    const products = document.querySelectorAll('.product-card');
+    const container = document.getElementById('products-container');
+    let foundAny = false;
+
+    products.forEach(product => {
+        // Тауардың атын тауып алу (product-name класы арқылы)
+        const productName = product.querySelector('.product-name').innerText.toLowerCase();
+        
+        if (productName.includes(searchTerm)) {
+            // Егер ат сәйкес келсе - көрсету
+            product.style.display = "block";
+            foundAny = true;
+        } else {
+            // Сәйкес келмесе - жасыру
+            product.style.display = "none";
+        }
+    });
+
+    // Нәтиже табылмаған жағдайдағы хабарламаны басқару
+    let noResultsMsg = document.getElementById('no-results-message');
+    
+    if (!foundAny) {
+        if (!noResultsMsg) {
+            noResultsMsg = document.createElement('div');
+            noResultsMsg.id = 'no-results-message';
+            noResultsMsg.className = 'col-span-full text-center py-10 italic text-gray-400';
+            noResultsMsg.innerHTML = `
+                <i class="fas fa-search-minus text-4xl mb-2"></i>
+                <p>Тауар табылмады...</p>
+            `;
+            container.appendChild(noResultsMsg);
+        }
+    } else {
+        if (noResultsMsg) noResultsMsg.remove();
+    }
+}
+        
+        
     </script>
 </body>
 
 </html>
+
 
