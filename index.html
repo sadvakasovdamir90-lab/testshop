@@ -20,23 +20,13 @@
 </head>
 <body class="bg-gray-50 font-sans text-gray-800">
 
-   <header class="bg-white shadow-sm sticky top-0 z-50">
+  <header class="bg-white shadow-sm sticky top-0 z-50">
     <div class="container mx-auto px-2 md:px-4">
+        
         <div class="flex items-center justify-between py-3 md:py-4 gap-2 md:gap-4">
             
             <div class="text-xl md:text-3xl font-bold text-orange-600 cursor-pointer shrink-0" onclick="location.reload()">
                 QulanShop
-            </div>
-
-            <div class="flex-1 max-w-2xl relative hidden md:block">
-    <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
-        <i class="fas fa-search"></i>
-    </span>
-    <input type="text" 
-           id="search-input" 
-           oninput="searchProducts(this.value)"
-           class="w-full border-2 border-gray-100 rounded-xl py-2 pl-10 pr-4 outline-none focus:border-orange-500 transition" 
-           placeholder="Поиск товаров...">
             </div>
 
             <div class="flex items-center space-x-2 md:space-x-8">
@@ -69,12 +59,19 @@
             </div>
         </div>
 
-        <div class="pb-3 md:hidden">
-            <div class="relative">
-                <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400"><i class="fas fa-search text-sm"></i></span>
-                <input type="text" class="w-full bg-gray-50 border-2 border-gray-100 rounded-xl py-2 pl-10 pr-4 outline-none focus:border-orange-500 transition text-sm" placeholder="Поиск товаров...">
+        <div class="pb-3 md:pb-4">
+            <div class="relative max-w-2xl mx-auto">
+                <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
+                    <i class="fas fa-search text-sm md:text-base"></i>
+                </span>
+                <input type="text" 
+                       id="search-input" 
+                       oninput="searchProducts(this.value)" 
+                       class="w-full bg-gray-50 md:bg-white border-2 border-gray-100 rounded-xl py-2 pl-10 pr-4 outline-none focus:border-orange-500 transition text-sm md:text-base" 
+                       placeholder="Поиск товаров...">
             </div>
         </div>
+        
     </div>
 </header>
 
@@ -477,5 +474,6 @@ function searchProducts(query) {
 </body>
 
 </html>
+
 
 
