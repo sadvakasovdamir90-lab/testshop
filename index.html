@@ -78,22 +78,59 @@
         <div class="md:col-span-3 h-48 md:h-80 rounded-2xl relative overflow-hidden shadow-lg">
             <div class="slider-container h-full flex" id="slider">
                 <div class="slide min-w-full h-full">
-                    <img src="images/banner.jpg" alt="Баннер 1" class="w-full h-full object-cover">
+                    <img id="slider-img-1" src="images/banner.jpg" alt="Баннер 1" class="w-full h-full object-cover">
                 </div>
                 <div class="slide min-w-full h-full">
-                    <img src="images/banner1.jpg" alt="Баннер 2" class="w-full h-full object-cover">
+                    <img id="slider-img-2" src="images/banner1.jpg" alt="Баннер 2" class="w-full h-full object-cover">
                 </div>
                 <div class="slide min-w-full h-full">
-                    <img src="images/banner2.jpg" alt="Баннер 3" class="w-full h-full object-cover">
+                    <img id="slider-img-3" src="images/banner2.jpg" alt="Баннер 3" class="w-full h-full object-cover">
                 </div>
             </div>
         </div>
 
         <div class="hidden md:block h-80 rounded-2xl overflow-hidden shadow-sm border-2 border-orange-100">
-            <img src="images/banner1000.jpg" alt="Жеткізу" class="w-full h-full object-cover">
+            <img id="small-banner-img" src="images/banner1000.jpg" alt="Жеткізу" class="w-full h-full object-cover">
         </div>
     </div>
 </section>
+
+
+<section id="promo-section" class="container mx-auto px-4 mt-8">
+    <div class="bg-white p-6 rounded-[2.5rem] shadow-xl border border-orange-100 flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden">
+        <div class="absolute -right-10 -top-10 w-40 h-40 bg-orange-50 rounded-full blur-3xl"></div>
+        
+        <div class="flex items-center gap-4 relative z-10">
+            <div class="w-14 h-14 bg-orange-600 text-white rounded-2xl flex items-center justify-center text-2xl shadow-lg shadow-orange-200">
+                <i class="fas fa-bolt animate-bounce"></i>
+            </div>
+            <div>
+                <h3 class="font-black italic uppercase text-lg tracking-tighter">Успей купить!</h3>
+                <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest italic">До конца мега-акции осталось:</p>
+            </div>
+        </div>
+
+        <div class="flex gap-3 relative z-10" id="countdown-timer">
+            <div class="text-center">
+                <div id="days" class="w-14 h-14 bg-slate-900 text-white rounded-2xl flex items-center justify-center text-xl font-black italic shadow-xl">00</div>
+                <span class="text-[8px] font-black uppercase text-gray-400 mt-1 block">Дней</span>
+            </div>
+            <div class="text-center">
+                <div id="hours" class="w-14 h-14 bg-slate-900 text-white rounded-2xl flex items-center justify-center text-xl font-black italic shadow-xl">00</div>
+                <span class="text-[8px] font-black uppercase text-gray-400 mt-1 block">Часов</span>
+            </div>
+            <div class="text-center">
+                <div id="minutes" class="w-14 h-14 bg-slate-900 text-white rounded-2xl flex items-center justify-center text-xl font-black italic shadow-xl">00</div>
+                <span class="text-[8px] font-black uppercase text-gray-400 mt-1 block">Мин</span>
+            </div>
+            <div class="text-center">
+                <div id="seconds" class="w-14 h-14 bg-orange-600 text-white rounded-2xl flex items-center justify-center text-xl font-black italic shadow-xl animate-pulse">00</div>
+                <span class="text-[8px] font-black uppercase text-gray-400 mt-1 block">Сек</span>
+            </div>
+        </div>
+    </div>
+</section>
+
 
    <section class="container mx-auto px-4 mt-12 mb-20 relative">
     <div class="inline-block relative w-full md:w-auto">
@@ -589,7 +626,68 @@ window.addEventListener('focus', renderProducts);
 
 
 
+function loadSiteBanners() {
+    // Админ панельден сақталған деректерді аламыз
+    const savedBanners = JSON.parse(localStorage.getItem('site_banners'));
+    
+    if (savedBanners) {
+        // Үлкен слайдер суреттерін ауыстыру
+        if (savedBanners.main[0]) document.getElementById('slider-img-1').src = savedBanners.main[0];
+        if (savedBanners.main[1]) document.getElementById('slider-img-2').src = savedBanners.main[1];
+        if (savedBanners.main[2]) document.getElementById('slider-img-3').src = savedBanners.main[2];
+        
+        // Кішкентай баннерді ауыстыру
+        if (savedBanners.small) document.getElementById('small-banner-img').src = savedBanners.small;
+    }
+}
 
+// Бет жүктелгенде іске қосамыз
+document.addEventListener('DOMContentLoaded', () => {
+    loadSiteBanners();
+    // Сенің ескі слайдер анимацияң осы жерде қала береді
+});
+
+
+
+function startGlobalTimer() {
+    const banners = JSON.parse(localStorage.getItem('site_banners'));
+    const promoSection = document.getElementById('promo-section');
+
+    // Егер деректер жоқ болса немесе уақыт орнатылмаса — блокты бірден жасырамыз
+    if (!banners || !banners.deadline || !promoSection) {
+        if(promoSection) promoSection.style.display = 'none';
+        return;
+    }
+
+    const targetDate = new Date(banners.deadline).getTime();
+
+    const interval = setInterval(() => {
+        const now = new Date().getTime();
+        const diff = targetDate - now;
+
+        // ЕГЕР УАҚЫТ БІТСЕ:
+        if (diff <= 0) {
+            clearInterval(interval);
+            promoSection.style.display = 'none'; // БҮКІЛ БЛОК ЖОҒАЛАДЫ
+            return;
+        }
+
+        // Таймерді есептеу
+        const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const s = Math.floor((diff % (1000 * 60)) / 1000);
+
+        // Сандарды шығару
+        document.getElementById('days').innerText = d < 10 ? '0' + d : d;
+        document.getElementById('hours').innerText = h < 10 ? '0' + h : h;
+        document.getElementById('minutes').innerText = m < 10 ? '0' + m : m;
+        document.getElementById('seconds').innerText = s < 10 ? '0' + s : s;
+    }, 1000);
+}
+
+// Бет жүктелгенде тексеру
+document.addEventListener('DOMContentLoaded', startGlobalTimer);
 
     </script>
 </body>
