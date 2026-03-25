@@ -23,6 +23,30 @@
         
         .btn-primary { background: var(--main-orange); transition: all 0.2s active:scale-95; }
         .btn-primary:active { transform: scale(0.97); }
+
+        @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.auth-section-active {
+    animation: fadeIn 0.4s ease-out forwards;
+}
+
+
+.input-error {
+    border-color: #ef4444 !important; /* Қызыл жиек */
+    background-color: #fef2f2 !important; /* Ашық қызыл фон */
+}
+.error-message {
+    color: #ef4444;
+    font-size: 10px;
+    font-weight: 700;
+    margin-left: 8px;
+    margin-top: 4px;
+    text-transform: uppercase;
+    font-style: italic;
+}
     </style>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
@@ -48,6 +72,12 @@
             <input type="password" id="login-pass" placeholder="Минимум 6 символов" class="w-full p-4 pr-12 rounded-2xl glass-input font-semibold text-slate-700 outline-none">
             <button onclick="togglePass('login-pass', this)" class="absolute right-4 top-9 text-gray-400 p-1"><i class="fas fa-eye"></i></button>
         </div>
+        <div class="flex items-center justify-between px-2">
+    <label class="flex items-center gap-2 cursor-pointer group">
+        <input type="checkbox" id="remember-me" class="w-4 h-4 rounded border-gray-300 text-orange-600 focus:ring-orange-500">
+        <span class="text-[11px] font-bold text-gray-400 uppercase italic group-hover:text-gray-600 transition-colors">Запомнить меня</span>
+    </label>
+</div>
     </div>
 
     <div class="mt-6 flex flex-col items-center gap-4">
@@ -65,9 +95,13 @@
     <div class="text-right">
         <button onclick="switchMode('forgot')" class="text-[11px] font-bold text-orange-600 hover:underline italic uppercase">Забыли пароль?</button>
     </div>
-    <button onclick="handleLogin()" class="btn-primary w-full text-white py-4 rounded-2xl font-bold uppercase italic shadow-lg shadow-orange-200">Войти</button>
+    <button onclick="handleLogin()" id="login-btn" class="btn-primary w-full text-white py-4 rounded-2xl font-bold uppercase italic shadow-lg shadow-orange-200 flex items-center justify-center gap-2">
+    <span>Войти</span>
+    <div id="login-spinner" class="hidden animate-spin h-5 w-5 border-2 border-white border-t-transparent rounded-full"></div>
+</button>
     <p class="text-center text-xs text-gray-400 font-medium">Нет аккаунта? <button onclick="switchMode('reg')" class="text-orange-600 font-bold underline">Зарегистрироваться</button></p>
 </div>
+
 
 <div id="reg-section" class="hidden-section space-y-5">
     <h2 class="text-xl font-bold text-gray-800 text-center uppercase tracking-tight">Регистрация</h2>
@@ -81,7 +115,16 @@
             class="absolute right-4 top-4 text-gray-400 p-1 focus:outline-none">
         <i class="fas fa-eye"></i>
     </button>
+
+    <div class="mt-2 px-2">
+    <div id="password-strength-bar" class="h-1 w-full bg-gray-200 rounded-full overflow-hidden transition-all duration-300">
+        <div id="strength-progress" class="h-full w-0 transition-all duration-500"></div>
+    </div>
+    <p id="strength-text" class="text-[9px] font-bold uppercase italic mt-1 text-gray-400">Сложность пароля</p>
 </div>
+
+</div>
+
         
         <div class="mt-4 flex flex-col items-center gap-4">
             <div class="flex items-center w-full gap-2">
@@ -95,6 +138,15 @@
             </button>
         </div>
     </div>
+    <div class="mt-4 px-2">
+    <label class="flex items-start gap-3 cursor-pointer group">
+        <input type="checkbox" id="reg-agreement" class="mt-1 w-4 h-4 rounded border-gray-300 text-orange-600 focus:ring-orange-500">
+        <span class="text-[10px] font-medium text-gray-400 leading-tight uppercase italic">
+            Я согласен с <button type="button" onclick="showTerms()" class="text-orange-600 underline font-bold">правилами сервиса</button> 
+            и <button type="button" onclick="showPrivacy()" class="text-orange-600 underline font-bold">политикой конфиденциальности</button>
+        </span>
+    </label>
+</div>
     <button type="button" 
         onclick="handleStartAuth('reg')" 
         class="btn-primary w-full text-white py-4 rounded-2xl font-bold uppercase italic shadow-lg shadow-orange-200">
@@ -112,7 +164,10 @@
         <label class="block text-[10px] font-bold text-gray-400 uppercase ml-2 mb-1">Данные аккаунта</label>
         <input type="text" id="forgot-identifier" placeholder="Номер или почта" class="w-full p-4 rounded-2xl glass-input font-semibold text-slate-700 outline-none">
     </div>
-    <button type="button" onclick="handleStartAuth('forgot')" class="btn-primary w-full text-white py-4 rounded-2xl font-bold uppercase italic shadow-lg shadow-orange-200 tracking-widest">Получить код</button>
+    <button type="button" onclick="handleStartAuth('reg')" id="reg-btn" class="btn-primary w-full text-white py-4 rounded-2xl font-bold uppercase italic shadow-lg shadow-orange-200 flex items-center justify-center gap-2">
+    <span>Получить код</span>
+    <div id="reg-spinner" class="hidden animate-spin h-5 w-5 border-2 border-white border-t-transparent rounded-full"></div>
+</button>  
     <button type="button" onclick="switchMode('login')" class="w-full text-gray-400 text-[10px] font-bold uppercase tracking-widest mt-2">Назад</button>
 </div>
 
@@ -172,30 +227,143 @@
     const auth = getAuth(app);
     const provider = new GoogleAuthProvider();
 
-    // --- EMAILJS ИНИЦИАЛИЗАЦИЯ (PUBLIC KEY ҚОЙЫЛДЫ) ---
-    emailjs.init("3GHLD-lMrHtb07Xni"); // Дамир, осы жерге EmailJS Account-тағы Public Key-ді жаз
+    // --- EMAILJS ИНИЦИАЛИЗАЦИЯ ---
+    emailjs.init("3GHLD-lMrHtb07Xni"); 
 
     window.currentProcess = ''; 
     window.tempUser = {};
 
-    // --- ТАЙМЕР ЛОГИКАСЫ ---
+    // --- ЖҮКТЕЛУ БЕЛГІСІН БАСҚАРУ ---
+    window.toggleLoading = function(isLoading) {
+        const btnId = (window.currentProcess === 'reg' || window.currentProcess === 'forgot') ? 'reg-btn' : 'login-btn';
+        const btn = document.getElementById(btnId);
+        if (!btn) return;
+        
+        const spinner = btn.querySelector('.animate-spin') || document.getElementById(btnId + '-spinner');
+        
+        if (isLoading) {
+            btn.disabled = true;
+            btn.classList.add('opacity-70');
+            if (spinner) spinner.classList.remove('hidden');
+        } else {
+            btn.disabled = false;
+            btn.classList.remove('opacity-70');
+            if (spinner) spinner.classList.add('hidden');
+        }
+    };
+
+    // --- ДЕРЕКТЕРДІ ТЕКСЕРУ ЖӘНЕ ҚАТЕЛЕРДІ КӨРСЕТУ ---
+    window.validateData = function(data) {
+        document.querySelectorAll('.error-message').forEach(el => el.remove());
+        document.querySelectorAll('.glass-input').forEach(el => el.classList.remove('input-error'));
+
+        const showError = (id, msg) => {
+            const el = document.getElementById(id);
+            if (el) {
+                el.classList.add('input-error');
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'error-message';
+                errorDiv.innerText = msg;
+                el.parentNode.appendChild(errorDiv);
+            }
+        };
+
+        let isValid = true;
+        if (!data.identifier || data.identifier === "+7") {
+            showError(window.currentProcess === 'reg' ? 'reg-identifier' : 'login-identifier', 'Обязательное поле');
+            isValid = false;
+        } else if (data.isEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.identifier)) {
+            showError(window.currentProcess === 'reg' ? 'reg-identifier' : 'login-identifier', 'Неверный формат Email');
+            isValid = false;
+        }
+
+        if (!data.password || data.password.length < 6) {
+            showError(window.currentProcess === 'reg' ? 'reg-pass' : 'login-pass', 'Минимум 6 символов');
+            isValid = false;
+        }
+
+        if (window.currentProcess === 'reg' && (!data.name || data.name.length < 2)) {
+            showError('reg-name', 'Введите корректное ФИО');
+            isValid = false;
+        }
+
+        if (window.currentProcess === 'reg') {
+            const agreement = document.getElementById('reg-agreement');
+            if (agreement && !agreement.checked) {
+                Swal.fire('Внимание', 'Вы должны согласиться с правилами сервиса!', 'warning');
+                isValid = false;
+            }
+        }
+        return isValid;
+    };
+
+    // --- ПАРОЛЬ КҮРДЕЛІЛІГІН ТЕКСЕРУ ---
+    window.checkPasswordStrength = function(password) {
+        const progress = document.getElementById('strength-progress');
+        const text = document.getElementById('strength-text');
+        let strength = 0;
+
+        if (password.length >= 6) strength += 25;
+        if (/[A-Z]/.test(password)) strength += 25;
+        if (/[0-9]/.test(password)) strength += 25;
+        if (/[^A-Za-z0-9]/.test(password)) strength += 25;
+
+        if (progress && text) {
+            progress.style.width = strength + '%';
+            if (strength <= 25) {
+                progress.className = 'h-full bg-red-500 transition-all duration-500';
+                text.innerText = 'Слабый пароль';
+                text.className = 'text-[9px] font-bold uppercase italic mt-1 text-red-500';
+            } else if (strength <= 50) {
+                progress.className = 'h-full bg-orange-500 transition-all duration-500';
+                text.innerText = 'Средний пароль';
+                text.className = 'text-[9px] font-bold uppercase italic mt-1 text-orange-500';
+            } else if (strength <= 75) {
+                progress.className = 'h-full bg-yellow-500 transition-all duration-500';
+                text.innerText = 'Хороший пароль';
+                text.className = 'text-[9px] font-bold uppercase italic mt-1 text-yellow-500';
+            } else {
+                progress.className = 'h-full bg-emerald-500 transition-all duration-500';
+                text.innerText = 'Очень сильный пароль';
+                text.className = 'text-[9px] font-bold uppercase italic mt-1 text-emerald-500';
+            }
+        }
+    };
+
+    // --- МОДАЛКАЛАР ---
+    window.showTerms = function() {
+        Swal.fire({
+            title: '<span style="color: #f26522; font-style: italic; font-weight: 900;">ПРАВИЛА СЕРВИСА</span>',
+            html: `<div style="text-align: left; font-size: 13px; line-height: 1.6; color: #444; font-family: sans-serif;"><p>Добро пожаловать в <b>QulanShop</b>! Регистрируясь в нашем сервисе, вы подтверждаете свое согласие со следующими правилами:</p><ul style="margin-left: 15px; list-style-type: disc;"><li><b>Личный аккаунт:</b> Пользователь обязуется предоставлять достоверную информацию. Создание нескольких аккаунтов одним лицом (мультиаккаунтинг) запрещено.</li><li><b>Безопасность:</b> Вы несете полную ответственность за сохранность вашего пароля и конфиденциальность доступа.</li><li><b>Заказы и оплата:</b> Все покупки совершаются добровольно. Перед подтверждением заказа внимательно проверяйте адрес доставки.</li><li><b>Запреты:</b> Запрещено использование любых автоматизированных скриптов (ботов) для манипуляции системой.</li><li><b>Модерация:</b> Администрация оставляет за собой право ограничить доступ к аккаунту в случае нарушения данных правил.</li></ul></div>`,
+            confirmButtonText: 'Я ПОНИМАЮ',
+            confirmButtonColor: '#f26522'
+        });
+    };
+
+    window.showPrivacy = function() {
+        Swal.fire({
+            title: '<span style="color: #f26522; font-style: italic; font-weight: 900;">КОНФИДЕНЦИАЛЬНОСТЬ</span>',
+            html: `<div style="text-align: left; font-size: 13px; line-height: 1.6; color: #444; font-family: sans-serif;"><p>Ваша конфиденциальность — наш приоритет. Мы собираем и обрабатываем данные на следующих условиях:</p><ul style="margin-left: 15px; list-style-type: disc;"><li><b>Сбор данных:</b> Мы запрашиваем ваше ФИО, номер телефона, email и адрес исключительно для обработки ваших заказов и доставки.</li><li><b>Защита информации:</b> Мы используем современные методы шифрования данных для предотвращения несанкционированного доступа.</li><li><b>Передача третьим лицам:</b> Мы гарантируем, что ваша личная информация не будет передана, продана или сдана в аренду третьим лицам.</li><li><b>Использование LocalStorage:</b> Мы сохраняем данные сессии в вашем браузере только для того, чтобы вам не приходилось авторизовываться при каждом посещении.</li><li><b>Удаление данных:</b> Вы имеете право в любой момент запросить удаление вашей учетной записи через службу поддержки.</li></ul></div>`,
+            confirmButtonText: 'ПРИНИМАЮ',
+            confirmButtonColor: '#f26522'
+        });
+    };
+
+    // --- ТАЙМЕР ---
     let timerInterval;
     window.startTimer = function() {
         let timeLeft = 60;
         const timerText = document.getElementById('timer-text');
         const timerCount = document.getElementById('timer-count');
         const resendBtn = document.getElementById('resend-btn');
-
         if (timerText && resendBtn) {
             timerText.classList.remove('hidden');
             resendBtn.classList.add('hidden');
             timerCount.innerText = timeLeft;
-            
             clearInterval(timerInterval);
             timerInterval = setInterval(() => {
                 timeLeft--;
                 timerCount.innerText = timeLeft;
-
                 if (timeLeft <= 0) {
                     clearInterval(timerInterval);
                     timerText.classList.add('hidden');
@@ -205,48 +373,36 @@
         }
     };
 
-    window.handleResend = function() {
-        window.handleStartAuth(window.currentProcess);
-    };
-
-    // Телефон форматы
-    window.fixPhone = function(input) {
-        if (!input.value.startsWith('+7 ')) {
-            input.value = '+7 ';
-        }
-    };
-
-    window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', { 
-        'size': 'invisible' 
-    });
+    window.handleResend = function() { window.handleStartAuth(window.currentProcess); };
+    window.fixPhone = function(input) { if (!input.value.startsWith('+7 ')) input.value = '+7 '; };
+    window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', { 'size': 'invisible' });
 
     // Экран ауыстыру
     window.switchMode = function(mode) {
         const sections = ['login-section', 'reg-section', 'forgot-section', 'verify-section', 'new-pass-section'];
         sections.forEach(s => {
             const el = document.getElementById(s);
-            if (el) el.classList.add('hidden-section');
+            if (el) {
+                el.classList.add('hidden-section');
+                el.classList.remove('auth-section-active'); 
+            }
         });
         const target = document.getElementById(mode + '-section');
-        if (target) target.classList.remove('hidden-section');
-
+        if (target) {
+            target.classList.remove('hidden-section');
+            setTimeout(() => { target.classList.add('auth-section-active'); }, 10);
+        }
         const subtitle = document.getElementById('auth-subtitle');
         if (mode === 'login') subtitle.innerText = "Добро пожаловать!";
         if (mode === 'reg') subtitle.innerText = "Создайте личный кабинет";
         if (mode === 'forgot' || mode === 'verify') subtitle.innerText = "Восстановление доступа";
     };
 
-    // СМС және Почта логикасын ажырату функциясы
+    // Код жіберу
     window.handleStartAuth = function(mode) {
         window.currentProcess = mode;
         const inputId = (mode === 'reg') ? 'reg-identifier' : 'forgot-identifier';
         const inputVal = document.getElementById(inputId).value.trim();
-
-        if (!inputVal || inputVal === "+7") {
-            Swal.fire('Ошибка', 'Введите номер или почту', 'error');
-            return;
-        }
-
         const isEmail = inputVal.includes('@');
         window.tempUser = {
             identifier: inputVal,
@@ -255,151 +411,135 @@
             password: document.getElementById('reg-pass')?.value || ""
         };
 
+        if (!window.validateData(window.tempUser)) return;
+        window.toggleLoading(true);
+
         if (isEmail) {
-            // ПОЧТАҒА КОД ЖІБЕРУ (ID ҚОЙЫЛДЫ)
             const code = Math.floor(100000 + Math.random() * 900000);
             window.generatedEmailCode = code;
-            
             emailjs.send('service_5dfhk7r', 'template_wpsnlxp', {
-                to_email: inputVal,
-                to_name: window.tempUser.name,
-                otp_code: code 
+                to_email: inputVal, to_name: window.tempUser.name, otp_code: code 
             }).then(() => {
+                window.toggleLoading(false);
                 Swal.fire('Успешно!', 'Код отправлен на Email 📧', 'success');
                 window.switchMode('verify');
-                window.startTimer(); // Таймерді бастау
-            }).catch((err) => {
-                console.error("EmailJS Error:", err);
-                Swal.fire('Қате', 'Почтаға жіберу сәтсіз аяқталды', 'error');
+                window.startTimer();
+            }).catch(() => {
+                window.toggleLoading(false);
+                Swal.fire('Ошибка', 'Не удалось отправить почту', 'error');
             });
         } else {
-            // СМС ЖІБЕРУ (Firebase)
             const phoneNumber = inputVal.replace(/\s+/g, '');
             signInWithPhoneNumber(auth, phoneNumber, window.recaptchaVerifier)
                 .then((result) => {
+                    window.toggleLoading(false);
                     window.confirmationResult = result;
-                    Swal.fire({ icon: 'success', title: 'Код отправлен!', timer: 2000, showConfirmButton: false });
                     window.switchMode('verify');
-                    window.startTimer(); // Таймерді бастау
+                    window.startTimer();
                 }).catch(() => {
-                    Swal.fire('Инфо', 'Продолжаем в тестовом режиме', 'info');
+                    window.toggleLoading(false);
                     window.switchMode('verify');
                     window.startTimer();
                 });
         }
     };
 
-    // Кодты растау функциясы (Жаңартылған)
     window.handleConfirmCode = function() {
         const code = document.getElementById('verify-code').value;
         if (window.tempUser.isEmail) {
             if (code == window.generatedEmailCode) proceedRegistration();
-            else Swal.fire('Қате', 'Код бұрыс!', 'error');
+            else Swal.fire('Ошибка', 'Неверный код!', 'error');
         } else {
             if (window.confirmationResult) {
-                window.confirmationResult.confirm(code).then(() => proceedRegistration())
-                .catch(() => proceedRegistration()); 
+                window.confirmationResult.confirm(code).then(() => proceedRegistration()).catch(() => proceedRegistration()); 
             } else proceedRegistration();
         }
     };
 
-    // Кодтан кейінгі қадам (Адрес сұрау)
     function proceedRegistration() {
-        if (window.currentProcess === 'forgot') {
-            window.switchMode('new-pass');
+        if (window.currentProcess === 'forgot') window.switchMode('new-pass');
+        else if (window.currentProcess === 'login_2fa') {
+            const user = window.tempUser;
+            if (user.rememberMe) {
+                localStorage.setItem('savedLogin', user.email || user.phone);
+                localStorage.setItem('savedPass', user.password);
+            }
+            loginUser(user.id);
         } else {
             Swal.fire({
                 title: 'Завершение',
                 html: `<input id="swal-address" class="swal2-input" placeholder="Адрес проживания">`,
-                confirmButtonText: 'Сохранить',
                 preConfirm: () => {
                     const addr = document.getElementById('swal-address').value;
-                    if (!addr) return Swal.showValidationMessage('Адрес жазыңыз!');
+                    if (!addr) return Swal.showValidationMessage('Адрес обязателен!');
                     return addr;
                 }
-            }).then(res => {
-                if (res.isConfirmed) {
-                    window.tempUser.address = res.value;
-                    saveFinalUser();
-                }
-            });
+            }).then(res => { if (res.isConfirmed) { window.tempUser.address = res.value; saveFinalUser(); } });
         }
     }
 
-    // Пайдаланушыны базаға сақтау
     function saveFinalUser() {
         let users = JSON.parse(localStorage.getItem('users')) || [];
-        const newUser = {
-            id: Date.now(),
-            name: window.tempUser.name,
-            email: window.tempUser.isEmail ? window.tempUser.identifier : "",
-            phone: window.tempUser.isEmail ? "" : window.tempUser.identifier,
-            address: window.tempUser.address,
-            password: window.tempUser.password,
-            debt: 0
-        };
+        const newUser = { id: Date.now(), name: window.tempUser.name, email: window.tempUser.isEmail ? window.tempUser.identifier : "", phone: window.tempUser.isEmail ? "" : window.tempUser.identifier, address: window.tempUser.address || "", password: window.tempUser.password, debt: 0, giftCards: [], twoFactorEnabled: false };
         users.push(newUser);
         localStorage.setItem('users', JSON.stringify(users));
-        localStorage.setItem('currentUserId', newUser.id);
-        localStorage.setItem('isLoggedIn', 'true');
-        window.location.href = 'profile.html';
+        loginUser(newUser.id);
     }
-
-    // СМС логикасы
-    window.startPhoneAuth = function(mode) {
-        window.handleStartAuth(mode);
-    };
-
-    window.confirmCode = function() {
-        window.handleConfirmCode();
-    };
 
     window.completeProcess = function() {
         const p1 = document.getElementById('pass1').value;
         const p2 = document.getElementById('pass2').value;
-        if (p1.length < 6 || p1 !== p2) {
-            Swal.fire('Ошибка', 'Пароли не совпадают', 'error');
-            return;
-        }
+        if (p1.length < 6 || p1 !== p2) return Swal.fire('Ошибка', 'Пароли не совпадают', 'error');
         let users = JSON.parse(localStorage.getItem('users')) || [];
-        if (window.currentProcess === 'reg') {
-            const newUser = { 
-                id: Date.now(), 
-                name: window.tempUser.name, 
-                phone: window.tempUser.isEmail ? "" : window.tempUser.identifier, 
-                email: window.tempUser.isEmail ? window.tempUser.identifier : "",
-                address: window.tempUser.address || "",
-                password: p1, 
-                debt: 0 
-            };
-            users.push(newUser);
+        const idx = users.findIndex(u => u.email === window.tempUser.identifier || u.phone === window.tempUser.identifier);
+        if (idx !== -1) {
+            users[idx].password = p1;
             localStorage.setItem('users', JSON.stringify(users));
-            localStorage.setItem('currentUserId', newUser.id);
-        } else {
-            const idx = users.findIndex(u => u.email === window.tempUser.identifier || u.phone === window.tempUser.identifier);
-            if (idx !== -1) {
-                users[idx].password = p1;
-                localStorage.setItem('users', JSON.stringify(users));
-            }
+            loginUser(users[idx].id);
         }
-        localStorage.setItem('isLoggedIn', 'true');
-        localStorage.setItem('lastAuthTime', new Date().getTime()); 
-        window.location.href = 'profile.html';
     };
 
     window.handleLogin = function() {
         const input = document.getElementById('login-identifier').value.trim();
         const pass = document.getElementById('login-pass').value;
-        let users = JSON.parse(localStorage.getItem('users')) || [];
-        const user = users.find(u => (u.phone === input || u.email === input) && u.password === pass);
-        if (user) {
-            localStorage.setItem('isLoggedIn', 'true');
-            localStorage.setItem('currentUserId', user.id);
-            localStorage.setItem('lastAuthTime', new Date().getTime()); 
-            window.location.href = 'profile.html';
-        } else {
-            Swal.fire('Ошибка', 'Неверные данные!', 'warning');
-        }
+        const rememberMe = document.getElementById('remember-me').checked; 
+        window.currentProcess = 'login';
+        if (!window.validateData({ identifier: input, password: pass, isEmail: input.includes('@') })) return;
+        window.toggleLoading(true);
+
+        setTimeout(() => {
+            let users = JSON.parse(localStorage.getItem('users')) || [];
+            const user = users.find(u => (u.phone === input || u.email === input || u.phone === "+7" + input.replace(/\D/g, '').slice(-10)) && u.password === pass);
+            
+            if (user) {
+                if (user.twoFactorEnabled) {
+                    window.tempUser = { ...user, rememberMe: rememberMe };
+                    window.currentProcess = 'login_2fa';
+                    const code = Math.floor(100000 + Math.random() * 900000);
+                    window.generatedEmailCode = code;
+                    window.tempUser.isEmail = true;
+
+                    emailjs.send('service_5dfhk7r', 'template_wpsnlxp', {
+                        to_email: user.email, to_name: user.name, otp_code: code 
+                    }).then(() => {
+                        window.toggleLoading(false);
+                        Swal.fire('2FA проверка', 'Код подтверждения отправлен на Email', 'info');
+                        window.switchMode('verify');
+                        window.startTimer();
+                    }).catch(() => {
+                        window.toggleLoading(false);
+                        Swal.fire('Ошибка', 'Не удалось отправить код 2FA', 'error');
+                    });
+                } else {
+                    if (rememberMe) { localStorage.setItem('savedLogin', input); localStorage.setItem('savedPass', pass); }
+                    else { localStorage.removeItem('savedLogin'); localStorage.removeItem('savedPass'); }
+                    loginUser(user.id);
+                }
+            } else {
+                window.toggleLoading(false);
+                Swal.fire('Ошибка', 'Неверный логин или пароль!', 'warning');
+            }
+        }, 800);
     };
 
     window.togglePass = function(id, btn) {
@@ -407,54 +547,24 @@
         if (el) el.type = el.type === 'password' ? 'text' : 'password';
     };
 
-    // --- GOOGLE AUTH ---
     window.signInWithGoogle = function() {
-        signInWithPopup(auth, provider)
-            .then((result) => {
-                const user = result.user;
-                let users = JSON.parse(localStorage.getItem('users')) || [];
-                let existingUser = users.find(u => u.email === user.email);
-
-                if (!existingUser) {
-                    Swal.fire({
-                        title: 'Завершение регистрации',
-                        html: `
-                            <div class="space-y-3">
-                                <input id="swal-name" class="swal2-input w-full" placeholder="ФИО" value="${user.displayName}">
-                                <input id="swal-phone" class="swal2-input w-full" placeholder="Номер телефона (+7)">
-                                <input id="swal-address" class="swal2-input w-full" placeholder="Адрес проживания">
-                            </div>
-                        `,
-                        confirmButtonText: 'Сохранить и войти',
-                        preConfirm: () => {
-                            const name = document.getElementById('swal-name').value;
-                            const phone = document.getElementById('swal-phone').value;
-                            const address = document.getElementById('swal-address').value;
-                            if (!name || !phone || !address) {
-                                Swal.showValidationMessage('Барлық ұяшықты толтырыңыз!');
-                            }
-                            return { name, phone, address };
-                        }
-                    }).then((res) => {
-                        if (res.isConfirmed) {
-                            const newUser = {
-                                id: user.uid,
-                                name: res.value.name,
-                                phone: res.value.phone,
-                                address: res.value.address,
-                                email: user.email,
-                                debt: 0,
-                                photo: user.photoURL
-                            };
-                            users.push(newUser);
-                            localStorage.setItem('users', JSON.stringify(users));
-                            loginUser(newUser.id);
-                        }
-                    });
-                } else {
-                    loginUser(existingUser.id);
-                }
-            }).catch(() => Swal.fire('Қате', 'Google Auth істемеді', 'error'));
+        signInWithPopup(auth, provider).then((result) => {
+            const user = result.user;
+            let users = JSON.parse(localStorage.getItem('users')) || [];
+            let existingUser = users.find(u => u.email === user.email);
+            if (!existingUser) {
+                Swal.fire({
+                    title: 'Регистрация',
+                    html: `<input id="swal-phone" class="swal2-input" placeholder="Телефон"><input id="swal-address" class="swal2-input" placeholder="Адрес">`,
+                    preConfirm: () => { return { phone: document.getElementById('swal-phone').value, address: document.getElementById('swal-address').value }; }
+                }).then((res) => {
+                    if (res.isConfirmed) {
+                        const newUser = { id: user.uid, name: user.displayName, email: user.email, phone: res.value.phone, address: res.value.address, debt: 0, giftCards: [], photo: user.photoURL, twoFactorEnabled: false };
+                        users.push(newUser); localStorage.setItem('users', JSON.stringify(users)); loginUser(newUser.id);
+                    }
+                });
+            } else loginUser(existingUser.id);
+        });
     };
 
     function loginUser(userId) {
@@ -464,12 +574,32 @@
         window.location.href = 'profile.html';
     }
 
-    // Қалпына келтіру
-    window.handleRecovery = function() {
-        const inputVal = document.getElementById('forgot-identifier').value.trim();
-        if (!inputVal) return Swal.fire('Ошибка', 'Введите данные!', 'warning');
-        window.handleStartAuth('forgot');
+    // --- EVENT LISTENERS & AUTO-LOAD ---
+    document.getElementById('reg-pass')?.addEventListener('input', (e) => window.checkPasswordStrength(e.target.value));
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            const active = ['login-section', 'reg-section', 'verify-section'].find(id => !document.getElementById(id).classList.contains('hidden-section'));
+            if (active === 'login-section') window.handleLogin();
+            else if (active === 'reg-section') window.handleStartAuth('reg');
+            else if (active === 'verify-section') window.handleConfirmCode();
+        }
+    });
+
+    const checkSavedCredentials = () => {
+        const savedLogin = localStorage.getItem('savedLogin');
+        const savedPass = localStorage.getItem('savedPass');
+        const loginInput = document.getElementById('login-identifier');
+        const passInput = document.getElementById('login-pass');
+        if (savedLogin && savedPass && loginInput && passInput) {
+            loginInput.value = savedLogin;
+            passInput.value = savedPass;
+            if (document.getElementById('remember-me')) document.getElementById('remember-me').checked = true;
+        }
     };
+
+    checkSavedCredentials();
+    setTimeout(() => document.getElementById('login-identifier')?.focus(), 500);
 </script>
 </body>
 </html>
