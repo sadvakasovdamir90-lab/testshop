@@ -352,10 +352,9 @@ async function generateGiftPDF() {
     const originalCode = codeElem.innerText;
     codeElem.innerText = uniqueNumber;
 
-    // --- СЕРТИФИКАТТЫ ПАЙДАЛАНУШЫНЫҢ ПРОФИЛІНЕ САҚТАУ ---
+    // --- БАЗАҒА САҚТАУ БӨЛІМІ (Өзгеріссіз) ---
     let users = JSON.parse(localStorage.getItem('users')) || [];
     const userIndex = users.findIndex(u => u.phone && u.phone.includes(phoneInput));
-
     if (userIndex !== -1) {
         if (!users[userIndex].certificates) users[userIndex].certificates = [];
         users[userIndex].certificates.push({
@@ -363,25 +362,39 @@ async function generateGiftPDF() {
             code: uniqueNumber,
             amount: amount,
             date: new Date().toLocaleDateString(),
-            style: document.getElementById('gift-card-preview').className // Түсі мен стилі
+            style: document.getElementById('gift-card-preview').className 
         });
         localStorage.setItem('users', JSON.stringify(users));
     }
 
+    // --- МЫНА ЖЕРДІ МҰҚИЯТ КӨШІР (PDF ТҮЗЕТУ) ---
     const opt = {
-        margin: 10,
+        margin: 0, // Жиекті алып тастаймыз, өзіміз реттейміз
         filename: `QulanShop_Gift_${amount}.pdf`,
         image: { type: 'jpeg', quality: 1 },
-        html2canvas: { scale: 3, useCORS: true, width: 800, windowWidth: 800, scrollY: 0 },
-        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        html2canvas: { 
+            scale: 3, // Сапа өте жоғары болады
+            useCORS: true,
+            width: element.offsetWidth, // Картаның нақты енін алу
+            height: element.offsetHeight, // Картаның нақты биіктігін алу
+            scrollY: 0,
+            windowWidth: element.scrollWidth
+        },
+        jsPDF: { 
+            unit: 'px', // Пиксельмен есептеу дәлірек
+            format: [element.offsetWidth + 40, element.offsetHeight + 40], // Парақ өлшемін картаға шақтау
+            orientation: 'landscape' 
+        }
     };
 
     try {
         await html2pdf().set(opt).from(element).save();
+        
         const phone = "7" + phoneInput;
-        const message = `Привет, ${foundUserNameGlobal}! Тебе подарок от QulanShop на сумму ${amount} ₸! 🎁 Карта нөмірі: ${uniqueNumber}. Сертификат сенің жеке кабинетіңе де қосылды!`;
+        const message = `Привет, ${foundUserNameGlobal}! Тебе подарок от QulanShop на сумму ${amount} ₸! 🎁 Код: ${uniqueNumber}`;
         window.open(`https://wa.me/${phone}?text=${encodeURIComponent(message)}`);
     } catch (e) {
+        console.error(e);
         alert("Ошибка!");
     } finally {
         codeElem.innerText = originalCode;

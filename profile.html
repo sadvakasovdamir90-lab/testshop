@@ -54,19 +54,29 @@
     <main class="container mx-auto px-2 md:px-4 pb-20">
         <div class="flex flex-col md:flex-row gap-4 md:gap-6">
             
-            <aside class="w-full md:w-1/4 space-y-2">
+     <aside class="w-full md:w-1/4 space-y-2">
     <div class="bg-white rounded-xl shadow-sm p-3 md:p-4 border border-gray-100">
         <h3 class="text-gray-400 text-[9px] md:text-[10px] font-bold uppercase mb-3 px-3 italic tracking-wider">Личные данные</h3>
         
-    <nav class="mobile-scroll md:space-y-1 flex md:block pb-2 md:pb-0">
+        <nav class="mobile-scroll md:space-y-1 flex md:block pb-2 md:pb-0">
             <button onclick="showTab(event, 'tab-profile')" class="nav-btn whitespace-nowrap w-auto md:w-full text-left px-4 py-2 rounded-lg bg-orange-50 text-orange-600 font-bold transition text-xs md:text-sm">Редактор профиля</button>
             <button onclick="showTab(event, 'tab-orders')" class="nav-btn whitespace-nowrap w-auto md:w-full text-left px-4 py-2 rounded-lg hover:bg-gray-100 transition text-xs md:text-sm">Мои заказы</button>
             <button onclick="showTab(event, 'tab-coupons')" class="nav-btn whitespace-nowrap w-auto md:w-full text-left px-4 py-2 rounded-lg hover:bg-gray-100 transition text-xs md:text-sm">Купоны</button>
-            <button onclick="showTab(event, 'tab-cart')" class="nav-btn whitespace-nowrap w-auto md:w-full text-left px-4 py-2 rounded-lg hover:bg-gray-100 transition text-xs md:text-sm">Корзина</button>
+            
+            <button onclick="showTab(event, 'tab-cart')" class="nav-btn flex justify-between items-center whitespace-nowrap w-auto md:w-full text-left px-4 py-2 rounded-lg hover:bg-gray-100 transition text-xs md:text-sm">
+                Корзина <span id="badge-cart" class="hidden bg-red-500 text-white text-[9px] px-1.5 py-0.5 rounded-full ml-2">0</span>
+            </button>
+            
             <button onclick="showTab(event, 'tab-reviews')" class="nav-btn whitespace-nowrap w-auto md:w-full text-left px-4 py-2 rounded-lg hover:bg-gray-100 transition text-xs md:text-sm ">Ваш отзывы</button>
             <button onclick="showTab(event, 'tab-wish list')" class="nav-btn whitespace-nowrap w-auto md:w-full text-left px-4 py-2 rounded-lg hover:bg-gray-100 transition text-xs md:text-sm ">Список желаний</button> 
-            <button onclick="showTab(event, 'tab-wishlist')" class="nav-btn whitespace-nowrap w-auto md:w-full text-left px-4 py-2 rounded-lg hover:bg-gray-100 transition text-xs md:text-sm ">Должник</button>   
-            <button onclick="showTab(event, 'tab-certificates')" class="nav-btn whitespace-nowrap w-auto md:w-full text-left px-4 py-2 rounded-lg hover:bg-gray-100 transition text-xs md:text-sm">Мои сертификаты</button>
+            
+            <button onclick="showTab(event, 'tab-wishlist')" class="nav-btn flex justify-between items-center whitespace-nowrap w-auto md:w-full text-left px-4 py-2 rounded-lg hover:bg-gray-100 transition text-xs md:text-sm ">
+                Должник <span id="badge-debt" class="hidden bg-red-600 text-white text-[9px] px-1.5 py-0.5 rounded-full ml-2 animate-pulse font-black italic">NEW</span>
+            </button>
+            
+            <button onclick="showTab(event, 'tab-certificates')" class="nav-btn flex justify-between items-center whitespace-nowrap w-auto md:w-full text-left px-4 py-2 rounded-lg hover:bg-gray-100 transition text-xs md:text-sm">
+                Мои сертификаты <span id="badge-cert" class="hidden bg-orange-500 text-white text-[9px] px-1.5 py-0.5 rounded-full ml-2 font-black italic">NEW</span>
+            </button>
         </nav>
 
         <h3 class="text-gray-400 text-[9px] md:text-[10px] font-bold uppercase mt-4 mb-3 px-3 italic tracking-wider border-t md:border-none pt-3 md:pt-0">Безопасность</h3>
@@ -500,6 +510,8 @@ window.addEventListener('DOMContentLoaded', updateOnlineStatus);
             renderProfileCart(); // Себетті шығару
             load2FAStatus();     // 2FA күйін тексеру
             renderCertificates(); // Сертификаттарды шығару
+            updateMenuBadges();   // Менюдегі сандарды шығару
+            updateOnlineStatus(); // Интернетті тексеру
         });
 
         // --- 1. ТАБТАР ЖҮЙЕСІ ---
@@ -672,6 +684,7 @@ window.addEventListener('DOMContentLoaded', updateOnlineStatus);
                 cartItemsList.innerHTML = '';
                 if (emptyMsg) emptyMsg.classList.remove('hidden');
                 if (cartFooter) cartFooter.classList.add('hidden');
+                updateMenuBadges();
                 return;
             }
 
@@ -704,6 +717,7 @@ window.addEventListener('DOMContentLoaded', updateOnlineStatus);
             });
             cartItemsList.innerHTML = htmlContent;
             if (totalPriceElem) totalPriceElem.innerText = total.toLocaleString() + ' ₸';
+            updateMenuBadges();
         }
 
         function removeFromCart(index) {
@@ -956,10 +970,63 @@ window.addEventListener('DOMContentLoaded', updateOnlineStatus);
             `).join('');
         }
 
+        // --- 10. МЕНЮДЕГІ БЕЛГІШЕЛЕРДІ (BADGES) ЖАҢАРТУ ---
+        function updateMenuBadges() {
+            const currentId = localStorage.getItem('currentUserId');
+            const users = JSON.parse(localStorage.getItem('users')) || [];
+            const user = users.find(u => u.id == currentId);
+            let cart = JSON.parse(localStorage.getItem('qulanCart')) || [];
+
+            // 1. Корзина
+            const badgeCart = document.getElementById('badge-cart');
+            if (badgeCart) {
+                if (cart.length > 0) {
+                    badgeCart.innerText = cart.length;
+                    badgeCart.classList.remove('hidden');
+                } else {
+                    badgeCart.classList.add('hidden');
+                }
+            }
+
+            if (user) {
+                // 2. Қарыз белгісі
+                const badgeDebt = document.getElementById('badge-debt');
+                if (badgeDebt) {
+                    if (user.debt > 0) badgeDebt.classList.remove('hidden');
+                    else badgeDebt.classList.add('hidden');
+                }
+
+                // 3. Сертификаттар саны
+                const badgeCert = document.getElementById('badge-cert');
+                if (badgeCert) {
+                    if (user.certificates && user.certificates.length > 0) {
+                        badgeCert.innerText = user.certificates.length;
+                        badgeCert.classList.remove('hidden');
+                    } else {
+                        badgeCert.classList.add('hidden');
+                    }
+                }
+            }
+        }
+
+        // --- 11. ИНТЕРНЕТТІ БАҚЫЛАУ ---
+        function updateOnlineStatus() {
+            const overlay = document.getElementById('offline-overlay');
+            if (!overlay) return;
+            if (!navigator.onLine) {
+                overlay.style.display = 'flex';
+                document.body.style.overflow = 'hidden';
+            } else {
+                overlay.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            }
+        }
+        window.addEventListener('online', updateOnlineStatus);
+        window.addEventListener('offline', updateOnlineStatus);
+
         // Event listeners
         document.getElementById('chat-input')?.addEventListener('keypress', function (e) {
             if (e.key === 'Enter') sendMessage();
         });
     </script>
-</body>
 </html>
