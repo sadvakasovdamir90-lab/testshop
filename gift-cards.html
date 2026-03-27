@@ -224,6 +224,8 @@
 
 
     <script>
+        let foundUserNameGlobal = ""; // PDF пен WhatsApp үшін есімді сақтау
+
         function changeStyle(styleClass, shadowColor) {
             const card = document.getElementById('gift-card-preview');
             card.classList.remove('card-orange', 'card-black', 'card-purple', 'card-green');
@@ -247,15 +249,7 @@
             preview.innerText = val ? Number(val).toLocaleString() + " ₸" : "0 ₸";
         }
 
-
-// Болашақта бұл жерге серверден келетін деректерді қосамыз
-// Әзірге "тіркелгендер" ретінде мыналарды қалдырамыз:
-const registeredUsers = {
-   
-};
-
 function checkUser(val) {
-    // Тек сандарды алу
     const phone = val.replace(/\D/g, ''); 
     document.getElementById('rec-phone').value = phone;
 
@@ -267,40 +261,42 @@ function checkUser(val) {
     // Картадағы элементтер
     const cardToBox = document.getElementById('preview-to-box');
     const cardName = document.getElementById('preview-to-name');
+    const wishesToBox = document.getElementById('to-display-wishes');
+    const wishesToName = document.getElementById('found-user-wishes');
+
+    // Админ панель базасынан алу
+    const registeredUsers = JSON.parse(localStorage.getItem('users')) || [];
+    const foundUser = registeredUsers.find(u => u.phone && u.phone.includes(phone));
 
     if (phone.length === 10) {
         box.classList.remove('hidden');
 
-        // БАЗАДАН ТЕКСЕРУ (Тек тіркелгендер)
-        if (registeredUsers[phone]) {
-            const userName = registeredUsers[phone];
+        if (foundUser) {
+            foundUserNameGlobal = foundUser.name;
             
-            // ТАБЫЛДЫ - СТИЛЬДЕР
             box.className = "mt-3 p-4 rounded-xl border-2 border-green-200 bg-green-50 flex items-center gap-3";
-            nameDisp.innerText = userName; // Аты + Т. шығады
+            nameDisp.innerText = foundUserNameGlobal; 
             nameDisp.className = "font-black text-sm text-green-700";
             statusTxt.innerText = "Клиент тіркелген ✅";
             statusTxt.className = "text-[9px] font-bold text-green-500 uppercase tracking-widest";
 
-            // Картаға жазу
             cardToBox.classList.remove('hidden');
-            cardName.innerText = userName;
+            cardName.innerText = foundUserNameGlobal;
+            wishesToBox.classList.remove('hidden');
+            wishesToName.innerText = foundUserNameGlobal;
 
-            // Батырманы ашу
             btn.disabled = false;
             btn.className = "w-full bg-orange-500 text-white py-6 rounded-3xl font-black uppercase italic shadow-xl active:scale-95";
         } else {
-            // ТІРКЕЛМЕГЕН
             box.className = "mt-3 p-4 rounded-xl border-2 border-red-200 bg-red-50 flex items-center gap-3";
             nameDisp.innerText = "Пользователь не найден";
             nameDisp.className = "font-black text-sm text-red-700";
             statusTxt.innerText = "Тіркелу қажет ❌";
             statusTxt.className = "text-[9px] font-bold text-red-500 uppercase tracking-widest";
 
-            // Картадан жасыру
             cardToBox.classList.add('hidden');
+            wishesToBox.classList.add('hidden');
 
-            // Батырманы жабу
             btn.disabled = true;
             btn.className = "w-full bg-gray-200 text-gray-400 py-6 rounded-3xl font-black uppercase italic cursor-not-allowed";
         }
@@ -310,34 +306,40 @@ function checkUser(val) {
     }
 }
 
-
-// handlePhoneInput ішіне, табылған кездегі бөлімге (if userDatabase[cleanPhone])
-const wishesToBox = document.getElementById('to-display-wishes');
-const wishesToName = document.getElementById('found-user-wishes');
-
-if (userDatabase[cleanPhone]) {
-    // ... бар кодтар ...
-    wishesToBox.classList.remove('hidden');
-    wishesToName.innerText = userDatabase[cleanPhone]; // "Дамир С." болып жазылады
-} else {
-    // ... табылмай қалған жағдай ...
-    wishesToBox.classList.add('hidden');
-}
-
-
 async function generateGiftPDF() {
     const amount = document.getElementById('amount-input').value;
     const btn = document.getElementById('buy-btn');
-    const element = document.getElementById('gift-card-preview'); // Тек картаны немесе бүкіл блокты таңда
+    const element = document.getElementById('gift-card-preview'); 
     const codeElem = document.getElementById('card-code-text');
+    const phoneInput = document.getElementById('rec-phone').value;
+
+    if(!amount || amount <= 0) {
+        alert("Сумманы енгізіңіз!");
+        return;
+    }
 
     btn.innerText = "Создаем...";
     btn.disabled = true;
 
-    // Уникалды карта номері
-    const uniqueNumber = generateCardNumber(); // Төмендегі көмекші функцияны қолдан
+    const uniqueNumber = generateCardNumber(); 
     const originalCode = codeElem.innerText;
     codeElem.innerText = uniqueNumber;
+
+    // --- СЕРТИФИКАТТЫ ПАЙДАЛАНУШЫНЫҢ ПРОФИЛІНЕ САҚТАУ ---
+    let users = JSON.parse(localStorage.getItem('users')) || [];
+    const userIndex = users.findIndex(u => u.phone && u.phone.includes(phoneInput));
+
+    if (userIndex !== -1) {
+        if (!users[userIndex].certificates) users[userIndex].certificates = [];
+        users[userIndex].certificates.push({
+            id: Date.now(),
+            code: uniqueNumber,
+            amount: amount,
+            date: new Date().toLocaleDateString(),
+            style: document.getElementById('gift-card-preview').className // Түсі мен стилі
+        });
+        localStorage.setItem('users', JSON.stringify(users));
+    }
 
     const opt = {
         margin: 10,
@@ -349,8 +351,9 @@ async function generateGiftPDF() {
 
     try {
         await html2pdf().set(opt).from(element).save();
-        const phone = "7" + document.getElementById('rec-phone').value;
-        window.open(`https://wa.me/${phone}?text=${encodeURIComponent('Привет, ' + foundName + '! Тебе подарок от QulanShop! 🎁')}`);
+        const phone = "7" + phoneInput;
+        const message = `Привет, ${foundUserNameGlobal}! Тебе подарок от QulanShop на сумму ${amount} ₸! 🎁 Карта нөмірі: ${uniqueNumber}. Сертификат сенің жеке кабинетіңе де қосылды!`;
+        window.open(`https://wa.me/${phone}?text=${encodeURIComponent(message)}`);
     } catch (e) {
         alert("Ошибка!");
     } finally {
@@ -360,7 +363,6 @@ async function generateGiftPDF() {
     }
 }
 
-// КАРТА НОМЕРІН ЖАСАУ (#### #### .... орнына)
 function generateCardNumber() {
     let res = '';
     for(let i=0; i<4; i++) {

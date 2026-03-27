@@ -39,15 +39,20 @@
                 <div class="w-10 h-10 bg-orange-50 rounded-xl flex items-center justify-center text-orange-600 shrink-0 ml-1">
                     <i class="fas fa-percentage text-sm"></i>
                 </div>
-                <input type="text" placeholder="ЕСТЬ ПРОМОКОД?" class="flex-1 bg-transparent px-4 outline-none text-xs font-black italic uppercase placeholder:text-slate-300">
-                <button class="bg-slate-900 text-white px-5 py-3 rounded-xl text-[10px] font-black uppercase italic tracking-widest active:scale-95 transition">ОК</button>
+                <input type="text" id="promo-input" placeholder="ЕСТЬ ПРОМОКОД?" class="flex-1 bg-transparent px-4 outline-none text-xs font-black italic uppercase placeholder:text-slate-300">
+                <button onclick="applyPromo()" class="bg-slate-900 text-white px-5 py-3 rounded-xl text-[10px] font-black uppercase italic tracking-widest active:scale-95 transition">ОК</button>
             </div>
+            <p id="promo-msg" class="text-[9px] font-bold uppercase italic mt-2 ml-4 hidden"></p>
         </div>
 
         <div class="bg-white p-6 rounded-[2.5rem] border border-slate-100 shadow-sm space-y-4">
             <div class="flex justify-between items-center text-[10px] font-bold uppercase italic text-slate-400 tracking-widest px-2">
                 <span id="items-count">Товары (0)</span>
                 <span id="subtotal-amount">0 ₸</span>
+            </div>
+            <div id="promo-row" class="hidden flex justify-between items-center text-[10px] font-bold uppercase italic text-orange-600 tracking-widest px-2">
+                <span>Скидка по промокоду</span>
+                <span id="promo-discount-val">-0 ₸</span>
             </div>
             <div class="flex justify-between items-center text-[10px] font-bold uppercase italic text-green-600 tracking-widest px-2">
                 <span>Доставка</span>
@@ -66,7 +71,7 @@
 
     <div class="fixed bottom-0 left-0 right-0 p-4 bg-white/80 backdrop-blur-lg border-t border-slate-100">
         <div class="max-w-xl mx-auto">
-            <button onclick="location.href='checkout.html'" class="w-full bg-orange-600 text-white py-4 rounded-[1.5rem] font-black uppercase italic tracking-widest text-sm shadow-xl shadow-orange-100 active:scale-95 transition flex items-center justify-center gap-3">
+            <button onclick="handleCheckout()" class="w-full bg-orange-600 text-white py-4 rounded-[1.5rem] font-black uppercase italic tracking-widest text-sm shadow-xl shadow-orange-100 active:scale-95 transition flex items-center justify-center gap-3">
                 Оформить заказ <i class="fas fa-chevron-right text-[10px]"></i>
             </button>
         </div>
@@ -75,6 +80,7 @@
 <script>
 // 1. LocalStorage-тен тауарларды алу
 let cart = JSON.parse(localStorage.getItem('qulanCart')) || [];
+let discountPercent = 0; // Промокод пайызын сақтау
 
 function renderCart() {
     const container = document.getElementById('cart-container');
@@ -82,7 +88,6 @@ function renderCart() {
     const subtotalElement = document.getElementById('subtotal-amount');
     const countElement = document.getElementById('items-count');
     
-    // Егер себет бос болса
     if (cart.length === 0) {
         container.innerHTML = `
             <div class="text-center py-20 animate-slide">
@@ -97,18 +102,32 @@ function renderCart() {
     }
 
     container.innerHTML = '';
-    let total = 0;
+    let totalOriginal = 0;
     let totalItems = 0;
 
     cart.forEach((item, index) => {
-        let itemTotal = item.price * item.quantity;
-        total += itemTotal;
+        let price = Number(item.price);
+        totalOriginal += price * item.quantity;
         totalItems += item.quantity;
+
+        // Тауардың жеке бағасын промокодпен есептеу
+        let discountedPrice = price;
+        let priceHTML = `<span class="text-lg font-black italic text-slate-900">${price.toLocaleString()} ₸</span>`;
+
+        if (discountPercent > 0) {
+            discountedPrice = Math.floor(price - (price * (discountPercent / 100)));
+            priceHTML = `
+                <div class="flex flex-col">
+                    <span class="text-[10px] text-slate-400 line-through">${price.toLocaleString()} ₸</span>
+                    <span class="text-lg font-black italic text-orange-600">${discountedPrice.toLocaleString()} ₸</span>
+                </div>
+            `;
+        }
 
         container.innerHTML += `
             <div class="product-card bg-white p-4 rounded-[2rem] flex items-center gap-4 shadow-sm border border-slate-50 animate-slide" style="animation-delay: ${index * 0.1}s">
-                <div class="w-20 h-20 bg-slate-50 rounded-2xl flex items-center justify-center shrink-0 border border-slate-100">
-                    <i class="fas ${item.icon || 'fa-box'} text-orange-500 text-3xl"></i>
+                <div class="w-20 h-20 bg-slate-50 rounded-2xl flex items-center justify-center shrink-0 border border-slate-100 overflow-hidden">
+                    <img src="${item.icon || item.img || 'images/no-photo.jpg'}" class="w-full h-full object-cover" onerror="this.src='https://via.placeholder.com/150'">
                 </div>
                 <div class="flex-1 min-w-0">
                     <div class="flex justify-between items-start">
@@ -119,7 +138,7 @@ function renderCart() {
                     </div>
                     <p class="text-slate-400 text-[10px] font-bold italic mb-3 uppercase">Premium Quality</p>
                     <div class="flex items-center justify-between">
-                        <span class="text-lg font-black italic text-slate-900">${item.price.toLocaleString()} ₸</span>
+                        ${priceHTML}
                         <div class="flex items-center gap-3 bg-slate-50 px-2 py-1 rounded-xl border border-slate-200">
                             <button onclick="updateQuantity(${index}, -1)" class="w-6 h-6 flex items-center justify-center text-slate-400 active:scale-90 transition"><i class="fas fa-minus text-[8px]"></i></button>
                             <span class="text-xs font-black w-4 text-center">${item.quantity}</span>
@@ -131,25 +150,63 @@ function renderCart() {
         `;
     });
 
-    // Қорытынды бағаларды жаңарту
-    totalElement.innerText = total.toLocaleString() + " ₸";
-    subtotalElement.innerText = total.toLocaleString() + " ₸";
+    // Төменгі жалпы есептеулер
+    subtotalElement.innerText = totalOriginal.toLocaleString() + " ₸";
+    
+    let finalTotal = totalOriginal;
+    if (discountPercent > 0) {
+        let discountAmount = Math.floor(totalOriginal * (discountPercent / 100));
+        finalTotal = totalOriginal - discountAmount;
+        document.getElementById('promo-row').classList.remove('hidden');
+        document.getElementById('promo-discount-val').innerText = `-${discountAmount.toLocaleString()} ₸`;
+    }
+
+    totalElement.innerText = finalTotal.toLocaleString() + " ₸";
     countElement.innerText = `Товары (${totalItems})`;
 }
 
-// Санын өзгерту
+// Промокод қолдану
+window.applyPromo = function() {
+    const input = document.getElementById('promo-input').value.toUpperCase().trim();
+    const msg = document.getElementById('promo-msg');
+    const promos = JSON.parse(localStorage.getItem('promos')) || [];
+    
+    const found = promos.find(p => p.code === input);
+    
+    msg.classList.remove('hidden');
+    if (found) {
+        discountPercent = parseInt(found.percent);
+        msg.innerText = `ПРОМОКОД ПРИНЯТ: -${discountPercent}% ✅`;
+        msg.className = "text-[9px] font-bold uppercase italic mt-2 ml-4 text-green-600";
+    } else {
+        discountPercent = 0;
+        msg.innerText = "ПРОМОКОД НЕ НАЙДЕН ❌";
+        msg.className = "text-[9px] font-bold uppercase italic mt-2 ml-4 text-red-500";
+        document.getElementById('promo-row').classList.add('hidden');
+    }
+    renderCart(); // Тізімді қайта сызу (бағалар өзгеруі үшін)
+}
+
+window.handleCheckout = function() {
+    if (cart.length === 0) {
+        alert("Сначала добавьте товары в корзину! 🛒");
+        return;
+    }
+    // Соңғы бағаны сақтап кету (checkout-қа керек болса)
+    localStorage.setItem('finalTotal', document.getElementById('total-amount').innerText);
+    location.href = 'checkout.html';
+}
+
 window.updateQuantity = function(index, delta) {
     if (cart[index].quantity + delta > 0) {
         cart[index].quantity += delta;
         saveAndRefresh();
     } else {
-        removeItem(index); // Саны 0 болса өшіру
+        removeItem(index);
     }
 }
 
-// Өшіру
 window.removeItem = function(index) {
-    // Өшіру алдында анимация қосуға болады, бірақ қазір жай ғана өшіреміз
     cart.splice(index, 1);
     saveAndRefresh();
 }
@@ -159,7 +216,6 @@ function saveAndRefresh() {
     renderCart();
 }
 
-// Бет жүктелгенде іске қосу
 document.addEventListener('DOMContentLoaded', renderCart);
 </script>
 

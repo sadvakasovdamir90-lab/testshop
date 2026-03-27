@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Оформление заказа | QulanShop</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
+        body { 
+            font-family: 'Inter', sans-serif; 
+            -webkit-tap-highlight-color: transparent; 
+            background-color: #f8fafc; 
+            overflow-x: hidden;
+        }
+        
+        /* Кәсіби анимациялар */
+        .loader-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            z-index: 2000;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .payment-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 2px solid transparent;
+        }
+        .payment-card.active {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 20px -5px rgba(234, 88, 12, 0.1);
+        }
+
+        /* Банктердің жеке стильдері */
+        .payment-card.active.kaspi { border-color: #f52d2d; background-color: #fff1f1; }
+        .payment-card.active.halyk { border-color: #008259; background-color: #f0fdf4; }
+        .payment-card.active.cash { border-color: #ea580c; background-color: #fff7ed; }
+
+        /* Планшет пен үлкен экрандарға адаптация */
+        @media (min-width: 768px) {
+            main { padding: 40px !important; }
+            .grid-cols-2 { gap: 20px !important; }
+        }
+
+        .shimmer {
+            background: linear-gradient(90deg, #f0f0f0 25%, #f8f8f8 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+        }
+        @keyframes shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+    </style>
+</head>
+<body class="font-sans text-slate-900 pb-10">
+
+    <!-- Төлемді өңдеу анимациясы (Processing) -->
+    <div id="loader" class="loader-overlay">
+        <div class="w-16 h-16 border-4 border-slate-100 border-t-orange-600 rounded-full animate-spin"></div>
+        <p class="mt-4 font-black italic uppercase tracking-widest text-slate-400 text-xs">Создаем заказ...</p>
+    </div>
+
+    <!-- Header -->
+    <header class="sticky top-0 z-[100] bg-white/80 backdrop-blur-md px-4 py-5 md:px-10 flex justify-between items-center border-b border-slate-100">
+        <button onclick="history.back()" class="w-10 h-10 md:w-12 md:h-12 rounded-full bg-slate-50 flex items-center justify-center text-slate-900 border border-slate-200 active:scale-90 transition">
+            <i class="fas fa-chevron-left text-sm"></i>
+        </button>
+        <h1 class="text-base md:text-lg font-black italic uppercase tracking-[0.1em]">Оформление</h1>
+        <div class="w-10 md:w-12"></div>
+    </header>
+
+    <main class="p-4 max-w-2xl mx-auto space-y-8">
+        
+        <!-- 1. Деректер бөлімі -->
+        <section class="space-y-4">
+            <div class="flex items-center gap-3 ml-2">
+                <span class="w-6 h-6 bg-slate-900 text-white text-[10px] font-black rounded-full flex items-center justify-center">01</span>
+                <h2 class="text-xl font-black italic uppercase tracking-tighter">Данные <span class="text-orange-600">Доставки</span></h2>
+            </div>
+            
+            <div class="bg-white p-6 rounded-[2.5rem] border border-slate-100 shadow-sm space-y-5">
+                <div class="relative">
+                    <label class="text-[10px] font-black uppercase text-slate-400 ml-4 mb-1 block">Ваше имя</label>
+                    <input type="text" id="user-name" class="w-full bg-slate-50 border-2 border-transparent rounded-2xl p-4 text-sm font-bold outline-none focus:border-orange-500/30 transition">
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="text-[10px] font-black uppercase text-slate-400 ml-4 mb-1 block">Номер телефона</label>
+                        <input type="tel" id="user-phone" placeholder="+7" class="w-full bg-slate-50 border-2 border-transparent rounded-2xl p-4 text-sm font-bold outline-none focus:border-orange-500/30 transition">
+                    </div>
+                    <div>
+                        <label class="text-[10px] font-black uppercase text-slate-400 ml-4 mb-1 block">Адрес (Құлан)</label>
+                        <input type="text" id="user-address" class="w-full bg-slate-50 border-2 border-transparent rounded-2xl p-4 text-sm font-bold outline-none focus:border-orange-500/30 transition">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. Төлем әдісі (Халық банк қосылды) -->
+        <section class="space-y-4">
+            <div class="flex items-center gap-3 ml-2">
+                <span class="w-6 h-6 bg-slate-900 text-white text-[10px] font-black rounded-full flex items-center justify-center">02</span>
+                <h2 class="text-xl font-black italic uppercase tracking-tighter">Способ <span class="text-orange-600">Оплаты</span></h2>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                <!-- Kaspi -->
+                <div onclick="selectPayment('Kaspi QR', 'kaspi')" id="pay-kaspi" class="payment-card active kaspi bg-white p-4 rounded-3xl border-2 border-slate-50 flex items-center gap-3 cursor-pointer">
+                    <img src="/images/kaspi.png" class="w-10 h-10 rounded-xl object-cover">
+                    <div>
+                        <span class="text-[11px] font-black uppercase italic block leading-none">Kaspi.kz</span>
+                        <span class="text-[8px] font-bold text-slate-400 uppercase">QR код</span>
+                    </div>
+                </div>
+
+                <!-- Halyk -->
+                <div onclick="selectPayment('Halyk Pay', 'halyk')" id="pay-halyk" class="payment-card halyk bg-white p-4 rounded-3xl border-2 border-slate-50 flex items-center gap-3 cursor-pointer">
+                    <img src="/images/halyk.png" class="w-10 h-10 rounded-xl object-cover">
+                    <div>
+                        <span class="text-[11px] font-black uppercase italic block leading-none">Halyk Pay</span>
+                        <span class="text-[8px] font-bold text-slate-400 uppercase">Карта / QR</span>
+                    </div>
+                </div>
+
+                <!-- Наличные -->
+                <div onclick="selectPayment('Наличные', 'cash')" id="pay-cash" class="payment-card cash bg-white p-4 rounded-3xl border-2 border-slate-50 flex items-center gap-3 cursor-pointer">
+                    <div class="w-10 h-10 bg-orange-100 rounded-xl flex items-center justify-center text-orange-600">
+                        <i class="fas fa-wallet text-lg"></i>
+                    </div>
+                    <div>
+                        <span class="text-[11px] font-black uppercase italic block leading-none">Наличные</span>
+                        <span class="text-[8px] font-bold text-slate-400 uppercase">Курьеру</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. Қорытынды -->
+        <div class="bg-slate-900 p-8 rounded-[3rem] text-white shadow-2xl relative overflow-hidden">
+            <div class="flex justify-between items-start relative z-10">
+                <div>
+                    <p class="text-[10px] font-black uppercase opacity-50 tracking-[0.2em] mb-1">Сумма к оплате:</p>
+                    <h3 id="checkout-total" class="text-4xl font-black italic tracking-tighter">0 ₸</h3>
+                </div>
+                <div class="bg-white/10 p-3 rounded-2xl backdrop-blur-md">
+                    <i class="fas fa-shield-alt text-orange-500"></i>
+                </div>
+            </div>
+            
+            <div class="mt-8 flex items-center gap-3 p-3 bg-white/5 rounded-2xl">
+                <i class="fas fa-truck-fast text-orange-500 text-xs"></i>
+                <p class="text-[9px] font-bold uppercase opacity-60">Бесплатная доставка по всему Кулану</p>
+            </div>
+            
+            <i class="fas fa-q absolute -right-10 -bottom-10 text-white/5 text-[15rem] font-black"></i>
+        </div>
+
+        <!-- Кәсіби батырма -->
+        <div class="space-y-3">
+            <button onclick="confirmOrder()" class="w-full bg-orange-600 text-white py-6 rounded-[2rem] font-black uppercase italic tracking-widest text-sm shadow-xl shadow-orange-200 active:scale-95 transition flex items-center justify-center gap-4 group">
+                Оплатить и подтвердить 
+                <i class="fas fa-arrow-right group-hover:translate-x-1 transition"></i>
+            </button>
+            <p class="text-center text-[9px] font-bold text-slate-400 uppercase tracking-widest italic">
+                Безопасная оплата через WhatsApp & Kaspi / Halyk
+            </p>
+        </div>
+
+    </main>
+
+    <script>
+        let selectedMethod = 'Kaspi QR';
+        let selectedType = 'kaspi';
+        let cart = JSON.parse(localStorage.getItem('qulanCart')) || [];
+
+        window.onload = () => {
+            const users = JSON.parse(localStorage.getItem('users')) || [];
+            const currentUserId = localStorage.getItem('currentUserId');
+            const currentUser = users.find(u => u.id == currentUserId);
+
+            if (currentUser) {
+                document.getElementById('user-name').value = currentUser.name || '';
+                document.getElementById('user-phone').value = currentUser.phone || '';
+                document.getElementById('user-address').value = currentUser.address || '';
+            }
+            calculateTotal();
+        };
+
+        function calculateTotal() {
+            let total = 0;
+            cart.forEach(item => total += item.price * item.quantity);
+            document.getElementById('checkout-total').innerText = total.toLocaleString() + " ₸";
+        }
+
+        function selectPayment(method, type) {
+            selectedMethod = method;
+            selectedType = type;
+            document.querySelectorAll('.payment-card').forEach(card => card.classList.remove('active', 'kaspi', 'halyk', 'cash'));
+            
+            const activeCard = document.getElementById('pay-' + type);
+            activeCard.classList.add('active', type);
+        }
+
+        function confirmOrder() {
+            const name = document.getElementById('user-name').value.trim();
+            const phone = document.getElementById('user-phone').value.trim();
+            const address = document.getElementById('user-address').value.trim();
+            const totalStr = document.getElementById('checkout-total').innerText;
+
+            if (!name || !phone || !address) {
+                alert("Упс! Забыли заполнить данные доставки 🧐");
+                return;
+            }
+
+            // 1. Анимацияны қосу
+            document.getElementById('loader').style.display = 'flex';
+
+            setTimeout(() => {
+                // 2. WhatsApp хабарламасын дайындау
+                let itemsText = "";
+                cart.forEach((item, index) => {
+                    itemsText += `• ${item.name} x${item.quantity}\n`;
+                });
+
+                const managerPhone = "7712730203"; 
+                const message = `📦 *НОВЫЙ ЗАКАЗ #QS${Math.floor(Math.random()*900)}*\n` +
+                                `👤 Клиент: ${name}\n` +
+                                `📞 Тел: ${phone}\n` +
+                                `🏠 Адрес: ${address}\n` +
+                                `--------------------------\n` +
+                                `🛒 Товары:\n${itemsText}\n` +
+                                `💰 ИТОГО: ${totalStr}\n` +
+                                `💳 Оплата: ${selectedMethod}`;
+
+                // 3. Админ панельге деректерді сақтау
+                let orders = JSON.parse(localStorage.getItem('orders')) || [];
+                orders.unshift({
+                    id: "ORD-" + Date.now().toString().slice(-4),
+                    customer: name, phone: phone, address: address,
+                    product: cart.map(i => i.name).join(", "),
+                    total: totalStr, payment: selectedMethod, status: 'new', date: new Date().toLocaleString()
+                });
+                localStorage.setItem('orders', JSON.stringify(orders));
+                localStorage.setItem('new_order_signal', 'true');
+
+                // 4. ТӨЛЕМ ЖҮЙЕСІНЕ БАҒЫТТАУ
+                const waLink = `https://wa.me/${managerPhone}?text=${encodeURIComponent(message)}`;
+                
+                // Егер Halyk болса, хабарламаға ескерту қосамыз
+                if(selectedType === 'halyk') {
+                    const halykMsg = message + "\n\n(Клиент таңдаған төлем әдісі: Halyk Pay)";
+                    window.location.href = `https://wa.me/${managerPhone}?text=${encodeURIComponent(halykMsg)}`;
+                } else {
+                    window.location.href = waLink;
+                }
+
+                localStorage.removeItem('qulanCart');
+            }, 1500); // 1.5 секундтық "Күту" эффектісі
+        }
+    </script>
+</body>
+</html>

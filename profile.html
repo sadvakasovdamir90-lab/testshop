@@ -66,6 +66,7 @@
             <button onclick="showTab(event, 'tab-reviews')" class="nav-btn whitespace-nowrap w-auto md:w-full text-left px-4 py-2 rounded-lg hover:bg-gray-100 transition text-xs md:text-sm ">Ваш отзывы</button>
             <button onclick="showTab(event, 'tab-wish list')" class="nav-btn whitespace-nowrap w-auto md:w-full text-left px-4 py-2 rounded-lg hover:bg-gray-100 transition text-xs md:text-sm ">Список желаний</button> 
             <button onclick="showTab(event, 'tab-wishlist')" class="nav-btn whitespace-nowrap w-auto md:w-full text-left px-4 py-2 rounded-lg hover:bg-gray-100 transition text-xs md:text-sm ">Должник</button>   
+            <button onclick="showTab(event, 'tab-certificates')" class="nav-btn whitespace-nowrap w-auto md:w-full text-left px-4 py-2 rounded-lg hover:bg-gray-100 transition text-xs md:text-sm">Мои сертификаты</button>
         </nav>
 
         <h3 class="text-gray-400 text-[9px] md:text-[10px] font-bold uppercase mt-4 mb-3 px-3 italic tracking-wider border-t md:border-none pt-3 md:pt-0">Безопасность</h3>
@@ -119,6 +120,76 @@
         Сохранить изменения
     </button>
 </div>
+
+<!-- ТАБ: СЕРТИФИКАТТАР -->
+<div id="tab-certificates" class="tab-content hidden bg-white rounded-xl shadow-sm p-4 md:p-8 border border-gray-100">
+    <div class="flex items-center gap-3 md:gap-4 mb-6 md:mb-8">
+        <div class="bg-orange-100 p-3 md:p-4 rounded-xl md:rounded-2xl text-orange-600 shrink-0">
+            <i class="fas fa-gift text-xl md:text-2xl"></i>
+        </div>
+        <div>
+            <h2 class="text-lg md:text-2xl font-black italic text-gray-800 uppercase tracking-tight">Мои Сертификаты</h2>
+            <p class="text-[10px] md:text-xs text-gray-400 italic">Подарочные карты QulanShop</p>
+        </div>
+    </div>
+
+    <!-- grid-cols-1 мобильдіде бір қатар, md:grid-cols-2 планшет/компьютерде екі қатар -->
+    <div id="certificates-list" class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+        <!-- Сертификаттар осында JS арқылы шығады -->
+    </div>
+
+    <div id="no-certificates" class="hidden text-center py-16 md:py-20">
+        <div class="bg-gray-50 w-20 h-20 md:w-28 md:h-28 rounded-full flex items-center justify-center mx-auto mb-4">
+            <i class="fas fa-ticket-alt text-4xl md:text-6xl text-gray-200"></i>
+        </div>
+        <p class="text-gray-400 italic text-sm">У вас пока нет активных сертификатов</p>
+    </div>
+</div>
+
+<style>
+    /* Сертификат картасының базалық стилі */
+    .cert-card {
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        cursor: pointer;
+        min-height: 160px; /* Телефонда биіктігі тым кішірейіп кетпеуі үшін */
+        position: relative;
+        overflow: hidden;
+        -webkit-tap-highlight-color: transparent; /* Айфонда басқандағы көк фонды алу */
+    }
+
+    /* Ховер эффект тек компьютерде жұмыс істеуі үшін (Media query) */
+    @media (min-width: 1024px) {
+        .cert-card:hover {
+            transform: scale(1.05) rotate(1deg);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+    }
+
+    /* Мобильді телефондарға арналған арнайы стильдер (iPhone/Android) */
+    @media (max-width: 640px) {
+        .cert-card {
+            border-radius: 1.5rem !important; /* Жұмсақ бұрыштар */
+            padding: 1.25rem !important;
+            min-height: 140px;
+        }
+        
+        .cert-card h3 {
+            font-size: 1.5rem !important; /* Соманың көлемін кішірейту */
+        }
+
+        /* Телефонда басқанда сәл кішірею эффектісі (Active state) */
+        .cert-card:active {
+            transform: scale(0.96);
+            opacity: 0.9;
+        }
+    }
+
+    /* Сертификат ішіндегі суреттер мен иконкалардың PDF-те және экранда дұрыс тұруы */
+    .cert-card img {
+        pointer-events: none;
+        user-select: none;
+    }
+</style>
 
                 <div id="tab-orders" class="tab-content hidden bg-white rounded-xl shadow-sm p-10 md:p-20 text-center border border-gray-100">
                     <i class="fas fa-box-open text-6xl text-gray-200 mb-6"></i>
@@ -399,6 +470,8 @@ header * {
             loadUserData();      // Адамның атын базадан жүктеу
             updateDebtStatus();  // Қарызды тексеру
             renderProfileCart(); // Себетті шығару
+            load2FAStatus();     // 2FA күйін тексеру
+            renderCertificates(); // Сертификаттарды шығару
         });
 
         // --- 1. ТАБТАР ЖҮЙЕСІ ---
@@ -412,6 +485,9 @@ header * {
             if (activeTab) activeTab.classList.remove('hidden');
             event.currentTarget.classList.add('bg-orange-50', 'text-orange-600', 'font-medium');
             event.currentTarget.classList.remove('hover:bg-gray-100');
+
+            // Сертификаттар табы ашылғанда деректерді жаңарту
+            if (tabId === 'tab-certificates') renderCertificates();
         }
 
         // --- 2. GEMINI AI CHAT ENGINE ---
@@ -502,7 +578,6 @@ header * {
             const btn = document.getElementById('pay-button');
             const notice = document.getElementById('restriction-notice');
             
-            // ЖАҢА: Номер заказа мен Датаны жасыру/көрсету үшін
             const debtDetails = document.getElementById('debt-details');
             const orderNumElem = document.getElementById('debt-order-number');
 
@@ -512,9 +587,8 @@ header * {
 
             amountElem.innerText = debt.toLocaleString() + " ₸";
 
-            // ЛОГИКА: ҚАРЫЗ 0 БОЛҒАНДА
             if (debt <= 0) {
-                if (debtDetails) debtDetails.classList.add('hidden'); // Артық блоктарды жасыру
+                if (debtDetails) debtDetails.classList.add('hidden'); 
                 card.className = "flex flex-col md:flex-row items-center justify-between p-6 bg-green-50 rounded-[2.5rem] border border-green-200 gap-6";
                 text.innerText = "Ваш баланс в порядке. Статус: Стабильный";
                 text.className = "text-[10px] mt-2 font-bold uppercase text-green-600 italic";
@@ -524,8 +598,7 @@ header * {
                 return;
             }
 
-            // ЛОГИКА: ҚАРЫЗ БАР БОЛҒАНДА
-            if (debtDetails) debtDetails.classList.remove('hidden'); // Блоктарды көрсету
+            if (debtDetails) debtDetails.classList.remove('hidden'); 
             if (btn) btn.classList.remove('hidden');
             if (startDateElem) startDateElem.innerText = debtDate;
             if (orderNumElem) orderNumElem.innerText = orderNum;
@@ -543,7 +616,7 @@ header * {
                 if (btn) btn.className = "w-full md:w-auto bg-green-600 text-white px-10 py-4 rounded-2xl font-bold text-lg hover:bg-green-700 transition shadow-lg uppercase tracking-wider";
             } else if (diffMonths <= 2) {
                 card.className = "flex flex-col md:flex-row items-center justify-between p-6 bg-yellow-50 rounded-[2.5rem] border border-yellow-200 gap-6";
-                text.innerText = "Внимание! Идет второй месяц задолженности";
+                text.innerText = "Внимание! Идет второй month задолженности";
                 text.className = "text-[10px] mt-2 font-bold uppercase text-yellow-700 italic";
                 amountElem.className = "text-4xl md:text-5xl font-black text-yellow-600 mt-1 italic";
                 if (btn) btn.className = "w-full md:w-auto bg-yellow-500 text-white px-10 py-4 rounded-2xl font-bold text-lg hover:bg-yellow-600 transition shadow-lg uppercase tracking-wider";
@@ -704,53 +777,51 @@ header * {
             }
         }
 
-      function toggle2FA() {
-    const checkbox = document.getElementById('2fa-toggle');
-    const statusText = document.getElementById('2fa-status-text');
-    const infoBox = document.getElementById('2fa-info');
-    
-    const currentId = localStorage.getItem('currentUserId');
-    let users = JSON.parse(localStorage.getItem('users')) || [];
-    const userIndex = users.findIndex(u => u.id == currentId);
+        function toggle2FA() {
+            const checkbox = document.getElementById('2fa-toggle');
+            const statusText = document.getElementById('2fa-status-text');
+            const infoBox = document.getElementById('2fa-info');
+            
+            const currentId = localStorage.getItem('currentUserId');
+            let users = JSON.parse(localStorage.getItem('users')) || [];
+            const userIndex = users.findIndex(u => u.id == currentId);
 
-    if (userIndex !== -1) {
-        // Базаға (LocalStorage) жаңа күйді сақтаймыз
-        users[userIndex].twoFactorEnabled = checkbox.checked;
-        localStorage.setItem('users', JSON.stringify(users));
+            if (userIndex !== -1) {
+                users[userIndex].twoFactorEnabled = checkbox.checked;
+                localStorage.setItem('users', JSON.stringify(users));
 
-        if (checkbox.checked) {
-            statusText.innerText = "В данный момент: Включено";
-            statusText.classList.add('text-orange-600', 'font-bold');
-            infoBox.classList.remove('hidden');
-            Swal.fire('Защита включена', 'Теперь при каждом входе потребуется подтверждение по Email', 'success');
-        } else {
-            statusText.innerText = "В настоящее время: Отключено";
-            statusText.classList.remove('text-orange-600', 'font-bold');
-            infoBox.classList.add('hidden');
-            Swal.fire('Защита отключена', 'Ваш аккаунт защищен только паролем', 'info');
+                if (checkbox.checked) {
+                    statusText.innerText = "В данный момент: Включено";
+                    statusText.classList.add('text-orange-600', 'font-bold');
+                    infoBox.classList.remove('hidden');
+                    Swal.fire('Защита включена', 'Теперь при каждом входе потребуется подтверждение по Email', 'success');
+                } else {
+                    statusText.innerText = "В настоящее время: Отключено";
+                    statusText.classList.remove('text-orange-600', 'font-bold');
+                    infoBox.classList.add('hidden');
+                    Swal.fire('Защита отключена', 'Ваш аккаунт защищен только паролем', 'info');
+                }
+            }
         }
-    }
-}
 
-// Бет жүктелгенде қолданушының 2FA күйін тексеру (DOMContentLoaded ішіне қос)
-function load2FAStatus() {
-    const currentId = localStorage.getItem('currentUserId');
-    const users = JSON.parse(localStorage.getItem('users')) || [];
-    const user = users.find(u => u.id == currentId);
-    
-    if (user && user.twoFactorEnabled) {
-        const checkbox = document.getElementById('2fa-toggle');
-        const statusText = document.getElementById('2fa-status-text');
-        const infoBox = document.getElementById('2fa-info');
-        
-        if (checkbox) checkbox.checked = true;
-        if (statusText) {
-            statusText.innerText = "В данный момент: Включено";
-            statusText.classList.add('text-orange-600', 'font-bold');
+        function load2FAStatus() {
+            const currentId = localStorage.getItem('currentUserId');
+            const users = JSON.parse(localStorage.getItem('users')) || [];
+            const user = users.find(u => u.id == currentId);
+            
+            if (user && user.twoFactorEnabled) {
+                const checkbox = document.getElementById('2fa-toggle');
+                const statusText = document.getElementById('2fa-status-text');
+                const infoBox = document.getElementById('2fa-info');
+                
+                if (checkbox) checkbox.checked = true;
+                if (statusText) {
+                    statusText.innerText = "В данный момент: Включено";
+                    statusText.classList.add('text-orange-600', 'font-bold');
+                }
+                if (infoBox) infoBox.classList.remove('hidden');
+            }
         }
-        if (infoBox) infoBox.classList.remove('hidden');
-    }
-}
 
         // --- 7. ТӨЛЕМ ЖӘНЕ TOAST ---
         function openPayment() {
@@ -820,6 +891,41 @@ function load2FAStatus() {
                     window.location.assign('auth.html');
                 }
             });
+        }
+
+        // --- 9. СЕРТИФИКАТТАРДЫ ШЫҒАРУ ---
+        function renderCertificates() {
+            const list = document.getElementById('certificates-list');
+            const emptyMsg = document.getElementById('no-certificates');
+            const currentId = localStorage.getItem('currentUserId');
+            const users = JSON.parse(localStorage.getItem('users')) || [];
+            const user = users.find(u => u.id == currentId);
+
+            if (!user || !user.certificates || user.certificates.length === 0) {
+                if(list) list.innerHTML = '';
+                if(emptyMsg) emptyMsg.classList.remove('hidden');
+                return;
+            }
+
+            if(emptyMsg) emptyMsg.classList.add('hidden');
+            
+            list.innerHTML = user.certificates.map(cert => `
+                <div class="cert-card ${cert.style} p-5 md:p-6 rounded-[1.8rem] md:rounded-[2rem] text-white relative overflow-hidden h-44 md:h-48 flex flex-col justify-between shadow-lg animate-modal">
+                    <div class="relative z-10 flex justify-between items-start">
+                        <span class="font-black italic text-[10px] md:text-xs uppercase opacity-80">QulanShop Gift</span>
+                        <i class="fas fa-crown opacity-40 text-xs md:text-base"></i>
+                    </div>
+                    <div class="relative z-10">
+                        <p class="text-[8px] md:text-[10px] font-bold uppercase opacity-70 tracking-widest">Номинал</p>
+                        <h3 class="text-2xl md:text-3xl font-black italic tracking-tighter">${Number(cert.amount).toLocaleString()} ₸</h3>
+                    </div>
+                    <div class="relative z-10 flex justify-between items-end">
+                        <span class="text-[9px] md:text-[10px] font-mono opacity-60 tracking-wider">${cert.code}</span>
+                        <span class="text-[8px] md:text-[9px] font-bold bg-white/20 px-2 py-1 rounded-lg uppercase backdrop-blur-sm">${cert.date}</span>
+                    </div>
+                    <i class="fas fa-gift absolute -right-4 -bottom-4 text-white/10 text-7xl md:text-8xl rotate-12 pointer-events-none"></i>
+                </div>
+            `).join('');
         }
 
         // Event listeners
