@@ -1002,7 +1002,7 @@ window.addEventListener('DOMContentLoaded', updateOnlineStatus);
             });
         }
 
- // --- 9. СЕРТИФИКАТТАРДЫ ШЫҒАРУ (ПРОФИЛЬ БЕТІ) ---
+   // --- 9. СЕРТИФИКАТТАРДЫ ШЫҒАРУ (ПРОФИЛЬ БЕТІ) ---
 function renderCertificates() {
     const list = document.getElementById('certificates-list');
     const currentId = localStorage.getItem('currentUserId');
@@ -1090,6 +1090,41 @@ function openCertModal(index) {
     document.getElementById('share-wa-btn').onclick = () => window.open(`https://wa.me/?text=${encodeURIComponent(shareText)}`);
     document.getElementById('share-tg-btn').onclick = () => window.open(`https://t.me/share/url?text=${encodeURIComponent(shareText)}`);
 }
+
+// --- МОДАЛЬКА ЖӘНЕ БӨЛІСУ ФУНКЦИЯЛАРЫ ---
+function openCertModal(index) {
+    const currentId = localStorage.getItem('currentUserId');
+    const users = JSON.parse(localStorage.getItem('users')) || [];
+    const user = users.find(u => u.id == currentId);
+    const cert = user.certificates[index];
+
+    const modal = document.getElementById('cert-modal');
+    const content = document.getElementById('cert-modal-content');
+    
+    content.innerHTML = `
+        <div id="pdf-receipt" class="cert-card ${cert.style} p-8 rounded-[2.5rem] text-white relative overflow-hidden h-60 flex flex-col justify-between shadow-2xl">
+            <div class="relative z-10 flex justify-between items-start">
+                <span class="font-black italic text-lg uppercase">QulanShop Premium</span>
+                <img src="images/favicon.ico" class="w-8 h-8 opacity-50">
+            </div>
+            <div class="relative z-10">
+                <p class="text-xs font-bold uppercase opacity-70 tracking-[0.3em]">Подарочный сертификат</p>
+                <h3 class="text-5xl font-black italic tracking-tighter">${Number(cert.amount).toLocaleString()} ₸</h3>
+            </div>
+            <div class="relative z-10 flex justify-between items-end border-t border-white/10 pt-4">
+                <div>
+                    <p class="text-[10px] font-mono opacity-60 mb-1">CODE: ${cert.code}</p>
+                    <p class="text-[10px] font-black uppercase italic">Для: ${user.name}</p>
+                </div>
+                <span class="text-xs font-bold bg-white/20 px-3 py-1 rounded-xl uppercase">${cert.date}</span>
+            </div>
+            <i class="fas fa-gift absolute -right-10 -bottom-10 text-white/10 text-[12rem] rotate-12"></i>
+        </div>
+    `;
+
+    modal.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+
     // Батырмаларға логика байлау
     document.getElementById('download-pdf-btn').onclick = () => downloadPDF(cert);
     
