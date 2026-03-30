@@ -942,7 +942,7 @@ function displayProductList(list) {
 
                 <!-- Бағалар бөлімі -->
                 <div class="flex flex-col mb-1">
-                    ${p.oldPrice ? `<span class="text-[10px] text-gray-400 line-through font-bold italic">${Number(p.oldPrice).toLocaleString()} ₸</span>` : '<span class="text-[10px] opacity-0">0</span>'}
+                    ${p.oldPrice ? `<span class="text-[10px] text-gray-400 line-through font-bold">${Number(p.oldPrice).toLocaleString()} ₸</span>` : '<span class="text-[10px] opacity-0">0</span>'}
                     <p class="text-orange-600 font-black text-xl italic leading-none">${Number(p.price).toLocaleString()} ₸</p>
                 </div>
 
@@ -1025,6 +1025,16 @@ function saveToHistory(id) {
 }
 
 </script>
+
+
+<!-- 1. Алдымен SweetAlert2 (бұлсыз Alert шықпайды) -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<!-- 2. Сосын сенің тексеруші файлың -->
+<script src="./auth-guard.js"></script>
+
+
+
 </body>
 
 </html>

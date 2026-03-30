@@ -108,10 +108,167 @@
             <button onclick="showTab(event, 'tab-password')" class="nav-btn whitespace-nowrap w-auto md:w-full text-left px-4 py-2 rounded-lg hover:bg-gray-100 transition text-xs md:text-sm">Изменить пароль</button>
             <button onclick="showTab(event, 'tab-2fa')" class="nav-btn whitespace-nowrap w-auto md:w-full text-left px-4 py-2 rounded-lg hover:bg-gray-100 transition text-xs md:text-sm">Защита 2FA</button>
         </nav>
+
+        <!-- Жаңа: Поддержка және Көмек блогы -->
+<h3 class="text-gray-400 text-[9px] md:text-[10px] font-bold uppercase mt-6 mb-3 px-3 italic tracking-wider border-t md:border-none pt-3 md:pt-0">Поддержка</h3>
+<nav class="mobile-scroll md:space-y-1 flex md:block pb-2 md:pb-0">
+    <button onclick="showTab(event, 'tab-support')" class="nav-btn flex justify-between items-center whitespace-nowrap w-auto md:w-full text-left px-4 py-2 rounded-lg hover:bg-orange-50 transition text-xs md:text-sm group">
+        <span class="flex items-center">
+            <i class="fas fa-headset mr-2 text-gray-400 group-hover:text-orange-600 transition"></i> Центр помощи
+        </span>
+        <span class="hidden md:inline bg-gray-100 text-[9px] px-1.5 py-0.5 rounded uppercase font-black text-gray-400">24/7</span>
+    </button>
+    
+    <button onclick="window.open('https://wa.me/77000000000')" class="nav-btn flex items-center whitespace-nowrap w-auto md:w-full text-left px-4 py-2 rounded-lg hover:bg-green-50 transition text-xs md:text-sm group">
+        <i class="fab fa-whatsapp mr-2 text-gray-400 group-hover:text-green-500 transition"></i> Написать менеджеру
+    </button>
+    
+    <button onclick="showTab(event, 'tab-faq')" class="nav-btn flex items-center whitespace-nowrap w-auto md:w-full text-left px-4 py-2 rounded-lg hover:bg-blue-50 transition text-xs md:text-sm group">
+        <i class="fas fa-question-circle mr-2 text-gray-400 group-hover:text-blue-500 transition"></i> Частые вопросы (FAQ)
+    </button>
+</nav>
+        
     </div>
 </aside>
 
             <section class="w-full md:w-3/4">
+
+                <!-- ТАБ: ЦЕНТР ПОМОЩИ -->
+<div id="tab-support" class="tab-content hidden animate-card">
+    <div class="mb-8">
+        <h2 class="text-2xl font-black uppercase tracking-tighter text-gray-900">Центр поддержки <span class="text-orange-600">Qulan</span></h2>
+        <p class="text-[10px] font-bold text-gray-400 uppercase mt-1">Мы работаем для вас 24/7</p>
+    </div>
+
+ <!-- Жұмыс уақыты блогы -->
+<div class="mt-6 bg-white border border-gray-100 p-8 rounded-[2.5rem] shadow-[0_10px_30px_-15px_rgba(0,0,0,0.03)] relative overflow-hidden">
+    
+    <!-- Декор үшін фондық элемент (сәл ғана көрінетін қызғылт сары шеңбер) -->
+    <div class="absolute -top-10 -right-10 w-32 h-32 bg-orange-50 rounded-full opacity-50"></div>
+
+    <div class="relative z-10">
+        <!-- Тақырыбы -->
+        <div class="flex items-center gap-4 mb-8">
+            <div class="w-12 h-12 bg-orange-50 rounded-2xl flex items-center justify-center text-orange-600 shadow-sm border border-orange-100/50">
+                <i class="fas fa-clock text-xl"></i>
+            </div>
+            <div>
+                <h4 class="font-black uppercase text-[12px] text-gray-900 tracking-tighter leading-none">График работы</h4>
+                <p class="text-[9px] font-bold text-gray-400 uppercase mt-1">Время обработки заказов</p>
+            </div>
+        </div>
+
+        <!-- Уақыт көрсеткіштері -->
+        <div class="space-y-4">
+            <!-- Онлайн Менеджерлер -->
+            <div class="flex items-center justify-between p-4 bg-gray-50/50 rounded-2xl border border-gray-100/50 group hover:bg-white hover:shadow-md transition-all duration-300">
+                <div class="flex items-center gap-3">
+                    <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(34,197,94,0.5)]"></div>
+                    <span class="text-[10px] font-black uppercase text-gray-500 tracking-wide">Онлайн менеджеры</span>
+                </div>
+                <span class="text-[10px] font-black uppercase text-green-600 bg-green-50 px-3 py-1 rounded-full">Круглосуточно</span>
+            </div>
+
+            <!-- Склад және Доставка -->
+            <div class="flex items-center justify-between p-4 bg-gray-50/50 rounded-2xl border border-gray-100/50 group hover:bg-white hover:shadow-md transition-all duration-300">
+                <div class="flex items-center gap-3 text-gray-400 group-hover:text-orange-600 transition-colors">
+                    <i class="fas fa-truck text-[10px]"></i>
+                    <span class="text-[10px] font-black uppercase tracking-wide">Склад и доставка</span>
+                </div>
+                <!-- Осылай өзгертсең, JS оның ішіндегі жазуды "ОТКРЫТО" деп ауыстыра алады -->
+                <span class="text-[10px] font-black uppercase text-gray-900 tracking-widest transition-all duration-500">09:00 — 21:00</span>
+            </div>
+        </div>
+
+        <!-- Кішігірім ескерту -->
+        <div class="mt-6 flex items-start gap-2 px-2">
+            <i class="fas fa-info-circle text-gray-300 text-[10px] mt-0.5"></i>
+            <p class="text-[9px] font-bold text-gray-400 uppercase leading-relaxed">Заказы, оформленные после 21:00, обрабатываются на следующее утро.</p>
+        </div>
+    </div>
+</div>
+
+<!-- ФОРМА: ОСТАВИТЬ ЗАЯВКУ -->
+<div class="mt-8 bg-white border border-gray-100 p-5 sm:p-8 rounded-[2.5rem] shadow-sm">
+    <div class="mb-8">
+        <h4 class="font-black uppercase text-[13px] text-gray-900 tracking-tight">Оставить заявку</h4>
+        <p class="text-[10px] font-bold text-gray-400 uppercase mt-1">Опишите проблему, и мы свяжемся с вами</p>
+    </div>
+
+    <form id="support-form" class="space-y-4">
+        <!-- Аты және Контакт (Мобилкада 1 колонка, компьютерде 2) -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <input type="text" id="sup-name" required placeholder="Ваше имя" 
+                class="w-full bg-gray-50 border-none rounded-2xl p-4 text-[11px] font-black uppercase placeholder:text-gray-300 focus:ring-2 focus:ring-orange-600/10 transition-all outline-none">
+            
+            <input type="text" id="sup-contact" required placeholder="Email или Телефон" 
+                class="w-full bg-gray-50 border-none rounded-2xl p-4 text-[11px] font-black uppercase placeholder:text-gray-300 focus:ring-2 focus:ring-orange-600/10 transition-all outline-none">
+        </div>
+
+        <!-- Хабарлама жазу -->
+        <textarea id="sup-message" required rows="4" placeholder="Опишите ваш вопрос..." 
+            class="w-full bg-gray-50 border-none rounded-[2rem] p-5 text-[11px] font-black uppercase placeholder:text-gray-300 focus:ring-2 focus:ring-orange-600/10 transition-all resize-none outline-none"></textarea>
+
+        <!-- Файл тіркеу -->
+        <div class="relative group">
+            <input type="file" id="support-file" class="hidden">
+            <label for="support-file" class="flex items-center justify-center gap-3 w-full border-2 border-dashed border-gray-100 py-6 rounded-[2rem] cursor-pointer group-hover:border-orange-200 group-hover:bg-orange-50 transition-all">
+                <i class="fas fa-paperclip text-gray-300 group-hover:text-orange-600 transition-colors"></i>
+                <span id="file-name" class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Прикрепить скриншот</span>
+            </label>
+        </div>
+
+        <!-- Жіберу батырмасы -->
+        <button type="submit" id="submit-btn" class="w-full bg-gray-950 text-white py-5 rounded-[2rem] text-[11px] font-black uppercase tracking-[0.2em] hover:bg-orange-600 transition-all active:scale-95 shadow-xl shadow-gray-100 flex items-center justify-center gap-3 group">
+            <span>Отправить заявку</span>
+            <i class="fas fa-paper-plane text-[10px] group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform"></i>
+        </button>
+    </form>
+</div>
+</div>
+
+<!-- ТАБ: FAQ (Жиі қойылатын сұрақтар) -->
+<div id="tab-faq" class="tab-content hidden animate-card">
+    <div class="mb-8">
+        <h2 class="text-2xl font-black uppercase tracking-tighter text-gray-900">Частые вопросы</h2>
+        <p class="text-[10px] font-bold text-gray-400 uppercase mt-1">Ответы на популярные запросы</p>
+    </div>
+
+    <div class="space-y-3">
+        <!-- Сұрақ 1 -->
+        <details class="group bg-white border border-gray-100 rounded-3xl overflow-hidden transition-all hover:border-orange-200">
+            <summary class="list-none p-5 flex justify-between items-center cursor-pointer font-black uppercase text-[10px] tracking-widest select-none text-gray-900">
+                Как отменить заказ?
+                <i class="fas fa-chevron-down text-[8px] transition-transform group-open:rotate-180"></i>
+            </summary>
+            <div class="px-5 pb-5 text-[11px] font-bold text-gray-500 leading-relaxed border-t border-gray-50 pt-4 uppercase">
+                Заказ можно отменить в течение 30 минут после оформления в разделе "Мои заказы". Если время прошло, свяжитесь с менеджером.
+            </div>
+        </details>
+
+        <!-- Сұрақ 2 -->
+        <details class="group bg-white border border-gray-100 rounded-3xl overflow-hidden transition-all hover:border-orange-200">
+            <summary class="list-none p-5 flex justify-between items-center cursor-pointer font-black uppercase text-[10px] tracking-widest select-none text-gray-900">
+                Как работает возврат?
+                <i class="fas fa-chevron-down text-[8px] transition-transform group-open:rotate-180"></i>
+            </summary>
+            <div class="px-5 pb-5 text-[11px] font-bold text-gray-500 leading-relaxed border-t border-gray-50 pt-4 uppercase">
+                Возврат товара возможен в течение 14 дней при сохранении товарного вида и упаковки. Деньги вернутся на ваш кошелек или карту.
+            </div>
+        </details>
+
+        <!-- Сұрақ 3 -->
+        <details class="group bg-white border border-gray-100 rounded-3xl overflow-hidden transition-all hover:border-orange-200">
+            <summary class="list-none p-5 flex justify-between items-center cursor-pointer font-black uppercase text-[10px] tracking-widest select-none text-gray-900">
+                Где мой товар?
+                <i class="fas fa-chevron-down text-[8px] transition-transform group-open:rotate-180"></i>
+            </summary>
+            <div class="px-5 pb-5 text-[11px] font-bold text-gray-500 leading-relaxed border-t border-gray-50 pt-4 uppercase">
+                Статус доставки можно отследить в реальном времени в разделе "Мои заказы". Мы отправим уведомление, когда курьер будет в пути.
+            </div>
+        </details>
+    </div>
+</div>
                 
         <div id="tab-profile" class="tab-content bg-white rounded-xl shadow-sm p-4 md:p-6 border border-gray-100">
     <h2 class="text-lg md:text-xl font-bold mb-6 italic">Редактор профиля</h2>
@@ -169,105 +326,132 @@
     </button>
 </div>
 
-<!-- ТАБ: МОЙ КОШЕЛЕК (Адаптивті нұсқа) -->
-<div id="tab-wallet" class="tab-content hidden animate-fade-in px-2 md:px-0">
-    <!-- Тақырып -->
-    <div class="flex items-center justify-between mb-6">
-        <h2 class="text-xl md:text-2xl font-black italic uppercase">
-            Мой <span class="text-orange-600">кошелек</span>
-        </h2>
-        <i class="fas fa-shield-alt text-gray-300 text-xl" title="Безопасные платежи"></i>
-    </div>
-
-    <!-- Негізгі блоктар: Телефонда 1 колонка, Компьютерде 2 колонка -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
-        
-        <!-- КАРТОЧКА БАЛАНСА (iPhone стиліндегі градиент) -->
-        <div class="relative overflow-hidden bg-gradient-to-br from-gray-900 via-orange-800 to-orange-600 p-6 md:p-8 rounded-[2rem] text-white shadow-2xl border border-white/10">
-            <div class="relative z-10">
-                <div class="flex justify-between items-start mb-8 relative z-10">
-    <div>
-        <p class="text-orange-100/70 text-[10px] md:text-xs font-bold uppercase tracking-[0.2em] mb-1">Доступный баланс</p>
-        <h3 id="wallet-balance-main" class="text-3xl md:text-5xl font-black tracking-tighter italic leading-none">0 ₸</h3>
-    </div>
-
-    <!-- VISA-НЫҢ ОРНЫНА: QULAN DIGITAL WALLET -->
-    <div class="flex flex-col items-end">
-        <div class="bg-white/20 backdrop-blur-md p-2 rounded-xl border border-white/30 mb-1">
-            <i class="fas fa-wallet text-white text-xl md:text-2xl"></i>
+<!-- ТАБ: МОЙ КОШЕЛЕК (Premium Stealth Design) -->
+<div id="tab-wallet" class="tab-content hidden animate-in fade-in duration-500 px-4 md:px-0 pb-20">
+    
+    <!-- Header: Кәсіби және таза -->
+    <div class="flex items-center justify-between mb-10 mt-6">
+        <div>
+            <h2 class="text-3xl font-black uppercase tracking-tighter text-gray-950 leading-none">
+                Мой <span class="text-orange-600">кошелек</span>
+            </h2>
+            <div class="flex items-center gap-2 mt-3">
+                <div class="w-2 h-2 bg-green-500 rounded-full shadow-[0_0_10px_rgba(34,197,94,0.4)]"></div>
+                <p class="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em]">Система защиты Q-Shield активна</p>
+            </div>
         </div>
-        <span class="text-[8px] md:text-[10px] font-black uppercase tracking-widest text-orange-100">Q-Wallet</span>
+        <div class="w-12 h-12 bg-gray-50 rounded-2xl flex items-center justify-center border border-gray-100 text-gray-400 shadow-sm">
+            <i class="fas fa-fingerprint text-xl"></i>
+        </div>
     </div>
-</div>
+
+    <!-- Негізгі Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        
+        <!-- КАРТОЧКА БАЛАНСА (Deep Carbon Card) -->
+        <div class="relative overflow-hidden bg-gradient-to-br from-[#1a1a1a] to-[#0a0a0a] p-10 rounded-[3rem] text-white shadow-2xl border border-white/10 flex flex-col justify-between min-h-[280px]">
+            
+            <!-- Сәндік фондық жарық (Градиент) -->
+            <div class="absolute -top-24 -right-24 w-80 h-80 bg-orange-600/10 rounded-full blur-[100px]"></div>
+            
+            <div class="relative z-10">
+                <div class="flex justify-between items-start mb-12">
+                    <div>
+                        <p class="text-gray-500 text-[10px] font-black uppercase tracking-[0.3em] mb-4 text-left">Доступный остаток</p>
+                        <div class="flex items-baseline gap-4">
+                            <h3 id="wallet-balance-main" class="text-6xl font-black tracking-tighter leading-none">0</h3>
+                            <span class="text-2xl font-bold text-orange-500 uppercase tracking-widest">kzt</span>
+                        </div>
+                    </div>
+                    <!-- Card Chip / Icon -->
+                    <div class="w-14 h-14 bg-white/5 backdrop-blur-3xl rounded-2xl border border-white/10 flex items-center justify-center shadow-inner">
+                        <i class="fas fa-wallet text-orange-500 text-2xl"></i>
+                    </div>
+                </div>
                 
-                <div class="flex flex-wrap gap-3">
-                    <div class="bg-white/10 backdrop-blur-md border border-white/10 p-2 px-4 rounded-xl flex items-center">
-                        <i class="fas fa-coins text-yellow-400 mr-2 text-xs"></i>
-                        <span class="text-[10px] md:text-xs uppercase tracking-tighter">
-                            Бонусы: <span id="wallet-bonuses" class="text-orange-300 ml-1">0</span> Q-Coins
+                <div class="flex items-center gap-8">
+                    <div class="flex flex-col">
+                        <p class="text-[8px] font-black text-gray-500 uppercase tracking-widest mb-2 text-left">Накоплено Q-Coins</p>
+                        <div class="flex items-center gap-2 bg-white/5 py-2 px-4 rounded-xl border border-white/5">
+                            <i class="fas fa-coins text-yellow-500 text-xs"></i>
+                            <span id="wallet-bonuses" class="text-sm font-black tracking-tight text-white">0.00</span>
+                        </div>
+                    </div>
+                    <div class="flex flex-col border-l border-white/10 pl-8">
+                        <p class="text-[8px] font-black text-gray-500 uppercase tracking-widest mb-2 text-left">Статус счета</p>
+                        <span class="text-[10px] font-black text-white uppercase tracking-[0.2em] flex items-center gap-2">
+                            <i class="fas fa-check-circle text-blue-400"></i> Верифицирован
                         </span>
                     </div>
                 </div>
             </div>
-            <!-- Сәндік элемент (Артқы фондағы иконка) -->
-            <i class="fas fa-wallet absolute -bottom-6 -right-6 text-9xl text-white/5 rotate-12"></i>
         </div>
 
-        <!-- ПОПОЛНЕНИЕ (Ыңғайлы форма) -->
-        <div class="bg-white p-6 rounded-[2rem] border border-gray-100 shadow-sm flex flex-col justify-center">
-            <h4 class="text-sm font-bold text-gray-700 mb-4 flex items-center">
-                <span class="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
-                Пополнить баланс онлайн
+        <!-- ФОРМА ПОПОЛНЕНИЯ (Clean Executive) -->
+        <div class="bg-white p-10 rounded-[3rem] border border-gray-100 shadow-[0_30px_60px_-15px_rgba(0,0,0,0.05)] flex flex-col justify-center">
+            <h4 class="text-[10px] font-black text-gray-400 uppercase mb-10 tracking-[0.3em] flex items-center">
+                <span class="w-8 h-[2px] bg-orange-500 mr-3"></span> Быстрое пополнение
             </h4>
             
-            <div class="space-y-4">
-                <div class="group relative">
-                    <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">₸</span>
-                    <input type="number" id="topup-amount" placeholder="Введите сумму" 
-                           class="w-full pl-10 pr-4 py-4 bg-gray-50 rounded-2xl border-2 border-transparent focus:border-orange-500 focus:bg-white outline-none transition-all font-black text-xl placeholder:font-normal placeholder:text-sm">
+            <div class="space-y-8">
+                <div class="relative border-b-2 border-gray-100 focus-within:border-orange-600 transition-all duration-500 pb-4">
+                    <p class="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">Введите сумму зачисления</p>
+                    <div class="flex items-center">
+                        <span class="text-gray-300 font-black text-2xl mr-4 uppercase tracking-tighter">kzt</span>
+                        <input type="number" id="topup-amount" placeholder="0.00" 
+                               class="w-full bg-transparent outline-none font-black text-5xl placeholder:text-gray-100 tracking-tighter text-gray-950 border-none p-0 focus:ring-0">
+                    </div>
                 </div>
                 
                 <button onclick="showPayMethods()" 
-                        class="w-full bg-orange-600 text-white py-4 rounded-2xl font-black uppercase tracking-widest hover:bg-orange-700 active:scale-[0.98] transition-all shadow-lg shadow-orange-200">
-                    Продолжить
+                        class="w-full bg-gray-950 text-white py-6 rounded-[1.5rem] font-black uppercase tracking-[0.3em] text-[11px] hover:bg-orange-600 active:scale-95 transition-all shadow-2xl shadow-gray-200 flex items-center justify-center gap-4 group">
+                    <span>Перейти к оплате</span>
+                    <i class="fas fa-arrow-right text-[10px] group-hover:translate-x-2 transition-transform"></i>
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- ТӨЛЕМ ӘДІСТЕРІ (iPhone-дағы жатық дизайн) -->
-    <div id="pay-methods" class="hidden mt-8 animate-fade-in pb-10">
-        <div class="flex items-center mb-4">
-            <hr class="flex-grow border-gray-100">
-            <span class="px-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest text-center">Выберите метод оплаты</span>
-            <hr class="flex-grow border-gray-100">
+    <!-- ТӨЛЕМ ӘДІСТЕРІ (Modern Grid) -->
+    <div id="pay-methods" class="hidden mt-16 animate-in slide-in-from-bottom-10 duration-700 pb-10">
+        <div class="flex items-center gap-6 mb-10 px-2">
+            <h4 class="text-[11px] font-black text-gray-900 uppercase tracking-[0.3em] whitespace-nowrap italic-none">Выберите метод</h4>
+            <div class="h-[1px] w-full bg-gray-100"></div>
         </div>
-
-        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
             <!-- Kaspi -->
             <div onclick="processTopUp('kaspi')" 
-                 class="group cursor-pointer bg-white p-4 rounded-2xl border-2 border-transparent hover:border-red-500 hover:shadow-md transition-all text-center">
-                <div class="w-12 h-12 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-2 group-hover:scale-110 transition">
-                    <img src="images/kaspi.png" alt="Kaspi QR" class="w-6 h-6 object-contain">
+                 class="group cursor-pointer bg-white p-8 rounded-[2.5rem] border-2 border-transparent hover:border-red-500 hover:shadow-2xl hover:shadow-red-50 transition-all flex flex-col items-center">
+                <div class="w-16 h-16 bg-red-50 rounded-3xl flex items-center justify-center mb-5 group-hover:rotate-6 transition-transform duration-500">
+                    <img src="https://kaspi.kz/img/kaspi_logo.png" class="w-10 h-10 object-contain rounded-xl">
                 </div>
-                <p class="text-[10px] font-black uppercase">Kaspi QR</p>
+                <p class="text-[10px] font-black uppercase text-gray-900 tracking-widest">Kaspi QR</p>
             </div>
 
-            <!-- Halyk / Card -->
-            <div class="bg-gray-50 p-4 rounded-2xl border border-gray-100 text-center grayscale opacity-60">
-                <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center mx-auto mb-2 text-gray-400">
-                    <i class="fas fa-credit-card"></i>
+            <!-- Card (Locked/Disabled Style) -->
+            <div class="group bg-gray-50/50 p-8 rounded-[2.5rem] border border-dashed border-gray-200 flex flex-col items-center opacity-40 cursor-not-allowed grayscale">
+                <div class="w-16 h-16 bg-white rounded-3xl flex items-center justify-center mb-5">
+                    <i class="fas fa-credit-card text-gray-300 text-2xl"></i>
                 </div>
-                <p class="text-[10px] font-black uppercase">Картой</p>
+                <p class="text-[10px] font-black uppercase text-gray-400 tracking-widest">Карта</p>
             </div>
         </div>
     </div>
 
-    <!-- ТРАНЗАКЦИЯЛАР (Тарихы) -->
-    <div class="mt-8">
-        <h4 class="text-sm font-bold text-gray-700 mb-4">Последние операции</h4>
-        <div class="bg-gray-50 rounded-2xl p-4 text-center">
-            <p class="text-xs text-gray-400">История транзакций пока пуста...</p>
+    <!-- ТРАНЗАКЦИЯЛАР (Executive History) -->
+    <div class="mt-16">
+        <div class="flex items-center justify-between mb-8 px-2">
+            <h4 class="text-[12px] font-black text-gray-900 uppercase tracking-[0.3em]">Последние операции</h4>
+            <span class="text-[9px] font-black text-gray-300 uppercase tracking-widest">Март 2026</span>
+        </div>
+        <div id="transaction-history" class="space-y-4">
+            <div class="flex flex-col items-center justify-center py-20 bg-gray-50/30 rounded-[3.5rem] border border-dashed border-gray-100">
+                <div class="w-20 h-20 bg-white rounded-[2rem] shadow-sm flex items-center justify-center mb-6">
+                    <i class="fas fa-folder-open text-gray-100 text-3xl"></i>
+                </div>
+                <p class="text-[10px] font-black text-gray-300 uppercase tracking-[0.4em] text-center leading-loose">История операций<br>пуста</p>
+            </div>
         </div>
     </div>
 </div>
@@ -672,6 +856,93 @@ header * {
         <button onclick="location.reload()" class="bg-slate-900 text-white px-8 py-3 rounded-xl font-black text-[10px] uppercase">Жаңарту</button>
     </div>
 </div>
+
+<!-- SweetAlert2 библиотекасы (әдемі хабарлама үшін) -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+// Файл таңдалғанда атын өзгерту
+document.getElementById('support-file')?.addEventListener('change', function() {
+    const fileName = this.files[0] ? this.files[0].name : "Прикрепить скриншот";
+    const label = document.getElementById('file-name');
+    if (label) {
+        label.innerText = fileName.toUpperCase();
+        label.classList.add('text-orange-600');
+    }
+});
+
+// Форманы жіберу (Суретті оқу мүмкіндігімен)
+document.getElementById('support-form')?.addEventListener('submit', async function(e) {
+    e.preventDefault();
+
+    const btn = document.getElementById('submit-btn');
+    const originalContent = btn.innerHTML;
+    const fileInput = document.getElementById('support-file');
+
+    // Жүктелу анимациясы
+    btn.innerHTML = '<i class="fas fa-circle-notch animate-spin"></i>';
+    btn.disabled = true;
+
+    // СУРЕТТІ ОҚУ (Егер файл таңдалса)
+    let imageData = null;
+    if (fileInput.files[0]) {
+        imageData = await new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.onload = (e) => resolve(e.target.result); // Суретті кодқа айналдыру
+            reader.readAsDataURL(fileInput.files[0]);
+        });
+    }
+
+    // Мәліметтерді жинау
+    const ticket = {
+        id: "TICK-" + Date.now().toString().slice(-6),
+        name: document.getElementById('sup-name').value,
+        contact: document.getElementById('sup-contact').value,
+        message: document.getElementById('sup-message').value,
+        image: imageData, // Нақты сурет осы жерде сақталады
+        date: new Date().toLocaleString(),
+        status: 'new'
+    };
+
+    // LocalStorage-қа сақтау
+    let tickets = JSON.parse(localStorage.getItem('support_tickets')) || [];
+    tickets.push(ticket);
+    localStorage.setItem('support_tickets', JSON.stringify(tickets));
+    localStorage.setItem('new_chat_request', 'true');
+
+    // Сәтті жіберілгені туралы хабарлама
+    setTimeout(() => {
+        Swal.fire({
+            title: '<span class="font-black uppercase tracking-tighter">Заявка принята!</span>',
+            html: `
+                <div class="text-center p-2">
+                    <p class="text-[11px] font-bold text-gray-500 uppercase leading-relaxed">
+                        Спасибо! Мы получили ваше сообщение.<br>
+                        Менеджер свяжется с вами в течение <span class="text-orange-600">15 минут</span></p>
+                </div>
+            `,
+            icon: 'success',
+            iconColor: '#ea580c',
+            confirmButtonText: 'ОТЛИЧНО',
+            confirmButtonColor: '#000',
+            customClass: {
+                popup: 'rounded-[2.5rem]',
+                confirmButton: 'rounded-2xl px-10 py-4 font-black uppercase text-[10px] tracking-widest'
+            }
+        });
+
+        // Форманы тазалау
+        this.reset();
+        btn.innerHTML = originalContent;
+        btn.disabled = false;
+        const fileNameLabel = document.getElementById('file-name');
+        if (fileNameLabel) {
+            fileNameLabel.innerText = "Прикрепить скриншот";
+            fileNameLabel.classList.remove('text-orange-600');
+        }
+    }, 1000);
+});
+</script>
 
 <!-- Скрипт бөлімі -->
 <script>
