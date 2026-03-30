@@ -92,9 +92,9 @@
     </button>
     
     <button onclick="showTab(event, 'tab-reviews')" class="nav-btn whitespace-nowrap w-auto md:w-full text-left px-4 py-2 rounded-lg hover:bg-gray-100 transition text-xs md:text-sm ">Ваш отзывы</button>
-    <button onclick="showTab(event, 'tab-wishlist')" class="nav-btn whitespace-nowrap w-auto md:w-full text-left px-4 py-2 rounded-lg hover:bg-gray-100 transition text-xs md:text-sm ">Список желаний</button> 
+    <button onclick="showTab(event, 'tab-debt')" class="nav-btn whitespace-nowrap w-auto md:w-full text-left px-4 py-2 rounded-lg hover:bg-gray-100 transition text-xs md:text-sm ">Список желаний</button> 
     
-    <button onclick="showTab(event, 'tab-debt')" class="nav-btn flex justify-between items-center whitespace-nowrap w-auto md:w-full text-left px-4 py-2 rounded-lg hover:bg-gray-100 transition text-xs md:text-sm ">
+    <button onclick="showTab(event, 'tab-wishlist')" class="nav-btn flex justify-between items-center whitespace-nowrap w-auto md:w-full text-left px-4 py-2 rounded-lg hover:bg-gray-100 transition text-xs md:text-sm ">
         Должник <span id="badge-debt" class="hidden bg-red-600 text-white text-[9px] px-1.5 py-0.5 rounded-full ml-2 animate-pulse font-black italic">NEW</span>
     </button>
     
@@ -185,18 +185,25 @@
         <!-- КАРТОЧКА БАЛАНСА (iPhone стиліндегі градиент) -->
         <div class="relative overflow-hidden bg-gradient-to-br from-gray-900 via-orange-800 to-orange-600 p-6 md:p-8 rounded-[2rem] text-white shadow-2xl border border-white/10">
             <div class="relative z-10">
-                <div class="flex justify-between items-start mb-8">
-                    <div>
-                        <p class="text-orange-200/70 text-xs md:text-sm font-medium uppercase tracking-widest mb-1">Доступный баланс</p>
-                        <h3 id="wallet-balance-main" class="text-3xl md:text-4xl font-black tracking-tight">0 ₸</h3>
-                    </div>
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg" class="h-4 opacity-50 filter brightness-200" alt="card-type">
-                </div>
+                <div class="flex justify-between items-start mb-8 relative z-10">
+    <div>
+        <p class="text-orange-100/70 text-[10px] md:text-xs font-bold uppercase tracking-[0.2em] mb-1">Доступный баланс</p>
+        <h3 id="wallet-balance-main" class="text-3xl md:text-5xl font-black tracking-tighter italic leading-none">0 ₸</h3>
+    </div>
+
+    <!-- VISA-НЫҢ ОРНЫНА: QULAN DIGITAL WALLET -->
+    <div class="flex flex-col items-end">
+        <div class="bg-white/20 backdrop-blur-md p-2 rounded-xl border border-white/30 mb-1">
+            <i class="fas fa-wallet text-white text-xl md:text-2xl"></i>
+        </div>
+        <span class="text-[8px] md:text-[10px] font-black uppercase tracking-widest text-orange-100">Q-Wallet</span>
+    </div>
+</div>
                 
                 <div class="flex flex-wrap gap-3">
                     <div class="bg-white/10 backdrop-blur-md border border-white/10 p-2 px-4 rounded-xl flex items-center">
                         <i class="fas fa-coins text-yellow-400 mr-2 text-xs"></i>
-                        <span class="text-[10px] md:text-xs font-bold uppercase tracking-tighter">
+                        <span class="text-[10px] md:text-xs uppercase tracking-tighter">
                             Бонусы: <span id="wallet-bonuses" class="text-orange-300 ml-1">0</span> Q-Coins
                         </span>
                     </div>
@@ -215,7 +222,7 @@
             
             <div class="space-y-4">
                 <div class="group relative">
-                    <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 font-bold italic">₸</span>
+                    <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">₸</span>
                     <input type="number" id="topup-amount" placeholder="Введите сумму" 
                            class="w-full pl-10 pr-4 py-4 bg-gray-50 rounded-2xl border-2 border-transparent focus:border-orange-500 focus:bg-white outline-none transition-all font-black text-xl placeholder:font-normal placeholder:text-sm">
                 </div>
@@ -241,7 +248,7 @@
             <div onclick="processTopUp('kaspi')" 
                  class="group cursor-pointer bg-white p-4 rounded-2xl border-2 border-transparent hover:border-red-500 hover:shadow-md transition-all text-center">
                 <div class="w-12 h-12 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-2 group-hover:scale-110 transition">
-                    <i class="fas fa-qrcode text-red-500"></i>
+                    <img src="/images/kaspi.png" alt="Kaspi QR" class="w-6 h-6 object-contain">
                 </div>
                 <p class="text-[10px] font-black uppercase">Kaspi QR</p>
             </div>
@@ -258,9 +265,9 @@
 
     <!-- ТРАНЗАКЦИЯЛАР (Тарихы) -->
     <div class="mt-8">
-        <h4 class="text-sm font-bold text-gray-700 mb-4 italic">Последние операции</h4>
+        <h4 class="text-sm font-bold text-gray-700 mb-4">Последние операции</h4>
         <div class="bg-gray-50 rounded-2xl p-4 text-center">
-            <p class="text-xs text-gray-400 italic">История транзакций пока пуста...</p>
+            <p class="text-xs text-gray-400">История транзакций пока пуста...</p>
         </div>
     </div>
 </div>
