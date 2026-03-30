@@ -98,7 +98,30 @@
 }
 .floating-cart:hover { transform: scale(1.1); }
 
+/* Хабарлама (Toast) ең жоғары қабатта тұруы керек */
+#custom-toast {
+    z-index: 9999 !important;
+    pointer-events: none; /* Бос жерлері басылып кете береді */
+}
 
+#custom-toast > div {
+    pointer-events: auto; /* Хабарламаның өзі және батырмасы басылады */
+}
+
+/* AI Chat терезесі */
+#ai-chat-wrapper {
+    z-index: 9998 !important;
+}
+
+/* Анимация: Пайда болу */
+@keyframes toastIn {
+    from { opacity: 0; transform: translate(-50%, -20px); }
+    to { opacity: 1; transform: translate(-50%, 0); }
+}
+
+.toast-active {
+    animation: toastIn 0.5s ease forwards;
+}
 
     </style>
 </head>
@@ -837,6 +860,7 @@ function searchProducts(query) {
         loadSiteBanners();
         startGlobalTimer();
         updatePrivateUI();
+        updateNavBalance();
     };
 
     // Батырмалардың активті күйін басқару
