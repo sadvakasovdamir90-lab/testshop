@@ -6,6 +6,7 @@
     <link rel="icon" href="images/favicon.ico" type="image/x-icon">
     <title>Личный кабинет | QulanShop</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="script.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
@@ -50,10 +51,10 @@
 
         <!-- Аты-жөні -->
         <div class="flex-1 flex justify-end px-2 min-w-0 items-center">
-            <span id="user-fullname-header" class="text-[11px] sm:text-xs md:text-sm font-bold text-gray-800 leading-tight text-right whitespace-nowrap italic">
-                Загрузка...
-            </span>
-        </div>
+    <span id="user-fullname-header" class="text-[11px] sm:text-xs md:text-sm font-bold text-gray-800 italic">
+        <div id="name-skeleton" class="h-4 w-24 md:w-32 bg-gray-200 animate-pulse rounded-full"></div>
+    </span>
+</div>  
 
         <!-- ШЫҒУ БАТЫРМАСЫ (ЕСІК) -->
         <div class="shrink-0 ml-4">
@@ -71,8 +72,9 @@
             
     <aside class="w-full md:w-1/4 space-y-2">
     <div class="bg-white rounded-xl shadow-sm p-3 md:p-4 border border-gray-100">
-        <h3 class="text-gray-400 text-[9px] md:text-[10px] font-bold uppercase mb-3 px-3 italic tracking-wider">Личные данные</h3>
-        
+<h3 data-lang="title_personal" class="text-gray-400 text-[9px] md:text-[10px] font-bold uppercase mb-3 px-3 italic tracking-wider">
+    Личные данные
+</h3>        
         <nav class="mobile-scroll md:space-y-1 flex md:block pb-2 md:pb-0">
     <!-- ЖАҢА: МОЙ КОШЕЛЕК (Басымдық беру үшін ең басына қойдым) -->
     <button onclick="showTab(event, 'tab-wallet')" class="nav-btn flex justify-between items-center whitespace-nowrap w-auto md:w-full text-left px-4 py-2 rounded-lg hover:bg-orange-100 transition text-xs md:text-sm border border-orange-200">
@@ -94,7 +96,7 @@
     <button onclick="showTab(event, 'tab-reviews')" class="nav-btn whitespace-nowrap w-auto md:w-full text-left px-4 py-2 rounded-lg hover:bg-gray-100 transition text-xs md:text-sm ">Ваш отзывы</button>
     <button onclick="showTab(event, 'tab-debt')" class="nav-btn whitespace-nowrap w-auto md:w-full text-left px-4 py-2 rounded-lg hover:bg-gray-100 transition text-xs md:text-sm ">Список желаний</button> 
     
-    <button onclick="showTab(event, 'tab-wishlist')" class="nav-btn flex justify-between items-center whitespace-nowrap w-auto md:w-full text-left px-4 py-2 rounded-lg hover:bg-gray-100 transition text-xs md:text-sm ">
+    <button onclick="showTab(event, 'tab-finances')" class="nav-btn flex justify-between items-center whitespace-nowrap w-auto md:w-full text-left px-4 py-2 rounded-lg hover:bg-gray-100 transition text-xs md:text-sm ">
         Должник <span id="badge-debt" class="hidden bg-red-600 text-white text-[9px] px-1.5 py-0.5 rounded-full ml-2 animate-pulse font-black italic">NEW</span>
     </button>
     
@@ -296,11 +298,18 @@
         </div>
     </div>
 
-    <div class="mt-2">
-        <label class="block text-xs text-gray-400 mb-1 font-bold italic">Номер телефона</label>
-        <input type="text" id="user-phone-input" placeholder="+7 (705) 000-00-00" disabled
-               class="w-full p-3 border rounded-lg outline-none focus:border-orange-500 text-sm font-semibold disabled:bg-gray-50 disabled:text-gray-400 transition-all">
-    </div>
+   <div class="mt-2">
+    <label data-lang="label_phone" class="block text-xs text-gray-400 mb-1 font-bold italic">
+        Номер телефона
+    </label>
+    
+    <input type="tel" 
+           id="user-phone-input" 
+           data-lang="placeholder_phone"
+           placeholder="+7 (705) 000-00-00" 
+           disabled
+           class="w-full p-3 border rounded-lg outline-none focus:border-orange-500 text-sm font-semibold disabled:bg-gray-50 disabled:text-gray-400 transition-all">
+</div>
 
     <div class="mt-2">
         <label class="block text-xs text-gray-400 mb-1 font-bold italic">Email почта</label>
@@ -318,7 +327,7 @@
     </div>
 </div>
 
-<button id="edit-profile-btn" onclick="toggleEditMode()" 
+<button id="edit-profile-btn" data-lang="btn_edit" onclick="toggleEditMode()" 
         class="mt-8 bg-orange-600 text-white px-8 py-3 rounded-lg font-bold hover:bg-orange-700 transition w-full md:w-auto shadow-lg shadow-orange-200">
     Изменить данные
 </button>
@@ -618,7 +627,7 @@
                     <h2 class="text-xl font-bold mb-2">У вас нет отзывов</h2>
                 </div>
 
-               <div id="tab-wishlist" class="tab-content hidden bg-white rounded-xl shadow-sm p-4 md:p-8 border border-gray-100">
+               <div id="tab-finances" class="tab-content hidden bg-white rounded-xl shadow-sm p-4 md:p-8 border border-gray-100">
     <div class="flex items-center gap-4 mb-8">
         <div class="bg-red-100 p-4 rounded-2xl text-red-600 shadow-sm">
             <i class="fas fa-hand-holding-dollar text-2xl"></i>
@@ -1260,33 +1269,41 @@ function processTopUp(method) {
             }
         }
 
+        function loadUserData() {
+    try {
+        const userJson = localStorage.getItem('currentUser');
+        
+        if (!userJson) throw new Error("Деректер бос"); // Егер дерек мүлдем жоқ болса
+
+        const user = JSON.parse(userJson);
+        
+        // ... ары қарай атын шығару логикасы
+        const displayName = user.name || "Пользователь";
+        document.getElementById('user-fullname-header').innerText = displayName;
+
+    } catch (e) {
+        console.error("Деректерді оқу мүмкін болмады:", e);
+        // Егер деректер қате болса, сессияны тазалап, логин бетіне жібереміз
+        handleLogout(); 
+    }
+}
+
         // Фотоны жүктеп, базаға сақтау функциясы
 function uploadAvatar(input) {
     if (input.files && input.files[0]) {
         const reader = new FileReader();
 
         reader.onload = function(e) {
-            const base64Image = e.target.result; // Суретті мәтін түріне айналдырады
+            const base64Image = e.target.result; // Суреттің коды
             
-            // 1. Экрандағы суретті бірден өзгерту
+            // 1. Экранда бірден көрсету
             document.getElementById('user-avatar').src = base64Image;
             
-            // 2. Базаға (LocalStorage) сақтау
-            const currentId = localStorage.getItem('currentUserId');
-            let users = JSON.parse(localStorage.getItem('users')) || [];
-            const userIndex = users.findIndex(u => String(u.id) === String(currentId));
-            
-            if (userIndex !== -1) {
-                users[userIndex].avatar = base64Image; // Пайдаланушыға суретті тіркейміз
-                localStorage.setItem('users', JSON.stringify(users));
-                
-                // Хабарлама шығару
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Фото обновлено!',
-                    showConfirmButton: false,
-                    timer: 1500
-                });
+            // 2. Уақытша currentUser нысанын жаңарту (сақтау батырмасын басқанда толық сақталады)
+            let currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            if (currentUser) {
+                currentUser.photo = base64Image; // немесе 'photo', сенің newUser құрылымыңа сәйкес
+                localStorage.setItem('currentUser', JSON.stringify(currentUser));
             }
         };
 
@@ -1335,26 +1352,6 @@ function loadUserData() {
         window.location.assign('auth.html');
     }
 }
-        function saveProfileChanges() {
-            const currentId = localStorage.getItem('currentUserId');
-            let users = JSON.parse(localStorage.getItem('users')) || [];
-            const userIndex = users.findIndex(u => u.id == currentId);
-
-            if (userIndex !== -1) {
-                users[userIndex].phone = document.getElementById('user-phone-input').value;
-                users[userIndex].email = document.getElementById('user-email-input').value;
-                users[userIndex].address = document.getElementById('user-address-input').value;
-
-                localStorage.setItem('users', JSON.stringify(users));
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Сақталды!',
-                    text: 'Мәліметтеріңіз сәтті жаңартылды.',
-                    timer: 2000,
-                    showConfirmButton: false
-                });
-            }
-        }
 
         // --- 6. ПАРОЛЬ ЖӘНЕ ҚАУІПСІЗДІК ---
         function togglePass(inputId, btn) {
@@ -1457,32 +1454,20 @@ function loadUserData() {
             modalContent.classList.add('animate-modal');
         }
 
-        function closePayment(isPaid = false) {
-            const modal = document.getElementById('payment-modal');
-            const modalContent = modal.querySelector('div');
-            modal.classList.add('hidden');
-            if (modalContent) modalContent.classList.remove('animate-modal');
-
-            if (isPaid) {
-                const currentId = localStorage.getItem('currentUserId');
-                let users = JSON.parse(localStorage.getItem('users')) || [];
-                const userIndex = users.findIndex(u => u.id == currentId);
-
-                if (userIndex !== -1) {
-                    users[userIndex].debt = 0;
-                    users[userIndex].debtDate = null;
-                    localStorage.setItem('users', JSON.stringify(users));
-                    updateDebtStatus(); 
-                    showToast();
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Заявка отправлена!',
-                        text: 'Менеджер проверит оплату и обновит баланс.',
-                        confirmButtonColor: '#f26522'
-                    });
-                }
-            }
-        }
+       function closePayment(isPaid = false) {
+    // ... сенің төлем кодының логикасы
+    if (isPaid) {
+        // Мысалы, қарызды 0 қылған соң:
+        let currentUser = JSON.parse(localStorage.getItem('currentUser'));
+        currentUser.debt = 0;
+        localStorage.setItem('currentUser', JSON.stringify(currentUser));
+        
+        // БЕЛГІЛЕРДІ ДЕРЕУ ЖАҢАРТУ
+        updateMenuBadges();
+        
+        Swal.fire('Сәтті!', 'Қарызыңыз өтелді', 'success');
+    }
+}
 
         function showToast() {
             const toast = document.getElementById('custom-toast');
@@ -1556,42 +1541,34 @@ function loadUserData() {
         }
 
         // --- 10. МЕНЮДЕГІ БЕЛГІШЕЛЕРДІ (BADGES) ЖАҢАРТУ ---
-        function updateMenuBadges() {
-            const currentId = localStorage.getItem('currentUserId');
-            const users = JSON.parse(localStorage.getItem('users')) || [];
-            const user = users.find(u => u.id == currentId);
-            let cart = JSON.parse(localStorage.getItem('qulanCart')) || [];
-
-            const badgeCart = document.getElementById('badge-cart');
-            if (badgeCart) {
-                if (cart.length > 0) {
-                    badgeCart.innerText = cart.length;
-                    badgeCart.classList.remove('hidden');
-                } else {
-                    badgeCart.classList.add('hidden');
-                }
-            }
-
-            if (user) {
-                const badgeDebt = document.getElementById('badge-debt');
-                if (badgeDebt) {
-                    if (user.debt > 0) badgeDebt.classList.remove('hidden');
-                    else badgeDebt.classList.add('hidden');
-                }
-
-                const badgeCert = document.getElementById('badge-cert');
-                const isRead = localStorage.getItem('certs_read_' + currentId);
-                if (badgeCert) {
-                    if (user.certificates && user.certificates.length > 0 && !isRead) {
-                        badgeCert.innerText = user.certificates.length;
-                        badgeCert.classList.remove('hidden');
-                    } else {
-                        badgeCert.classList.add('hidden');
-                    }
-                }
-            }
+      function updateMenuBadges() {
+    const userJson = localStorage.getItem('currentUser');
+    const badgeDebt = document.getElementById('badge-debt');
+    
+    if (userJson && userJson !== "null") {
+        const user = JSON.parse(userJson);
+        
+        // 1. ҚАРЫЗ БЕЛГІСІН БАСҚАРУ
+        // Егер қарыз (debt) бар болса және ол 0-ден үлкен болса
+        if (user.debt && Number(user.debt) > 0) {
+            badgeDebt.classList.remove('hidden'); // Белгіні көрсету
+        } else {
+            badgeDebt.classList.add('hidden');    // Белгіні жасыру
         }
-
+    }
+    
+    // Себет белгісін де осы жерде жаңартып кетуге болады
+    const badgeCart = document.getElementById('badge-cart');
+    let cart = JSON.parse(localStorage.getItem('qulanCart')) || [];
+    if (badgeCart) {
+        if (cart.length > 0) {
+            badgeCart.innerText = cart.length;
+            badgeCart.classList.remove('hidden');
+        } else {
+            badgeCart.classList.add('hidden');
+        }
+    }
+}
         // --- 11. ИНТЕРНЕТТІ БАҚЫЛАУ ---
         function updateOnlineStatus() {
             const overlay = document.getElementById('offline-overlay');
@@ -1737,22 +1714,33 @@ function toggleEditMode() {
 
 function saveProfileChanges() {
     const currentId = localStorage.getItem('currentUserId');
+    const currentUser = JSON.parse(localStorage.getItem('currentUser')); // Сессиядан жаңарған фотоны аламыз
     let users = JSON.parse(localStorage.getItem('users')) || [];
+    
     const userIndex = users.findIndex(u => String(u.id) === String(currentId));
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const phone = document.getElementById('user-phone-input').value;
+    const email = document.getElementById('user-email-input').value;
+
+if (phone.length < 10) return Swal.fire('Қате', 'Телефон нөмірін толық жазыңыз', 'error');
+if (!emailRegex.test(email)) return Swal.fire('Қате', 'Email форматы қате', 'error');
 
     if (userIndex !== -1) {
-        // 1. Деректерді базаға (users тізіміне) жаңарту
+        // 1. Мәтіндік деректерді алу
         users[userIndex].phone = document.getElementById('user-phone-input').value;
         users[userIndex].email = document.getElementById('user-email-input').value;
         users[userIndex].address = document.getElementById('user-address-input').value;
 
-        // 2. LocalStorage-ты жаңарту
+        // 2. ФОТОНЫ САҚТАУ (Егер жаңа фото жүктелген болса)
+        if (currentUser && currentUser.photo) {
+            users[userIndex].photo = currentUser.photo;
+        }
+
+        // 3. LocalStorage-ты түгел жаңарту
         localStorage.setItem('users', JSON.stringify(users));
-        
-        // 3. Сессияны (currentUser) жаңарту (атың жоғалып кетпеуі үшін маңызды)
         localStorage.setItem('currentUser', JSON.stringify(users[userIndex]));
 
-        // 4. Интерфейсті қайта жабу
+        // 4. Интерфейсті жабу
         isEditMode = false;
         document.getElementById('user-phone-input').disabled = true;
         document.getElementById('user-email-input').disabled = true;
@@ -1762,17 +1750,16 @@ function saveProfileChanges() {
         btn.innerText = "Изменить данные";
         btn.classList.replace('bg-green-600', 'bg-orange-600');
 
-        // 5. Хабарлама шығару
         Swal.fire({
             icon: 'success',
-            title: 'Данные обновлены',
+            title: 'Успешно!',
+            text: 'Данные и фото сохранены',
             timer: 2000,
             showConfirmButton: false,
             customClass: { popup: 'rounded-[2rem]' }
         });
         
-        // 6. Header-дегі атын қайта тексеру (керек болса)
-        loadUserData();
+        loadUserData(); // Бетті жаңартып жіберу
     }
 }
 

@@ -280,6 +280,79 @@ async function signInWithGoogle() {
     }
 }
 
+function changeLanguage(lang) {
+    localStorage.setItem('qulan_lang', lang);
+    
+    const translations = {
+        kz: {
+            // Мәзір (Sidebar)
+            nav_wallet: "Менің әмияным",
+            nav_profile: "Профиль редакторы",
+            nav_orders: "Тапсырыстарым",
+            nav_debt: "Қарызгер",
+            nav_certs: "Сертификаттарым",
+            title_personal: "Жеке мәліметтер",
+            title_security: "Қауіпсіздік",
+            
+            // Редактор бөлімі
+            edit_title: "Профильді өңдеу",
+            label_fio: "Аты-жөні (ФИО)",
+            label_phone: "Телефон нөмірі",
+            label_email: "Email почта",
+            label_address: "Мекен-жай",
+            btn_edit: "Мәліметтерді өзгерту",
+            btn_save: "Өзгерістерді сақтау",
+            
+            // Жүйелік хабарламалар
+            logout_confirm: "Шығуды растайсыз ба?",
+            success_update: "Мәліметтер сәтті жаңартылды!"
+        },
+        ru: {
+            nav_wallet: "Мой кошелек",
+            nav_profile: "Редактор профиля",
+            nav_orders: "Мои заказы",
+            nav_debt: "Должник",
+            nav_certs: "Мои сертификаты",
+            title_personal: "Личные данные",
+            title_security: "Безопасность",
+            
+            edit_title: "Редактор профиля",
+            label_fio: "ФИО",
+            label_phone: "Номер телефона",
+            label_email: "Email почта",
+            label_address: "Адрес проживания",
+            btn_edit: "Изменить данные",
+            btn_save: "Сохранить изменения"
+        }
+    };
 
+    const t = translations[lang];
+
+    // Барлық 'data-lang' атрибуты бар элементтерді аудару
+    document.querySelectorAll('[data-lang]').forEach(el => {
+        const key = el.getAttribute('data-lang');
+        if (t[key]) {
+            if (el.tagName === 'INPUT') el.placeholder = t[key]; // Инпуттар үшін
+            else el.innerText = t[key]; // Қалған элементтер үшін
+        }
+    });
+}
+
+const translations = {
+    kz: {
+        label_phone: "Телефон нөмірі",
+        placeholder_phone: "+7 (___) ___-__-__"
+    },
+    ru: {
+        label_phone: "Номер телефона",
+        placeholder_phone: "+7 (___) ___-__-__"
+    }
+};
+
+// Бет жүктелгенде сақталған тілді бірден қолдану
+document.addEventListener('DOMContentLoaded', () => {
+    const savedLang = localStorage.getItem('qulan_lang') || 'ru';
+    changeLanguage(savedLang);
+});
 
 
