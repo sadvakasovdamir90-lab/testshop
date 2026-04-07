@@ -682,6 +682,78 @@ document.addEventListener('DOMContentLoaded', () => {
     checkWishlistStatus();
 });
 
+
+       // 1. Модалканы ашу және бағаны жіберу
+function openPaymentModal() {
+    // Тауардың бағасын экраннан (немесе объектіден) аламыз
+    const priceText = document.getElementById('product-price').innerText;
+    const priceValue = priceText.replace(/\D/g, ''); // Тек сандарды қалдырамыз (759990)
+
+    // Модалканы көрсетеміз
+    const modal = document.getElementById('payment-modal');
+    if (modal) {
+        modal.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+
+        // Модалка ішіндегі "К оплате" жеріне бағаны жазамыз
+        const modalFinalPrice = document.getElementById('modal-final-price');
+        if (modalFinalPrice) {
+            modalFinalPrice.innerText = Number(priceValue).toLocaleString() + " ₸";
+        }
+
+        // Баланс пен бонустарды жаңарту (егер функция болса)
+        initPaymentModal(priceValue);
+    }
+}
+
+// 2. Баланс пен бонустарды модалка ішінде көрсету
+function initPaymentModal(price) {
+    const currentUser = JSON.parse(localStorage.getItem('currentUser')) || { balance: 0, bonuses: 0 };
+    
+    const balanceElem = document.getElementById('modal-wallet-balance');
+    const bonusElem = document.getElementById('modal-bonus-available');
+
+    if (balanceElem) balanceElem.innerText = `Баланс: ${Number(currentUser.balance).toLocaleString()} ₸`;
+    if (bonusElem) bonusElem.innerText = `Доступно: ${Number(currentUser.bonuses).toLocaleString()} Б`;
+    
+    // Егер бонустарды қолдану басылып тұрса, бағаны қайта есептеу
+    calculateFinalPrice(price);
+}
+
+// 3. Бонустарды есепке ала отырып, соңғы бағаны шығару
+function calculateFinalPrice(basePrice) {
+    let final = Number(basePrice);
+    const useBonuses = document.getElementById('use-bonuses-toggle')?.checked;
+
+    if (useBonuses) {
+        const currentUser = JSON.parse(localStorage.getItem('currentUser')) || { bonuses: 0 };
+        final = final - currentUser.bonuses;
+        if (final < 0) final = 0;
+    }
+
+    const finalPriceElem = document.getElementById('modal-final-price');
+    if (finalPriceElem) {
+        finalPriceElem.innerText = final.toLocaleString() + " ₸";
+    }
+}
+
+// 4. Төлем әдісін таңдау
+function selectPaymentMethod(method) {
+    selectedMethod = method;
+    document.querySelectorAll('.payment-method-btn').forEach(btn => {
+        btn.classList.remove('border-orange-500', 'bg-orange-50');
+        btn.classList.add('border-gray-50');
+    });
+
+    const activeBtn = (method === 'Q-Wallet') ? document.getElementById('method-qwallet') : document.getElementById('method-cash');
+    if (activeBtn) {
+        activeBtn.classList.add('border-orange-500', 'bg-orange-50');
+        activeBtn.classList.remove('border-gray-50');
+    }
+    localStorage.setItem('qulan_method', method);
+}
+
+
 </script>
 
 <!-- 1. Алдымен SweetAlert2 (бұлсыз Alert шықпайды) -->
