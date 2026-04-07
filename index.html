@@ -99,9 +99,25 @@
 .floating-cart:hover { transform: scale(1.1); }
 
 /* Хабарлама (Toast) ең жоғары қабатта тұруы керек */
+/* Хабарлама (Toast) ең жоғары қабатта тұруы керек */
+
 #custom-toast {
-    z-index: 9999 !important;
-    pointer-events: none; /* Бос жерлері басылып кете береді */
+    z-index: 9999 !important; /* Ең жоғарғы қабат */
+    pointer-events: none;
+}
+
+#custom-toast > div {
+    pointer-events: auto; /* Хабарламаның өзі басылатындай болу керек */
+}
+
+/* Анимация: Жоғарыдан әдемі түсу */
+.animate-ios-slide {
+    animation: ios-slide 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+@keyframes ios-slide {
+    from { transform: translateY(-100px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
 }
 
 #custom-toast > div {
@@ -121,6 +137,44 @@
 
 .toast-active {
     animation: toastIn 0.5s ease forwards;
+}
+
+/* Мәзірдің бастапқы күйі (Жасырулы) */
+#category-menu {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-20px) scale(0.95);
+    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1); /* Жұмсақ анимация */
+    pointer-events: none;
+}
+
+/* Мәзір ашық болғандағы күйі */
+#category-menu.active {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0) scale(1);
+    pointer-events: auto;
+}
+
+/* Категориялардың үстіне барғандағы эффект */
+.category-item {
+    transition: background-color 0.3s ease;
+}
+
+
+#category-menu {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-20px) scale(0.95);
+    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+    pointer-events: none;
+}
+
+#category-menu.active {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0) scale(1);
+    pointer-events: auto;
 }
 
     </style>
@@ -238,42 +292,41 @@
 </section>
 
 
-   <section class="container mx-auto px-4 mt-12 mb-20 relative">
-    <div class="inline-block relative w-full md:w-auto">
+ <section class="container mx-auto px-4 mt-12 mb-20 relative">
+    <div class="relative inline-block w-full md:w-auto">
         <button onclick="toggleCategories()" class="bg-orange-600 text-white px-8 py-3 rounded-xl font-bold shadow-lg hover:bg-orange-700 transition inline-flex items-center w-full md:w-auto justify-center italic">
             <i class="fas fa-bars mr-3"></i> 
             <span id="txt-cat-btn">Категории товаров</span>
             <i class="fas fa-chevron-down ml-3 text-xs transition-transform duration-300 transform" id="cat-chevron"></i>
         </button>
 
-        <div id="category-menu" class="dropdown-animate mt-1 bg-white rounded-2xl shadow-2xl border border-gray-100 italic absolute z-40 w-full md:w-80">
+        <div id="category-menu" class="absolute top-full left-0 mt-2 bg-white rounded-2xl shadow-2xl border border-gray-100 italic z-40 w-full md:w-80 overflow-hidden">
     <div class="py-2">
-        <div class="category-item flex items-center px-6 py-4 hover:bg-orange-50 cursor-pointer border-b border-gray-50 transition-colors">
-            <i class="fas fa-magic w-8 text-pink-500 text-xl"></i>
-            <span class="font-bold ml-4 text-sm">Красота и здоровье</span>
-        </div>
-        <div class="category-item flex items-center px-6 py-4 hover:bg-orange-50 cursor-pointer border-b border-gray-50 transition-colors">
-            <i class="fas fa-utensils w-8 text-gray-600 text-xl"></i>
-            <span class="font-bold ml-4 text-sm">Посуда для кухни</span>
-        </div>
-        <div class="category-item flex items-center px-6 py-4 hover:bg-orange-50 cursor-pointer border-b border-gray-50 transition-colors">
-            <i class="fas fa-snowflake w-8 text-blue-400 text-xl"></i>
-            <span class="font-bold ml-4 text-sm uppercase">Новый год</span>
-        </div>
-        <div class="category-item flex items-center px-6 py-4 hover:bg-orange-50 cursor-pointer border-b border-gray-50 transition-colors">
-            <i class="fas fa-puzzle-piece w-8 text-orange-500 text-xl"></i>
-            <span class="font-bold ml-4 text-sm uppercase">Игрушки</span>
-        </div>
-        <div class="category-item flex items-center px-6 py-4 hover:bg-orange-50 cursor-pointer border-b border-gray-50 transition-colors">
-            <i class="fas fa-headphones w-8 text-indigo-600 text-xl"></i>
-            <span class="font-bold ml-4 text-sm uppercase">Аудио техника</span>
-        </div>
-        <div class="category-item flex items-center px-6 py-4 hover:bg-orange-50 cursor-pointer border-b border-gray-50 transition-colors">
-            <i class="fas fa-baby-carriage w-8 text-green-500 text-xl"></i>
-            <span class="font-bold ml-4 text-sm uppercase">Товары для детей</span>
-        </div>
+    <div onclick="filterByCategory('all')" class="category-item flex items-center px-6 py-4 hover:bg-orange-50 cursor-pointer border-b border-gray-50 transition-colors">
+        <i class="fas fa-th-large w-8 text-gray-400 text-xl"></i>
+        <span class="font-bold ml-4 text-sm uppercase">Все товары</span>
     </div>
-</div>
+
+    <div onclick="filterByCategory('Красота и здоровье')" class="category-item flex items-center px-6 py-4 hover:bg-orange-50 cursor-pointer border-b border-gray-50 transition-colors">
+        <i class="fas fa-magic w-8 text-pink-500 text-xl"></i>
+        <span class="font-bold ml-4 text-sm">Красота и здоровье</span>
+    </div>
+
+    <div onclick="filterByCategory('Игрушки')" class="category-item flex items-center px-6 py-4 hover:bg-orange-50 cursor-pointer border-b border-gray-50 transition-colors">
+        <i class="fas fa-puzzle-piece w-8 text-orange-500 text-xl"></i>
+        <span class="font-bold ml-4 text-sm uppercase">Игрушки</span>
+    </div>
+
+    <div onclick="filterByCategory('Продукты')" class="category-item flex items-center px-6 py-4 hover:bg-orange-50 cursor-pointer border-b border-gray-50 transition-colors">
+        <i class="fas fa-shopping-basket w-8 text-orange-500 text-xl"></i>
+        <span class="font-bold ml-4 text-sm uppercase">Продукты</span>
+    </div>
+
+    <div onclick="filterByCategory('Аудио техника')" class="category-item flex items-center px-6 py-4 hover:bg-orange-50 cursor-pointer border-b border-gray-50 transition-colors">
+        <i class="fas fa-headphones w-8 text-indigo-600 text-xl"></i>
+        <span class="font-bold ml-4 text-sm uppercase">Аудио техника</span>
+             </div>
+         </div>
     </div>
 </section>
 
@@ -550,6 +603,8 @@
     </div>
 </div>
 
+
+
 <!-- Скрипт бөлімі -->
 <script>
 function updateOnlineStatus() {
@@ -605,12 +660,21 @@ window.addEventListener('DOMContentLoaded', updateOnlineStatus);
     }
 
     // --- 4. КАТЕГОРИЯЛАР ---
-    function toggleCategories() {
-        const catMenu = document.getElementById('category-menu');
-        const chevron = document.getElementById('cat-chevron');
-        if(catMenu) catMenu.classList.toggle('active');
-        if(chevron) chevron.style.transform = catMenu.classList.contains('active') ? 'rotate(180deg)' : 'rotate(0deg)';
+ function toggleCategories() {
+    const catMenu = document.getElementById('category-menu');
+    const chevron = document.getElementById('cat-chevron');
+    
+    if (catMenu) {
+        // 'active' класын қосу/алу (бұл CSS-тегі анимацияны іске қосады)
+        catMenu.classList.toggle('active');
+        
+        // Стрелканың (chevron) айналуы
+        const isOpen = catMenu.classList.contains('active');
+        if (chevron) {
+            chevron.style.transform = isOpen ? 'rotate(180deg)' : 'rotate(0deg)';
+        }
     }
+}
 
     // --- 5. GEMINI AI CHAT (КӘСІБИ ЖӘНЕ МЫҚТЫ НҰСҚА) ---
     const GEMINI_API_KEY = "AIzaSyBU1eWfKxsuIJshtMzUlR4YKucfuRTvWog";
@@ -1001,6 +1065,51 @@ function saveToHistory(id) {
     }
 }
 
+
+function filterByCategory(categoryName) {
+    // 1. Базадан (localStorage) тауарларды оқимыз
+    const products = JSON.parse(localStorage.getItem('products')) || [];
+    const container = document.getElementById('products-container'); // Тауарлар тұратын контейнер ID-і
+    
+    if (!container) return;
+
+    // 2. Сүзу логикасы
+    let filtered;
+    if (categoryName === 'all') {
+        filtered = products; // Бәрін көрсету
+        document.getElementById('txt-cat-btn').innerText = "Категории товаров";
+    } else {
+        // Тауардың категориясы біз басқан атқа сәйкес келуі керек
+        filtered = products.filter(p => p.category === categoryName);
+        document.getElementById('txt-cat-btn').innerText = categoryName;
+    }
+
+    // 3. Тауарларды экранға шығару (Сенің дизайныңмен)
+    if (filtered.length === 0) {
+        container.innerHTML = `
+            <div class="col-span-full py-20 text-center opacity-50 italic">
+                <i class="fas fa-search text-5xl mb-4"></i>
+                <p class="font-black uppercase tracking-widest text-[10px]">Бұл категорияда тауар табылмады...</p>
+            </div>`;
+    } else {
+        container.innerHTML = filtered.map(p => `
+            <div class="bg-white rounded-3xl shadow-sm p-4 border border-gray-50 group hover:shadow-xl transition-all cursor-pointer animate-modal" onclick="location.href='product.html?id=${p.id}'">
+                <div class="h-48 bg-gray-100 rounded-2xl mb-4 overflow-hidden relative">
+                    <img src="${p.img}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                    ${p.oldPrice ? `<span class="absolute top-2 left-2 bg-red-500 text-white text-[8px] font-black px-2 py-1 rounded-full uppercase">Скидка</span>` : ''}
+                </div>
+                <h3 class="font-black italic uppercase text-sm mb-1 truncate">${p.name}</h3>
+                <div class="flex items-end gap-2">
+                    <p class="text-orange-600 font-black italic text-lg leading-none">${Number(p.price).toLocaleString()} ₸</p>
+                    ${p.oldPrice ? `<p class="text-gray-300 line-through text-[10px] font-bold mb-0.5">${Number(p.oldPrice).toLocaleString()} ₸</p>` : ''}
+                </div>
+            </div>
+        `).join('');
+    }
+
+    // 4. Мәзірді жабу (Анимациямен)
+    toggleCategories();
+}
 </script>
 
 
@@ -1011,6 +1120,10 @@ function saveToHistory(id) {
 <script src="./auth-guard.js"></script>
 
 
+<div id="image-viewer-modal" class="hidden fixed inset-0 bg-black/95 backdrop-blur-xl z-[3000] flex items-center justify-center p-4 md:p-10" onclick="closeImageViewer()">
+    <button class="absolute top-6 right-6 text-white/50 hover:text-white text-4xl transition-all">&times;</button>
+    <img id="full-res-image" src="" class="max-w-full max-h-full rounded-2xl shadow-2xl transform transition-transform duration-300 scale-95" onclick="event.stopPropagation()">
+</div>
 
 </body>
 

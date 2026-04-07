@@ -192,8 +192,14 @@ window.handleCheckout = function() {
         alert("Сначала добавьте товары в корзину! 🛒");
         return;
     }
+    
     // Соңғы бағаны сақтап кету (checkout-қа керек болса)
-    localStorage.setItem('finalTotal', document.getElementById('total-amount').innerText);
+    const finalPriceText = document.getElementById('total-amount').innerText;
+    localStorage.setItem('finalTotal', finalPriceText);
+    
+    // ЖАҢА: Тек сандық мәнді де сақтаймыз (checkout бетінде есептеулерге ыңғайлы болу үшін)
+    localStorage.setItem('finalCartTotal', finalPriceText.replace(/\D/g, ''));
+
     location.href = 'checkout.html';
 }
 

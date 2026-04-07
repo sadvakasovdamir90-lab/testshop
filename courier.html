@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QulanShop | Курьер Панелі</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="bg-gray-900 text-white font-sans">
+
+    <header class="p-6 border-b border-gray-800 flex justify-between items-center sticky top-0 bg-gray-900 z-50">
+        <h1 class="text-xl font-black italic uppercase text-orange-500">Qulan<span class="text-white">Delivery</span></h1>
+        <div class="flex items-center gap-2">
+            <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+            <span class="text-[10px] font-bold uppercase tracking-widest text-gray-400">Онлайн</span>
+        </div>
+    </header>
+
+    <main class="p-4 space-y-6">
+        <div class="grid grid-cols-2 gap-4">
+            <div class="bg-gray-800 p-4 rounded-3xl border border-gray-700">
+                <p class="text-[9px] font-black uppercase text-gray-500 italic">Тапсырыстар</p>
+                <p id="active-count" class="text-2xl font-black italic text-orange-500">0</p>
+            </div>
+            <button onclick="location.reload()" class="bg-gray-800 p-4 rounded-3xl border border-gray-700 flex flex-col items-center justify-center">
+                <i class="fas fa-sync-alt text-gray-500"></i>
+                <span class="text-[8px] font-black uppercase mt-1">Жаңарту</span>
+            </button>
+        </div>
+
+        <h2 class="text-sm font-black uppercase italic tracking-widest text-gray-500 px-2">Жолдағы тапсырыстар:</h2>
+
+        <div id="courier-orders-list" class="space-y-4">
+            </div>
+    </main>
+
+    <script>
+     
+        // 1. ТАПСЫРЫСТЫ ТОЛЫҚ ШЫҒАРУ (ЧЕК ЖӘНЕ ДЕРЕКТЕРМЕН)
+function renderCourierOrders() {
+    const container = document.getElementById('courier-orders-list');
+    const orders = JSON.parse(localStorage.getItem('orders')) || [];
+    
+    // Тек "Жолдағы" (delivering) тапсырыстарды аламыз
+    const activeOrders = orders.filter(ord => ord.status === 'delivering');
+    
+    // Статистиканы жаңарту (Егер HTML-де active-count ID-сі болса)
+    const activeCountElem = document.getElementById('active-count');
+    if (activeCountElem) activeCountElem.innerText = activeOrders.length;
+
+    if (activeOrders.length === 0) {
+        container.innerHTML = `<div class="py-20 text-center opacity-30 italic">Белсенді тапсырыстар жоқ...</div>`;
+        return;
+    }
+
+    container.innerHTML = activeOrders.map(ord => `
+        <div class="bg-gray-800 p-6 rounded-[2.5rem] border border-gray-700 shadow-2xl space-y-4 animate-in slide-in-from-bottom-5">
+            <div class="flex justify-between items-center border-b border-gray-700 pb-4">
+                <div>
+                    <p class="text-[9px] font-black text-gray-500 uppercase tracking-widest">ID: ${ord.id}</p>
+                    <h3 class="text-lg font-black text-white uppercase italic leading-tight">${ord.product}</h3>
+                </div>
+                <p class="text-xl font-black text-orange-500 italic">${ord.total}</p>
+            </div>
+
+            <div class="grid grid-cols-1 gap-3 bg-gray-900/50 p-4 rounded-2xl border border-gray-700">
+                <div class="flex items-center gap-3">
+                    <i class="fas fa-user-circle text-gray-500"></i>
+                    <p class="text-xs font-bold uppercase text-gray-300">Аты: <span class="text-white">${ord.customer}</span></p>
+                </div>
+                
+                <div class="flex items-center gap-3">
+                    <i class="fas fa-phone-alt text-blue-400"></i>
+                    <p class="text-xs font-bold uppercase text-gray-300">Тел: <span class="text-white">${ord.phone}</span></p>
+                </div>
+
+                <div class="flex items-center gap-3">
+                    <i class="fas fa-map-marked-alt text-orange-500"></i>
+                    <p class="text-xs font-bold uppercase text-gray-300 italic">Мекен-жай: <span class="text-white">${ord.address}</span></p>
+                </div>
+                
+                <div class="flex items-center gap-3">
+                    <i class="fas fa-credit-card text-blue-400"></i>
+                    <p class="text-[10px] font-black uppercase text-gray-400">Төлем түрі: ${ord.payment || 'Көрсетілмеген'}</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-4 gap-2">
+                <a href="tel:${ord.phone}" class="bg-blue-600 h-14 rounded-2xl flex items-center justify-center text-white active:scale-95 transition">
+                    <i class="fas fa-phone-alt"></i>
+                </a>
+                <button onclick="openMap('${ord.address}')" class="bg-gray-700 h-14 rounded-2xl flex items-center justify-center text-white active:scale-95 transition">
+                    <i class="fas fa-location-arrow"></i>
+                </button>
+                <button onclick="sendReceipt('${ord.id}')" class="bg-green-600 h-14 rounded-2xl flex items-center justify-center text-white active:scale-95 transition">
+                    <i class="fab fa-whatsapp text-xl"></i>
+                </button>
+                <button onclick="finishDelivery('${ord.id}')" class="bg-orange-600 h-14 rounded-2xl flex items-center justify-center text-white active:scale-95 transition">
+                    <i class="fas fa-check-double"></i>
+                </button>
+            </div>
+        </div>
+    `).join('');
+}
+
+// 2. WHATSAPP-ҚА ЭЛЕКТРОНДЫ ЧЕК ЖІБЕРУ
+function sendReceipt(orderId) {
+    const orders = JSON.parse(localStorage.getItem('orders')) || [];
+    const ord = orders.find(o => String(o.id) === String(orderId));
+    if (!ord) return;
+
+    const receiptText = `*QulanShop Электронды Чек* 🧾%0A` +
+        `---------------------------%0A` +
+        `*Тапсырыс:* ${ord.product}%0A` +
+        `*Сомасы:* ${ord.total}%0A` +
+        `*Төлем:* ${ord.payment}%0A` +
+        `*Клиент:* ${ord.customer}%0A` +
+        `*Күні:* ${ord.date}%0A` +
+        `---------------------------%0A` +
+        `Тауар жеткізілді. Рақмет! 🔥`;
+
+    let phone = ord.phone.replace(/\D/g, '');
+    if (phone.startsWith('8')) phone = '7' + phone.substring(1);
+    
+    window.open(`https://wa.me/${phone}?text=${receiptText}`, '_blank');
+}
+
+// 3. КАРТАНЫ АШУ
+function openMap(address) {
+    // Құланотпес ауылының контекстін қосып іздеу
+    const query = encodeURIComponent("село Кулан, " + address);
+    window.open(`https://www.google.com/maps/search/?api=1&query=${query}`, '_blank');
+}
+
+        function finishDelivery(orderId) {
+            if (!confirm("Тапсырыс жеткізілді деп белгілейсіз бе?")) return;
+
+            let orders = JSON.parse(localStorage.getItem('orders')) || [];
+            let users = JSON.parse(localStorage.getItem('users')) || [];
+            const index = orders.findIndex(o => String(o.id) === String(orderId));
+
+            if (index !== -1) {
+                // Статусты "Completed" деп өзгерту
+                orders[index].status = 'completed';
+                
+                // Бонус және қарыз логикасын Админдегідей осы жерде де іске қосуға болады
+                // Немесе оны Админ өзі қабылдап (Approve) жасауына болады
+                
+                localStorage.setItem('orders', JSON.stringify(orders));
+                renderCourierOrders();
+                alert("Керемет! Тапсырыс аяқталды. ✅");
+            }
+        }
+
+        window.onload = renderCourierOrders;
+
+
+        
+    </script>
+</body>
+</html>

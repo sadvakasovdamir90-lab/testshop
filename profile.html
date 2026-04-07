@@ -431,7 +431,7 @@
             <div onclick="processTopUp('kaspi')" 
                  class="group cursor-pointer bg-white p-8 rounded-[2.5rem] border-2 border-transparent hover:border-red-500 hover:shadow-2xl hover:shadow-red-50 transition-all flex flex-col items-center">
                 <div class="w-16 h-16 bg-red-50 rounded-3xl flex items-center justify-center mb-5 group-hover:rotate-6 transition-transform duration-500">
-                    <img src="https://kaspi.kz/img/kaspi_logo.png" class="w-10 h-10 object-contain rounded-xl">
+                    <img src="images/kaspi.png" class="w-10 h-10 object-contain rounded-xl">
                 </div>
                 <p class="text-[10px] font-black uppercase text-gray-900 tracking-widest">Kaspi QR</p>
             </div>
@@ -585,11 +585,33 @@
     }
 </style>
 
-                <div id="tab-orders" class="tab-content hidden bg-white rounded-xl shadow-sm p-10 md:p-20 text-center border border-gray-100">
-                    <i class="fas fa-box-open text-6xl text-gray-200 mb-6"></i>
-                    <h2 class="text-xl font-bold mb-2">Заказов нет</h2>
-                    <p class="text-gray-400 italic text-sm">Здесь будет список ваших покупок</p>
-                </div>
+              <div id="tab-orders" class="tab-content hidden bg-white rounded-xl shadow-sm p-6 md:p-10 border border-gray-100">
+    <div class="mb-6 border-b border-gray-50 pb-4">
+        <h2 class="text-xl font-bold italic uppercase tracking-tighter text-gray-900">Мои <span class="text-orange-600">заказы</span></h2>
+    </div>
+
+    <div id="my-orders-list" class="space-y-4"></div>
+
+    <div id="no-orders-msg" class="text-center py-10 md:py-20">
+        <i class="fas fa-box-open text-6xl text-gray-200 mb-6"></i>
+        <h2 class="text-xl font-bold mb-2">Заказов нет</h2>
+        <p class="text-gray-400 italic text-sm">Здесь будет список ваших покупок</p>
+    </div>
+</div>
+
+        <div id="tab-debt" class="tab-content hidden bg-white rounded-xl shadow-sm p-6 md:p-10 border border-gray-100">
+    <div class="mb-6 border-b border-gray-50 pb-4">
+        <h2 class="text-xl font-bold italic uppercase tracking-tighter text-gray-900">Список<span class="text-orange-600">желаний</span></h2>
+    </div>
+
+<div id="my-debt-list" class="space-y-4"></div>
+
+ <div id="tab-debt" class="text-center py-10 md:py-20">
+        <i class="fas fa-box-open text-6xl text-gray-200 mb-6"></i>
+        <h2 class="text-xl font-bold mb-2">Страница еще не готова</h2>
+        <p class="text-gray-400 italic text-sm">Страница еще не готова</p>
+    </div>
+</div>
 
                 <div id="tab-coupons" class="tab-content hidden bg-white rounded-xl shadow-sm p-10 md:p-20 text-center border border-gray-100">
                     <i class="fas fa-ticket-alt text-6xl text-gray-200 mb-6"></i>
@@ -607,6 +629,8 @@
         <h2 class="text-xl font-bold mb-2">Ваша корзина пуста</h2>
         <button type="button" onclick="location.href='index.html'" class="mt-4 bg-orange-600 text-white px-8 py-3 rounded-xl font-bold shadow-lg shadow-orange-100">В магазин</button>
     </div>
+
+    
 
     <div id="cart-footer" class="hidden border-t pt-6 flex flex-col md:flex-row justify-between items-center gap-4">
         <div class="text-center md:text-left">
@@ -1189,54 +1213,59 @@ function processTopUp(method) {
         }
 
         // --- 4. СЕБЕТТІ БАСҚАРУ ---
-        function renderProfileCart() {
-            const cartItemsList = document.getElementById('cart-items-list');
-            const emptyMsg = document.getElementById('empty-cart-msg');
-            const cartFooter = document.getElementById('cart-footer');
-            const totalPriceElem = document.getElementById('cart-total-price');
-            
-            if (!cartItemsList) return;
-            let cart = JSON.parse(localStorage.getItem('qulanCart')) || [];
+      function renderProfileCart() {
+    const cartItemsList = document.getElementById('cart-items-list');
+    const emptyMsg = document.getElementById('empty-cart-msg');
+    const cartFooter = document.getElementById('cart-footer');
+    const totalPriceElem = document.getElementById('cart-total-price');
+    
+    if (!cartItemsList) return;
+    let cart = JSON.parse(localStorage.getItem('qulanCart')) || [];
 
-            if (cart.length === 0) {
-                cartItemsList.innerHTML = '';
-                if (emptyMsg) emptyMsg.classList.remove('hidden');
-                if (cartFooter) cartFooter.classList.add('hidden');
-                updateMenuBadges();
-                return;
-            }
+    if (cart.length === 0) {
+        cartItemsList.innerHTML = '';
+        if (emptyMsg) emptyMsg.classList.remove('hidden');
+        if (cartFooter) cartFooter.classList.add('hidden');
+        updateMenuBadges();
+        return;
+    }
 
-            if (emptyMsg) emptyMsg.classList.add('hidden');
-            if (cartFooter) cartFooter.classList.remove('hidden');
-            
-            let total = 0;
-            let htmlContent = '';
+    if (emptyMsg) emptyMsg.classList.add('hidden');
+    if (cartFooter) cartFooter.classList.remove('hidden');
+    
+    let total = 0;
+    let htmlContent = '';
 
-            cart.forEach((item, index) => {
-                const price = parseInt(item.price) || 0;
-                const qty = item.quantity || 1;
-                total += price * qty;
-                htmlContent += `
-                    <div class="flex items-center justify-between p-4 bg-white rounded-2xl border border-gray-100 shadow-sm mb-3 animate-modal">
-                        <div class="flex items-center gap-4">
-                            <div class="w-14 h-14 bg-gray-50 rounded-xl flex items-center justify-center text-orange-500 overflow-hidden border">
-                                 <img src="${item.image || 'images/no-photo.jpg'}" class="w-full h-full object-cover" onerror="this.src='https://via.placeholder.com/150'">
-                            </div>
-                            <div>
-                                <h4 class="font-bold text-sm text-gray-800">${item.name}</h4>
-                                <p class="text-orange-600 font-black text-sm">${price.toLocaleString()} ₸ ${qty > 1 ? 'x'+qty : ''}</p>
-                            </div>
-                        </div>
-                        <button type="button" onclick="removeFromCart(${index})" class="text-gray-300 hover:text-red-500 p-2 transition active:scale-90">
-                            <i class="fas fa-trash-alt"></i>
-                        </button>
+    cart.forEach((item, index) => {
+        const price = parseInt(item.price) || 0;
+        const qty = item.quantity || 1;
+        total += price * qty;
+
+        // --- СУРЕТТІ АНЫҚТАУ БӨЛІМІ (ТҮЗЕТІЛДІ) ---
+        // Егер 'image' бос болса, 'img' немесе 'icon' кілттерін тексереді
+        const itemImg = item.img || item.image || item.icon || 'images/no-photo.jpg';
+
+        htmlContent += `
+            <div class="flex items-center justify-between p-4 bg-white rounded-2xl border border-gray-100 shadow-sm mb-3 animate-modal">
+                <div class="flex items-center gap-4">
+                    <div class="w-16 h-16 bg-gray-50 rounded-xl flex items-center justify-center text-orange-500 overflow-hidden border shrink-0">
+                         <img src="${itemImg}" class="w-full h-full object-cover" onerror="this.src='https://via.placeholder.com/150'">
                     </div>
-                `;
-            });
-            cartItemsList.innerHTML = htmlContent;
-            if (totalPriceElem) totalPriceElem.innerText = total.toLocaleString() + ' ₸';
-            updateMenuBadges();
-        }
+                    <div>
+                        <h4 class="font-bold text-sm text-gray-800">${item.name}</h4>
+                        <p class="text-orange-600 font-black text-sm">${price.toLocaleString()} ₸ ${qty > 1 ? 'x'+qty : ''}</p>
+                    </div>
+                </div>
+                <button type="button" onclick="removeFromCart(${index})" class="text-gray-300 hover:text-red-500 p-2 transition active:scale-90">
+                    <i class="fas fa-trash-alt"></i>
+                </button>
+            </div>
+        `;
+    });
+    cartItemsList.innerHTML = htmlContent;
+    if (totalPriceElem) totalPriceElem.innerText = total.toLocaleString() + ' ₸';
+    updateMenuBadges();
+}
 
         function removeFromCart(index) {
             let cart = JSON.parse(localStorage.getItem('qulanCart')) || [];
@@ -1762,6 +1791,73 @@ if (!emailRegex.test(email)) return Swal.fire('Қате', 'Email форматы 
         loadUserData(); // Бетті жаңартып жіберу
     }
 }
+
+function renderMyOrders() {
+    const container = document.getElementById('my-orders-list');
+    const noOrdersMsg = document.getElementById('no-orders-msg');
+    const userJson = localStorage.getItem('currentUser');
+    
+    if (!container || !userJson) return;
+
+    const currentUser = JSON.parse(userJson);
+    const allOrders = JSON.parse(localStorage.getItem('orders')) || [];
+
+    // Пайдаланушыны телефоны немесе аты арқылы сүзу
+    const myOrders = allOrders.filter(ord => 
+        (ord.phone && ord.phone.replace(/\D/g, '') === currentUser.phone.replace(/\D/g, '')) || 
+        ord.customer === currentUser.name
+    );
+
+    if (myOrders.length === 0) {
+        container.innerHTML = '';
+        noOrdersMsg.classList.remove('hidden');
+        return;
+    }
+
+    noOrdersMsg.classList.add('hidden');
+    container.innerHTML = myOrders.map(ord => {
+        // Статусқа байланысты стильдер
+        let statusHtml = '';
+        if (ord.status === 'delivering') {
+            statusHtml = `<span class="bg-blue-50 text-blue-600 text-[9px] font-black px-3 py-1.5 rounded-lg border border-blue-100 animate-pulse uppercase"><i class="fas fa-truck-fast mr-1"></i> В пути</span>`;
+        } else if (ord.status === 'completed') {
+            statusHtml = `<span class="bg-green-50 text-green-600 text-[9px] font-black px-3 py-1.5 rounded-lg border border-green-100 uppercase"><i class="fas fa-check-circle mr-1"></i> Доставлено</span>`;
+        } else {
+            statusHtml = `<span class="bg-orange-50 text-orange-600 text-[9px] font-black px-3 py-1.5 rounded-lg border border-orange-100 uppercase"><i class="fas fa-clock mr-1"></i> Обработка</span>`;
+        }
+
+        return `
+            <div class="bg-gray-50/50 p-4 rounded-2xl border border-gray-100 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 transition-all hover:bg-white hover:shadow-md">
+                <div class="flex items-center gap-4">
+                    <div class="w-12 h-12 bg-white rounded-xl flex items-center justify-center shadow-sm border border-gray-100">
+                        <i class="fas fa-shopping-bag text-orange-500"></i>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2 mb-1">
+                            <span class="text-[9px] font-black text-gray-400 uppercase tracking-widest">#${ord.id}</span>
+                            <span class="text-[9px] font-bold text-gray-300 uppercase">${ord.date}</span>
+                        </div>
+                        <h4 class="font-black text-sm text-gray-800 uppercase italic leading-tight">${ord.product}</h4>
+                    </div>
+                </div>
+                <div class="flex items-center justify-between w-full md:w-auto gap-6">
+                    <div class="text-right">
+                        <p class="text-lg font-black text-orange-600 italic leading-none">${ord.total}</p>
+                        <p class="text-[8px] text-gray-400 font-bold uppercase mt-1 italic">${ord.payment}</p>
+                    </div>
+                    ${statusHtml}
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+// Таб ашылғанда тізімді жаңарту
+const originalShowTab = showTab;
+showTab = function(event, tabId) {
+    if (typeof originalShowTab === 'function') originalShowTab(event, tabId);
+    if (tabId === 'tab-orders') renderMyOrders();
+};
 
     </script>
 </html>

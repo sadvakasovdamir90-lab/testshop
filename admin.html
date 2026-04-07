@@ -195,9 +195,10 @@
                         <label class="text-[10px] font-black text-slate-500 uppercase ml-2 tracking-widest italic mb-1 block">Категория</label>
                         <select id="p-category" onchange="runAdvancedFilter()" class="w-full p-4 rounded-2xl bg-[#1e293b] border border-slate-800 outline-none font-bold text-white focus:border-orange-500 transition-all text-sm appearance-none cursor-pointer">
                             <option value="all">Все категории</option>
-                            <option value="Техника">Техника</option>
-                            <option value="Овощи">Овощи</option>
+                            <option value="Красота и здоровье">Красота и здоровье</option>
+                            <option value="Игрушки">Игрушки</option>
                             <option value="Продукты">Продукты</option>
+                            <option value="Аудио техника">Аудио техника</option>
                         </select>
                     </div>
                 </div>
@@ -373,48 +374,64 @@
 
     <!-- Модалкалар -->
     <div id="product-modal" class="hidden fixed inset-0 bg-black/90 backdrop-blur-md z-[1000] flex items-center justify-center p-4">
-        <div class="bg-[#1e293b] w-full max-w-lg rounded-[2.5rem] p-8 border border-slate-700 shadow-2xl">
-            <h3 class="text-xl font-black italic uppercase text-orange-500 mb-6">Новый товар</h3>
-            <div class="space-y-4">
-                <input type="text" id="p-name" placeholder="Название товара" class="w-full p-4 rounded-2xl outline-none font-bold">
-                <div class="grid grid-cols-2 gap-4">
-                    <input type="number" id="p-price" placeholder="Цена (₸)" class="p-4 rounded-2xl outline-none font-bold">
-                    <input type="number" id="p-old-price" placeholder="Старая цена (скидка)" class="p-4 rounded-2xl outline-none font-bold text-red-400">
+    <div class="bg-[#1e293b] w-full max-w-lg rounded-[2.5rem] flex flex-col border border-slate-700 shadow-2xl overflow-hidden max-h-[90vh]">
+        
+        <div class="p-8 pb-4 border-b border-slate-800 shrink-0">
+            <h3 class="text-xl font-black italic uppercase text-orange-500">Товар туралы мәлімет</h3>
+        </div>
+
+        <div class="flex-1 overflow-y-auto p-8 py-4 custom-scroll space-y-4">
+            <input type="text" id="p-name" placeholder="Название товара" class="w-full p-4 rounded-2xl outline-none font-bold">
+            
+            <div class="grid grid-cols-2 gap-4">
+                <input type="number" id="p-price" placeholder="Цена (₸)" class="p-4 rounded-2xl outline-none font-bold">
+                <input type="number" id="p-old-price" placeholder="Старая цена (скидка)" class="p-4 rounded-2xl outline-none font-bold text-red-400">
+            </div>
+
+            <div class="space-y-1">
+                <label class="text-[10px] font-black text-slate-500 uppercase ml-2 tracking-widest italic">Количество на складе</label>
+                <input type="number" id="p-stock" placeholder="Кол-во (шт/кг)" class="w-full p-4 rounded-2xl outline-none font-bold bg-[#0f172a] border border-slate-700">
+            </div>
+
+            <input type="text" id="p-img" placeholder="Ссылка на фото (URL)" class="w-full p-4 rounded-2xl outline-none font-bold">
+            
+            <div class="space-y-1">
+                <label class="text-[10px] font-black text-slate-500 uppercase ml-2 italic">Превью фото</label>
+                <div id="img-preview-container" class="w-full h-32 bg-[#0f172a] rounded-2xl border border-slate-700 overflow-hidden flex items-center justify-center">
+                    <img id="p-img-preview" src="https://via.placeholder.com/150" class="h-full w-full object-contain opacity-50">
                 </div>
-                <!-- ЖАҢА: Количество өрісі -->
+            </div>
+
+            <div class="space-y-4 mt-4">
                 <div class="space-y-1">
-                    <label class="text-[10px] font-black text-slate-500 uppercase ml-2 tracking-widest italic">Количество на складе</label>
-                    <input type="number" id="p-stock" placeholder="Кол-во (шт/кг)" class="w-full p-4 rounded-2xl outline-none font-bold bg-[#0f172a] border border-slate-700">
+                    <label class="text-[10px] font-black text-slate-500 uppercase ml-2 tracking-widest italic">Категория товара</label>
+                    <select id="p-category-modal" class="w-full p-4 rounded-2xl bg-[#0f172a] border border-slate-700 outline-none font-bold text-white focus:border-orange-500 transition-all text-sm appearance-none cursor-pointer">
+                        <option value="all">Все категории</option>
+                        <option value="Красота и здоровье">Красота и здоровье</option>
+                        <option value="Игрушки">Игрушки</option>
+                        <option value="Продукты">Продукты</option>
+                        <option value="Аудио техника">Аудио техника</option>
+                    </select>
                 </div>
-                <input type="text" id="p-img" placeholder="Ссылка на фото (URL)" class="w-full p-4 rounded-2xl outline-none font-bold">
-                <div class="space-y-1">
-    <label class="text-[10px] font-black text-slate-500 uppercase ml-2 italic">Превью фото</label>
-    <div id="img-preview-container" class="w-full h-32 bg-[#0f172a] rounded-2xl border border-slate-700 overflow-hidden flex items-center justify-center">
-        <img id="p-img-preview" src="https://via.placeholder.com/150" class="h-full w-full object-contain opacity-50">
-    </div>
-</div>
-                <div class="space-y-2 mt-4">
-                    <div class="space-y-1">
-                        <label class="text-[10px] font-black text-slate-500 uppercase ml-2 tracking-widest italic">Категория товара</label>
-                        <select id="p-category-modal" class="w-full p-4 rounded-2xl bg-[#0f172a] border border-slate-700 outline-none font-bold text-white focus:border-orange-500 transition-all text-sm appearance-none cursor-pointer">
-                            <option value="Техника">Техника</option>
-                            <option value="Овощи">Овощи</option>
-                            <option value="Продукты">Продукты</option>
-                        </select>
-                    </div>
-                    <label class="text-[10px] font-bold text-slate-500 uppercase italic">Характеристики товара</label>
-                    <div id="specs-container" class="space-y-2"></div>
-                    <button type="button" onclick="addSpecRow()" class="text-xs text-orange-500 font-bold border border-orange-500/30 px-3 py-1 rounded-lg hover:bg-orange-500/10 transition">
-                        + Добавить параметр
+
+                <div class="border-t border-slate-800 pt-4">
+                    <label class="text-[10px] font-bold text-slate-500 uppercase italic block mb-2">Характеристики товара</label>
+                    <div id="specs-container" class="space-y-2 mb-3"></div>
+                    <button type="button" onclick="addSpecRow()" class="w-full text-xs text-orange-500 font-bold border border-orange-500/30 py-3 rounded-xl hover:bg-orange-500/10 transition uppercase tracking-widest">
+                        <i class="fas fa-plus mr-2"></i> Добавить характеристику
                     </button>
-                </div>
-                <div class="flex gap-4 pt-4">
-                    <button onclick="saveProduct()" class="flex-1 bg-orange-600 py-4 rounded-2xl font-black uppercase italic tracking-widest shadow-lg shadow-orange-900/40">Сохранить</button>
-                    <button onclick="hideModal('product-modal')" class="flex-1 bg-slate-700 py-4 rounded-2xl font-black uppercase italic">Отмена</button>
                 </div>
             </div>
         </div>
+
+        <div class="p-8 pt-4 border-t border-slate-800 bg-[#1e293b] shrink-0">
+            <div class="flex gap-4">
+                <button onclick="saveProduct()" class="flex-1 bg-orange-600 py-4 rounded-2xl font-black uppercase italic tracking-widest shadow-lg shadow-orange-900/40 active:scale-95 transition-all">Сохранить</button>
+                <button onclick="hideModal('product-modal')" class="flex-1 bg-slate-700 py-4 rounded-2xl font-black uppercase italic active:scale-95 transition-all text-slate-300">Отмена</button>
+            </div>
+        </div>
     </div>
+</div>
     
 
     <div id="promo-modal" class="hidden fixed inset-0 bg-black/90 backdrop-blur-md z-[1000] flex items-center justify-center p-4">
@@ -462,7 +479,10 @@
     </div>
 </div>
 
-
+<div id="image-viewer-modal" class="hidden fixed inset-0 bg-black/95 backdrop-blur-xl z-[3000] flex items-center justify-center p-4 md:p-10" onclick="closeImageViewer()">
+    <button class="absolute top-6 right-6 text-white/50 hover:text-white text-4xl transition-all">&times;</button>
+    <img id="full-res-image" src="" class="max-w-full max-h-full rounded-2xl shadow-2xl transform transition-transform duration-300 scale-95" onclick="event.stopPropagation()">
+</div>
 
 
 <!-- Скрипт бөлімі -->
@@ -1251,17 +1271,17 @@ container.innerHTML = tickets.map((t, index) => {
                 </div>
 
                 <!-- СУРЕТ ШЫҒАТЫН БӨЛІМ (ОСЫ ЖЕРГЕ ҚОСЫЛДЫ) -->
-                ${currentTicket.image ? `
-                    <div class="mt-3">
-                        <p class="text-[8px] font-black text-slate-500 uppercase mb-1">Скриншот проблемы:</p>
-                        <div class="relative group cursor-pointer overflow-hidden rounded-xl border border-slate-700 shadow-lg" onclick="viewSupportImage('${currentTicket.image}')">
-                            <img src="${currentTicket.image}" class="w-full h-32 object-cover group-hover:scale-110 transition-transform duration-500">
-                            <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity duration-300">
-                                <i class="fas fa-search-plus text-white text-xl"></i>
-                            </div>
-                        </div>
-                    </div>
-                ` : ''}
+              ${currentTicket.image ? `
+    <div class="mt-3">
+        <p class="text-[8px] font-black text-slate-500 uppercase mb-1">Скриншот проблемы:</p>
+        <div class="relative group cursor-pointer overflow-hidden rounded-xl border border-slate-700 shadow-lg" 
+             onclick="viewSupportImage('${currentTicket.image}')"> <img src="${currentTicket.image}" class="w-full h-32 object-cover group-hover:scale-110 transition-transform duration-500">
+            <div class="absolute inset-0 bg-black/40 opacity-100 flex items-center justify-center transition-opacity duration-300">
+                <i class="fas fa-search-plus text-white text-xl"></i>
+            </div>
+        </div>
+    </div>
+` : ''} 
 
                 ${currentTicket.fileName ? `
                     <div class="flex items-center gap-2 text-blue-400">
@@ -1320,17 +1340,44 @@ setInterval(() => {
     }
 }, 5000);
 
+// 1. Суретті үлкейтіп ашу функциясы
 function viewSupportImage(imgSrc) {
-    Swal.fire({
-        imageUrl: imgSrc,
-        imageAlt: 'Проблема клиента',
-        confirmButtonText: 'ЗАКРЫТЬ',
-        confirmButtonColor: '#000',
-        customClass: {
-            popup: 'rounded-[2.5rem] bg-[#1e293b] border border-slate-700 shadow-2xl',
-            image: 'rounded-2xl'
-        }
-    });
+    const modal = document.getElementById('image-viewer-modal');
+    const fullImg = document.getElementById('full-res-image');
+    
+    if (!modal || !fullImg) return;
+
+    fullImg.src = imgSrc; // Суреттің сілтемесін қою
+    modal.classList.remove('hidden'); // Модалканы көрсету
+    modal.classList.add('flex');
+    
+    // Аздап кешігумен scale (үлкейту) анимациясын қосу
+    setTimeout(() => {
+        fullImg.classList.remove('scale-95');
+        fullImg.classList.add('scale-100');
+    }, 10);
+
+    // Артқы беттің (Body) скроллын тоқтату
+    document.body.style.overflow = 'hidden';
+}
+
+// 2. Модалканы жабу функциясы
+function closeImageViewer() {
+    const modal = document.getElementById('image-viewer-modal');
+    const fullImg = document.getElementById('full-res-image');
+    
+    if (!modal || !fullImg) return;
+
+    // Анимацияны кері қайтару
+    fullImg.classList.add('scale-95');
+    fullImg.classList.remove('scale-100');
+    
+    // Анимация біткен соң жабу
+    setTimeout(() => {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+        document.body.style.overflow = 'auto'; // Скроллды қайта қосу
+    }, 200);
 }
 
     </script>
