@@ -111,6 +111,20 @@
     <button onclick="showTab(event, 'tab-certificates')" class="nav-btn flex justify-between items-center whitespace-nowrap w-auto md:w-full text-left px-4 py-2 rounded-lg hover:bg-gray-100 transition text-xs md:text-sm">
         Мои сертификаты <span id="badge-cert" class="hidden bg-orange-500 text-white text-[9px] px-1.5 py-0.5 rounded-full ml-2 font-black italic">NEW</span>
     </button>
+
+<button onclick="showTab(event, 'tab-referral')" 
+        class="nav-btn flex items-center justify-between shrink-0 md:w-full text-left px-3 py-2 rounded-xl hover:bg-blue-50 transition-all border border-blue-100 md:border-blue-200 group overflow-hidden">
+    <div class="flex items-center min-w-0">
+        <div class="w-7 h-7 bg-blue-100 rounded-lg flex items-center justify-center mr-2 group-hover:scale-110 transition-transform shrink-0">
+            <i class="fas fa-user-plus text-blue-600 text-[10px]"></i>
+        </div>
+        <span class="text-blue-600 font-bold text-[10px] md:text-sm italic truncate">Пригласи друга</span>
+    </div>
+    <span class="ml-2 bg-blue-600 text-white text-[8px] md:text-[9px] px-1.5 py-0.5 rounded-full font-black animate-pulse shadow-sm shadow-blue-200 shrink-0">
+        +500 ₸
+    </span>
+</button>
+
 </nav>
 
         <h3 class="text-gray-400 text-[9px] md:text-[10px] font-bold uppercase mt-4 mb-3 px-3 italic tracking-wider border-t md:border-none pt-3 md:pt-0">Безопасность</h3>
@@ -143,6 +157,67 @@
 
             <section class="w-full md:w-3/4">
 
+         <div id="tab-referral" class="tab-content hidden animate-modal px-1 md:px-0">
+    <div class="mb-6 md:mb-8">
+        <h2 class="text-xl md:text-2xl font-black uppercase tracking-tighter text-gray-900 leading-none">
+            Пригласи <span class="text-blue-600">друга</span>
+        </h2>
+        <p class="text-[9px] md:text-[10px] font-bold text-gray-400 uppercase mt-2 italic tracking-wider">
+            Бонусная программа QulanShop
+        </p>
+    </div>
+
+    <div class="relative overflow-hidden bg-slate-900 p-6 md:p-10 rounded-[2rem] md:rounded-[3rem] text-white shadow-xl mb-6 border border-white/5">
+        <div class="absolute -right-10 -bottom-10 w-40 h-40 bg-blue-600 rounded-full blur-[80px] opacity-30"></div>
+        <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+            <div>
+                <h3 class="text-2xl md:text-4xl font-black italic mb-2 md:mb-3 leading-none uppercase">
+                    Получи <span class="text-blue-500">500 ₸</span>
+                </h3>
+                <p class="text-[10px] md:text-xs font-bold opacity-60 uppercase tracking-widest italic leading-relaxed max-w-[250px]">
+                    Пригласи первого друга и получи разовый бонус на свой баланс.
+                </p>
+            </div>
+            <div class="shrink-0">
+                <div class="w-14 h-14 md:w-20 md:h-20 bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl md:rounded-[2rem] flex items-center justify-center shadow-inner">
+                    <i class="fas fa-gift text-blue-500 text-2xl md:text-4xl"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-white border border-gray-100 p-5 md:p-8 rounded-[2rem] md:rounded-[3rem] shadow-sm space-y-6">
+        <div>
+            <label class="text-[9px] font-black uppercase text-gray-400 ml-3 mb-2 block tracking-widest">Твоя ссылка:</label>
+            <div class="flex flex-col sm:flex-row items-stretch gap-2 bg-gray-50 p-1.5 rounded-2xl border-2 border-dashed border-gray-200">
+                <input type="text" id="referral-link" readonly value="Загрузка..." 
+                    class="flex-1 bg-transparent border-none outline-none px-4 py-3 text-[16px] md:text-[13px] font-bold text-gray-600 truncate min-w-0">
+                <button onclick="copyReferralLink()" 
+                    class="bg-blue-600 text-white px-6 py-3 rounded-xl text-[10px] font-black uppercase italic active:scale-95 transition-all shadow-lg shadow-blue-100 shrink-0">
+                    Копировать
+                </button>
+            </div>
+        </div>
+        
+        <div class="grid grid-cols-2 gap-3 md:gap-6">
+            <div class="bg-gray-50/50 p-4 md:p-6 rounded-2xl md:rounded-[2.5rem] border border-gray-100 text-center">
+                <p id="ref-count-display" class="text-xl md:text-3xl font-black text-slate-950 italic leading-none">0</p>
+                <p class="text-[8px] md:text-[10px] font-black text-gray-400 uppercase italic mt-2">Приглашено</p>
+            </div>
+            <div class="bg-blue-50/50 p-4 md:p-6 rounded-2xl md:rounded-[2.5rem] border border-blue-100 text-center">
+                <p id="ref-earned-display" class="text-xl md:text-3xl font-black text-blue-600 italic leading-none">0 ₸</p>
+                <p class="text-[8px] md:text-[10px] font-black text-blue-500 uppercase italic mt-2">Бонус получен</p>
+            </div>
+        </div>
+
+        <div class="flex items-start gap-3 bg-amber-50 p-4 rounded-2xl border border-amber-100/50">
+            <i class="fas fa-exclamation-circle text-amber-500 text-[10px] mt-0.5"></i>
+            <p class="text-[9px] font-bold text-amber-700/80 uppercase leading-relaxed italic">
+                Внимание: Бонус начисляется только один раз за первого успешно зарегистрированного друга.
+            </p>
+        </div>
+    </div>
+</div>
                 <!-- ТАБ: ЦЕНТР ПОМОЩИ -->
 <div id="tab-support" class="tab-content hidden animate-card">
     <div class="mb-8">
@@ -1031,11 +1106,13 @@ window.addEventListener('DOMContentLoaded', () => {
 });
         // --- 1. ТАБТАР ЖҮЙЕСІ ---
         function showTab(event, tabId) {
+            
             const currentId = localStorage.getItem('currentUserId');
             document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
             document.querySelectorAll('.nav-btn').forEach(b => {
                 b.classList.remove('bg-orange-50', 'text-orange-600', 'font-medium');
                 b.classList.add('hover:bg-gray-100');
+                
             });
             const activeTab = document.getElementById(tabId);
             if (activeTab) activeTab.classList.remove('hidden');
@@ -1047,6 +1124,7 @@ window.addEventListener('DOMContentLoaded', () => {
                 localStorage.setItem('certs_read_' + currentId, 'true');
                 renderCertificates();
                 updateMenuBadges(); 
+
             }
         }
 
@@ -1874,6 +1952,54 @@ const originalShowTab = showTab;
 showTab = function(event, tabId) {
     if (typeof originalShowTab === 'function') originalShowTab(event, tabId);
     if (tabId === 'tab-orders') renderMyOrders();
+};
+
+
+// Реферал жүйесін іске қосу
+function initReferralSystem() {
+    const userJson = localStorage.getItem('currentUser');
+    if (!userJson) return;
+    const user = JSON.parse(userJson);
+
+    // Ссылканы жасау (auth.html-ге жібереді)
+    const refLink = window.location.origin + "/auth.html?ref=" + (user.id || 'guest');
+    const linkInput = document.getElementById('referral-link');
+    if (linkInput) linkInput.value = refLink;
+
+    // Статистиканы жаңарту
+    const countDisp = document.getElementById('ref-count-display');
+    const earnedDisp = document.getElementById('ref-earned-display');
+    
+    if (countDisp) countDisp.innerText = user.referralCount || 0;
+    if (earnedDisp) earnedDisp.innerText = (user.referralEarned || 0) + ' ₸';
+}
+
+// Ссылканы көшіру
+function copyReferralLink() {
+    const linkInput = document.getElementById('referral-link');
+    if (!linkInput) return;
+    
+    linkInput.select();
+    document.execCommand('copy');
+    
+    // Әдемі хабарлама (SweetAlert)
+    Swal.fire({
+        toast: true,
+        position: 'top-end',
+        icon: 'success',
+        title: 'Ссылка скопирована! 🚀',
+        showConfirmButton: false,
+        timer: 1500,
+        background: '#1e293b',
+        color: '#fff'
+    });
+}
+
+// showTab функциясын реферал үшін жаңарту
+const originalShowTabWithRef = showTab;
+showTab = function(event, tabId) {
+    if (typeof originalShowTabWithRef === 'function') originalShowTabWithRef(event, tabId);
+    if (tabId === 'tab-referral') initReferralSystem();
 };
 
     </script>
