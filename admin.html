@@ -368,9 +368,9 @@
         * Таңдалған категорияға жеңілдік жүреді. "Сброс" бассаңыз, БҮКІЛ тауардың бағасы бастапқы қалпына келеді.
     </p>
 
-    <button onclick="applyGlobalDiscount()" class="w-full bg-orange-600 py-5 rounded-2xl font-black uppercase italic tracking-widest shadow-lg shadow-orange-900/40 hover:bg-orange-500 transition-all mt-6">
-                            <i class="fas fa-save mr-2"></i> Сохранить все изменения
-                        </button>
+    <button onclick="saveAllBanners()" class="w-full bg-orange-600 py-5 rounded-2xl font-black uppercase italic tracking-widest shadow-lg shadow-orange-900/40 hover:bg-orange-500 transition-all mt-6">
+    <i class="fas fa-save mr-2"></i> Сохранить все изменения (Баннеры и Таймер)
+</button>
 
 </div>
 
@@ -779,21 +779,41 @@ document.getElementById('p-img').addEventListener('input', function() {
         function deleteItem(key, id, callback) { if(confirm("Вы уверены?")) { db[key] = db[key].filter(i => i.id !== id); localStorage.setItem(key, JSON.stringify(db[key])); callback(); } }
         function showToast() { const toast = document.getElementById('toast'); if (!toast) return; toast.style.top = "30px"; setTimeout(() => { toast.style.top = "-100px"; }, 3000); }
 
-        function saveAllBanners() {
-            const banners = { main: [document.getElementById('main-banner-1').value, document.getElementById('main-banner-2').value, document.getElementById('main-banner-3').value], small: document.getElementById('small-banner').value, deadline: document.getElementById('promo-deadline').value };
-            localStorage.setItem('site_banners', JSON.stringify(banners)); showToast();
-        }
+      function saveAllBanners() {
+    // Баннерлер мен таймердің (deadline) мәндерін жинау
+    const banners = { 
+        main: [
+            document.getElementById('main-banner-1').value, 
+            document.getElementById('main-banner-2').value, 
+            document.getElementById('main-banner-3').value
+        ], 
+        small: document.getElementById('small-banner').value, 
+        deadline: document.getElementById('promo-deadline').value // Таймер мәні
+    };
+    
+    // Мәліметтерді базаға сақтау
+    localStorage.setItem('site_banners', JSON.stringify(banners)); 
+    
+    showToast(); // Хабарлама шығару
+}
 
-        function loadBannersToAdmin() {
-            const banners = JSON.parse(localStorage.getItem('site_banners'));
-            if (banners) {
-                if(document.getElementById('main-banner-1')) document.getElementById('main-banner-1').value = banners.main[0] || '';
-                if(document.getElementById('main-banner-2')) document.getElementById('main-banner-2').value = banners.main[1] || '';
-                if(document.getElementById('main-banner-3')) document.getElementById('main-banner-3').value = banners.main[2] || '';
-                if(document.getElementById('small-banner')) document.getElementById('small-banner').value = banners.small || '';
-                if(document.getElementById('promo-deadline')) document.getElementById('promo-deadline').value = banners.deadline || '';
-            }
+function loadBannersToAdmin() {
+    // Базадан баннерлерді оқу
+    const banners = JSON.parse(localStorage.getItem('site_banners'));
+    
+    if (banners) {
+        // Элементтер бар болса, мәндерін инпуттарға жазу
+        if(document.getElementById('main-banner-1')) document.getElementById('main-banner-1').value = banners.main[0] || '';
+        if(document.getElementById('main-banner-2')) document.getElementById('main-banner-2').value = banners.main[1] || '';
+        if(document.getElementById('main-banner-3')) document.getElementById('main-banner-3').value = banners.main[2] || '';
+        if(document.getElementById('small-banner')) document.getElementById('small-banner').value = banners.small || '';
+        
+        // Таймерді (deadline) қайта жүктеу
+        if(document.getElementById('promo-deadline')) {
+            document.getElementById('promo-deadline').value = banners.deadline || '';
         }
+    }
+}
 
       // 1. ФИЛЬТРЛЕУ ЖӘНЕ СҰРЫПТАУ (Оңтайландырылған нұсқа)
 function runAdvancedFilter() {
@@ -1435,6 +1455,7 @@ function closeImageViewer() {
 function applyGlobalDiscount() {
     const target = document.getElementById('global-discount-target').value;
     const percent = parseInt(document.getElementById('global-discount-percent').value);
+    const deadline = document.getElementById('promo-deadline').value; // ТАЙМЕР МӘНІ
     
     if (!percent || percent <= 0 || percent >= 100) {
         alert("Дұрыс пайыз енгізіңіз (1-99)!");
@@ -1442,16 +1463,15 @@ function applyGlobalDiscount() {
     }
 
     const confirmText = target === 'all' 
-        ? `Бүкіл тауарға -${percent}% жеңілдік жасағыңыз келе ме?` 
-        : `"${target}" категориясына -${percent}% жеңілдік жасағыңыз келе ме?`;
+        ? `Бүкіл тауарға -${percent}% жеңілдік жасап, таймерді сақтағыңыз келе ме?` 
+        : `"${target}" категориясына -${percent}% жеңілдік жасап, таймерді сақтағыңыз келе ме?`;
 
     if (confirm(confirmText)) {
+        // 1. ТАУАРЛАРҒА ЖЕҢІЛДІК ҚОЛДАНУ
         let products = JSON.parse(localStorage.getItem('products')) || [];
         
         products = products.map(p => {
-            // Егер "Бәрі" таңдалса немесе категория сәйкес келсе
             if (target === 'all' || p.category === target) {
-                // Егер бұрыннан скидка болса, бастапқы бағаны жоғалтып алмас үшін тексереміз
                 const currentBasePrice = p.oldPrice ? Number(p.oldPrice) : Number(p.price);
                 const newPrice = Math.round(currentBasePrice * (1 - percent / 100));
                 
@@ -1462,18 +1482,27 @@ function applyGlobalDiscount() {
                     discountLabel: `-${percent}%`
                 };
             }
-            return p; // Басқа тауарларға тиіспейміз
+            return p;
         });
 
         localStorage.setItem('products', JSON.stringify(products));
+        if (typeof db !== 'undefined') db.products = products; 
+
+        // 2. ТАЙМЕРДІ ЖӘНЕ БАННЕРЛЕРДІ БІРДЕЙ САҚТАУ
+        const banners = JSON.parse(localStorage.getItem('site_banners')) || { main: ['', '', ''], small: '' };
+        banners.deadline = deadline; // Таймерді жаңарту
+        
+        localStorage.setItem('site_banners', JSON.stringify(banners));
+
         runAdvancedFilter(); // Кестені жаңарту
-        showToast(); //
-        alert("Жеңілдік сәтті қолданылды! ✅");
+        showToast(); 
+        alert("Жеңілдік қолданылды және Таймер сақталды! ✅");
     }
 }
 
 function resetGlobalDiscount() {
-    if (confirm("Бүкіл жеңілдіктерді өшіріп, бағаларды бастапқы қалпына келтіреміз бе?")) {
+    if (confirm("Бүкіл жеңілдіктерді өшіріп, таймер мен акцияларды бастапқы қалпына келтіреміз бе?")) {
+        // 1. ТАУАРЛАРДЫҢ БАҒАСЫН ҚАЙТАРУ
         let products = JSON.parse(localStorage.getItem('products')) || [];
         
         products = products.map(p => {
@@ -1489,12 +1518,43 @@ function resetGlobalDiscount() {
         });
 
         localStorage.setItem('products', JSON.stringify(products));
-        runAdvancedFilter(); //
-        showToast(); //
-        alert("Бағалар қалпына келтірілді! 🔄");
+        if (typeof db !== 'undefined') db.products = products;
+
+        // 2. БАЗАДАҒЫ ТАЙМЕР МЕН БАННЕРЛЕРДІ ТАЗАЛАУ
+        const banners = { 
+            main: ['', '', ''], 
+            small: '', 
+            deadline: '' 
+        };
+        localStorage.setItem('site_banners', JSON.stringify(banners));
+
+        // 3. ИНТЕРФЕЙСТЕГІ ЦИФРЛАР МЕН МӘНДЕРДІ ТАЗАЛАУ (АНУЛИРОВАТЬ)
+        
+        // Пайыз жазатын инпутты тазалау
+        const percentInput = document.getElementById('global-discount-percent');
+        if (percentInput) {
+            percentInput.value = ''; 
+        }
+
+        // Таймер инпутын тазалау
+        const deadlineInput = document.getElementById('promo-deadline');
+        if (deadlineInput) {
+            deadlineInput.value = '';
+        }
+        
+        // Баннер инпуттарын тазалау
+        for(let i=1; i<=3; i++) {
+            const bInput = document.getElementById(`main-banner-${i}`);
+            if(bInput) bInput.value = '';
+        }
+        const sInput = document.getElementById('small-banner');
+        if(sInput) sInput.value = '';
+
+        runAdvancedFilter(); // Кестені жаңарту
+        showToast(); 
+        alert("Бәрі тазаланды: бағалар, таймер және инпуттар анулировать етілді! 🔄");
     }
 }
-
     </script>
 </body>
 </html>
