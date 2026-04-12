@@ -436,46 +436,45 @@
     </div>
 
     <!-- Негізгі Grid -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+   <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-8 items-stretch">
+    
+    <div class="relative overflow-hidden bg-[#0f0f0f] p-6 sm:p-8 md:p-10 rounded-[2rem] md:rounded-[3rem] text-white shadow-2xl border border-white/5 flex flex-col justify-between min-h-[240px] md:min-h-[280px] w-full">
         
-        <!-- КАРТОЧКА БАЛАНСА (Deep Carbon Card) -->
-        <div class="relative overflow-hidden bg-gradient-to-br from-[#1a1a1a] to-[#0a0a0a] p-10 rounded-[3rem] text-white shadow-2xl border border-white/10 flex flex-col justify-between min-h-[280px]">
-            
-            <!-- Сәндік фондық жарық (Градиент) -->
-            <div class="absolute -top-24 -right-24 w-80 h-80 bg-orange-600/10 rounded-full blur-[100px]"></div>
-            
-            <div class="relative z-10">
-                <div class="flex justify-between items-start mb-12">
-                    <div>
-                        <p class="text-gray-500 text-[10px] font-black uppercase tracking-[0.3em] mb-4 text-left">Доступный остаток</p>
-                        <div class="flex items-baseline gap-4">
-                            <h3 id="wallet-balance-main" class="text-6xl font-black tracking-tighter leading-none">0</h3>
-                            <span class="text-2xl font-bold text-orange-500 uppercase tracking-widest">kzt</span>
-                        </div>
-                    </div>
-                    <!-- Card Chip / Icon -->
-                    <div class="w-14 h-14 bg-white/5 backdrop-blur-3xl rounded-2xl border border-white/10 flex items-center justify-center shadow-inner">
-                        <i class="fas fa-wallet text-orange-500 text-2xl"></i>
+        <div class="absolute -top-24 -right-24 w-80 h-80 bg-orange-600/10 rounded-full blur-[100px] pointer-events-none"></div>
+        
+        <div class="relative z-10 h-full flex flex-col justify-between">
+            <div class="flex justify-between items-start">
+                <div>
+                    <p class="text-gray-500 text-[8px] md:text-[10px] font-black uppercase tracking-[0.3em] mb-4 text-left">Доступный остаток</p>
+                    <div class="flex items-baseline gap-3">
+                        <h3 id="wallet-balance-main" class="text-4xl md:text-6xl font-black tracking-tighter leading-none">0</h3>
+                        <span class="text-xl md:text-2xl font-bold text-orange-500 uppercase">kzt</span>
                     </div>
                 </div>
-                
-                <div class="flex items-center gap-8">
-                    <div class="flex flex-col">
-                        <p class="text-[8px] font-black text-gray-500 uppercase tracking-widest mb-2 text-left">Накоплено Q-Coins</p>
-                        <div class="flex items-center gap-2 bg-white/5 py-2 px-4 rounded-xl border border-white/5">
-                            <i class="fas fa-coins text-yellow-500 text-xs"></i>
-                            <span id="wallet-bonuses" class="text-sm font-black tracking-tight text-white">0.00</span>
-                        </div>
+
+                <div class="w-12 h-12 md:w-14 md:h-14 bg-white/5 backdrop-blur-3xl rounded-2xl border border-white/10 flex items-center justify-center shrink-0 ml-4">
+                    <i class="fas fa-wallet text-orange-500 text-xl md:text-2xl"></i>
+                </div>
+            </div>
+            
+            <div class="flex items-center gap-6 md:gap-8 mt-8">
+                <div class="flex flex-col">
+                    <p class="text-[7px] md:text-[8px] font-black text-gray-500 uppercase mb-2 text-left">Q-Coins</p>
+                    <div class="flex items-center gap-2 bg-white/5 py-2 px-4 rounded-xl border border-white/5">
+                        <i class="fas fa-coins text-yellow-500 text-[10px]"></i>
+                        <span id="wallet-bonuses" class="text-xs md:text-sm font-black text-white">0.00</span>
                     </div>
-                    <div class="flex flex-col border-l border-white/10 pl-8">
-                        <p class="text-[8px] font-black text-gray-500 uppercase tracking-widest mb-2 text-left">Статус счета</p>
-                        <span class="text-[10px] font-black text-white uppercase tracking-[0.2em] flex items-center gap-2">
-                            <i class="fas fa-check-circle text-blue-400"></i> Верифицирован
-                        </span>
-                    </div>
+                </div>
+                <div class="flex flex-col border-l border-white/10 pl-6 md:pl-8">
+                    <p class="text-[7px] md:text-[8px] font-black text-gray-500 uppercase mb-2 text-left">Статус</p>
+                    <span class="text-[8px] md:text-[10px] font-black text-white uppercase flex items-center gap-2 tracking-wider">
+                        <i class="fas fa-check-circle text-blue-400 text-[10px]"></i> Верифицирован
+                    </span>
                 </div>
             </div>
         </div>
+    </div>
+
 
         <!-- ФОРМА ПОПОЛНЕНИЯ (Clean Executive) -->
         <div class="bg-white p-10 rounded-[3rem] border border-gray-100 shadow-[0_30px_60px_-15px_rgba(0,0,0,0.05)] flex flex-col justify-center">
@@ -2198,6 +2197,189 @@ showTab = function(event, tabId) {
     if (typeof originalShowTabWithRef === 'function') originalShowTabWithRef(event, tabId);
     if (tabId === 'tab-referral') initReferralSystem();
 };
+
+function loadUserProfile() {
+    // Міндетті түрде localStorage-тан ең соңғы мәнді алу керек
+    const latestBalance = localStorage.getItem('userBalance') || 0;
+    const balanceDisplay = document.getElementById('user-balance-display');
+    
+    if (balanceDisplay) {
+        balanceDisplay.innerText = Number(latestBalance).toLocaleString() + " ₸";
+    }
+}
+// Бұл функцияны window.onload кезінде шақыруды ұмытпа
+
+
+function checkNewNotifications() {
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    if (!currentUser || !currentUser.notifications) return;
+
+    // Оқылмаған хабарламаларды табу
+    const newNotes = currentUser.notifications.filter(n => n.isNew);
+
+    if (newNotes.length > 0) {
+        newNotes.forEach(note => {
+            // SweetAlert арқылы хабарлама шығару
+            Swal.fire({
+                title: 'Жаңа хабарлама! 📩',
+                text: note.message,
+                icon: 'info',
+                confirmButtonColor: '#ea580c'
+            });
+
+            // Хабарламаны "оқылған" деп белгілеу
+            note.isNew = false;
+        });
+
+        // Пайдаланушының деректерін базада жаңарту (оқылған деп белгілеу үшін)
+        let users = JSON.parse(localStorage.getItem('users')) || [];
+        const idx = users.findIndex(u => String(u.id) === String(currentUser.id));
+        if (idx !== -1) {
+            users[idx].notifications = currentUser.notifications;
+            localStorage.setItem('users', JSON.stringify(users));
+            localStorage.setItem('currentUser', JSON.stringify(users[idx]));
+        }
+    }
+}
+
+// Профиль ашылғанда тексеру
+window.addEventListener('DOMContentLoaded', checkNewNotifications);
+
+
+
+function showEChack(trxId) {
+    const user = JSON.parse(localStorage.getItem('currentUser'));
+    const trx = user.transactions.find(t => t.id === trxId);
+
+    if (!trx) return;
+
+    Swal.fire({
+        title: '<span class="italic font-black uppercase tracking-tighter">Qulan<span class="text-orange-600">Shop</span> Чек</span>',
+        html: `
+            <div class="text-left space-y-2 border-t border-dashed border-gray-200 pt-4 mt-4 italic">
+                <div class="flex justify-between text-[10px] font-bold">
+                    <span class="text-gray-400 uppercase">ID ТРАНЗАКЦИИ:</span>
+                    <span>${trx.id}</span>
+                </div>
+                <div class="flex justify-between text-[10px] font-bold">
+                    <span class="text-gray-400 uppercase">ДАТА:</span>
+                    <span>${trx.date}</span>
+                </div>
+                <div class="flex justify-between text-[10px] font-bold">
+                    <span class="text-gray-400 uppercase">КЛИЕНТ:</span>
+                    <span>${user.name}</span>
+                </div>
+                <div class="flex justify-between text-[10px] font-bold">
+                    <span class="text-gray-400 uppercase">ОПЕРАЦИЯ:</span>
+                    <span>${trx.description}</span>
+                </div>
+                <div class="border-t border-dashed border-gray-200 pt-2 mt-2 flex justify-between items-center">
+                    <span class="text-xs font-black uppercase">ИТОГО:</span>
+                    <span class="text-xl font-black">${Number(trx.amount).toLocaleString()} ₸</span>
+                </div>
+                <div class="text-center pt-4">
+                    <div class="inline-block p-2 bg-gray-50 rounded-lg">
+                        <i class="fas fa-qrcode text-4xl opacity-20"></i>
+                    </div>
+                    <p class="text-[8px] text-gray-400 mt-2">СПАСИБО ЗА ПОКУПКУ!</p>
+                </div>
+            </div>
+        `,
+        confirmButtonText: 'ЖАБУ',
+        confirmButtonColor: '#000',
+        customClass: { popup: 'rounded-[2rem]' }
+    });
+}
+
+// 1. Тапсырыстарды батырмамен бірге шығару функциясы
+function renderUserOrders() {
+    const orders = JSON.parse(localStorage.getItem('orders')) || [];
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    const container = document.getElementById('orders-container'); // Осы ID бар ма тексер, болмаса өзгеріс енгіз
+    
+
+    if (!container || !currentUser) return;
+
+    // Тек осы қолданушының тапсырыстарын сүзіп алу
+    const myOrders = orders.filter(o => String(o.userId) === String(currentUser.id));
+
+    if (myOrders.length === 0) {
+        container.innerHTML = '<p class="text-center text-gray-400 italic py-10">Тапсырыстар әлі жоқ</p>';
+        return;
+    }
+
+    container.innerHTML = myOrders.map(order => {
+        // Чек батырмасы тек "Доставлено" немесе "Оплачено" болса шығады
+        const canShowCheck = order.status === 'Доставлено' || order.status === 'Оплачено' || order.isPaid;
+        
+        const checkBtn = canShowCheck 
+            ? `<button onclick="showOrderReceipt('${order.id}')" class="ml-2 bg-orange-50 text-orange-600 border border-orange-200 px-3 py-1 rounded-lg text-[10px] font-black uppercase italic hover:bg-orange-600 hover:text-white transition-all">
+                <i class="fas fa-file-invoice-dollar mr-1"></i> Чек
+               </button>` 
+            : '';
+
+        return `
+            <div class="bg-white p-4 rounded-3xl border border-gray-100 mb-4 shadow-sm">
+                <div class="flex justify-between items-start mb-3">
+                    <div>
+                        <p class="text-[9px] font-bold text-gray-400 uppercase tracking-widest">ID: #ORD-${order.id}</p>
+                        <h3 class="font-black italic uppercase text-slate-800 flex items-center">
+                            ${order.productName} (x${order.quantity || 1})
+                            ${checkBtn}
+                        </h3>
+                    </div>
+                    <span class="text-[9px] font-black px-3 py-1 rounded-full uppercase italic ${order.status === 'Доставлено' ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700'}">
+                        ${order.status}
+                    </span>
+                </div>
+                <div class="flex justify-between items-end border-t border-gray-50 pt-3">
+                    <p class="text-[10px] text-gray-400 font-bold">${order.date || ''}</p>
+                    <p class="font-black text-lg text-slate-900">${Number(order.totalPrice).toLocaleString()} ₸</p>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+// 2. Чекті SweetAlert арқылы шығару (Алдыңғы берген кодым)
+function showOrderReceipt(orderId) {
+    const orders = JSON.parse(localStorage.getItem('orders')) || [];
+    const order = orders.find(o => String(o.id) === String(orderId));
+
+    if (!order) return;
+
+    Swal.fire({
+        title: '<div class="font-black italic uppercase">Qulan<span class="text-orange-600">Shop</span></div>',
+        html: `
+            <div class="text-left mt-4 border-t border-dashed border-gray-300 pt-4 italic">
+                <div class="flex justify-between text-[10px] font-bold mb-2">
+                    <span class="text-gray-400 uppercase">ЗАКАЗ №:</span>
+                    <span>${order.id}</span>
+                </div>
+                <div class="flex justify-between text-[10px] font-bold mb-4">
+                    <span class="text-gray-400 uppercase">ДАТА:</span>
+                    <span>${order.date || '---'}</span>
+                </div>
+                <div class="bg-gray-50 p-3 rounded-xl mb-4">
+                    <div class="flex justify-between font-black text-sm uppercase">
+                        <span>${order.productName}</span>
+                        <span>${Number(order.totalPrice).toLocaleString()} ₸</span>
+                    </div>
+                </div>
+                <div class="flex justify-between items-center border-t border-gray-200 pt-4">
+                    <span class="font-black text-xl uppercase italic">ИТОГО:</span>
+                    <span class="text-2xl font-black text-orange-600">${Number(order.totalPrice).toLocaleString()} ₸</span>
+                </div>
+            </div>
+        `,
+        confirmButtonText: 'ЖАБУ',
+        confirmButtonColor: '#000',
+        customClass: { popup: 'rounded-[2rem]' }
+    });
+}
+
+// БЕТ ЖҮКТЕЛГЕНДЕ ІСКЕ ҚОСУ
+window.addEventListener('DOMContentLoaded', renderUserOrders);
 
     </script>
 </html>

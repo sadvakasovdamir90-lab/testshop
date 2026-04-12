@@ -119,11 +119,17 @@
     </div>
 
     <div id="user-status-box" class="hidden mt-3 p-4 rounded-xl border-2 flex items-center gap-3 transition-all">
-        <div id="status-icon" class="w-8 h-8 rounded-full flex items-center justify-center text-white font-bold"></div>
-        <div>
-            <p id="status-name" class="font-black text-sm"></p>
-            <p id="status-text" class="text-[9px] font-bold uppercase"></p>
+    <div class="relative shrink-0">
+        <div class="w-12 h-12 rounded-full border-2 border-white shadow-sm overflow-hidden bg-gray-100 flex items-center justify-center">
+            <img id="found-user-avatar" src="" class="w-full h-full object-cover hidden">
+            <i id="avatar-placeholder" class="fas fa-user text-gray-300"></i>
         </div>
+        <div id="online-badge" class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white rounded-full hidden"></div>
+    </div>
+    
+    <div>
+        <p id="status-name" class="font-black text-sm"></p>
+        <p id="status-text" class="text-[9px] font-bold uppercase"></p>
     </div>
 </div>
 
@@ -159,72 +165,23 @@
         </div>
     </main>
 
-    <!-- ОПЛАТА МОДАЛКАСЫ -->
-<div id="payment-modal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
-    <div class="bg-white rounded-[2.5rem] w-full max-w-md overflow-hidden shadow-2xl animate-modal">
-        <div class="bg-orange-600 p-8 text-white text-center">
-            <div class="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                <i class="fas fa-credit-card text-2xl"></i>
-            </div>
-            <h3 class="text-xl font-black uppercase italic tracking-widest">Оплата подарка</h3>
-            <p class="text-orange-100 text-xs mt-2 font-bold opacity-80 uppercase tracking-tighter">Сумма к оплате: <span id="modal-pay-amount">0</span> ₸</p>
-        </div>
+ <div id="payment-modal" class="hidden fixed inset-0 bg-black/70 z-[2000] flex items-center justify-center p-4 backdrop-blur-md"> 
+    <div class="bg-white rounded-[2.5rem] w-full max-w-md p-8 shadow-2xl relative border border-orange-100 animate-slide-up">
+        <button onclick="closeAllModals()" class="absolute top-6 right-6 text-gray-400 hover:text-red-500"><i class="fas fa-times text-lg"></i></button>
+        <h2 class="text-xl font-black italic text-gray-900 mb-8 uppercase text-center tracking-tighter">Оплата <span class="text-orange-600">заказа</span></h2>
         
-  <!-- НЕГІЗГІ КОНТЕЙНЕР: ПК-да ортаға жинайды, телефонда толық енді алады -->
-<div class="w-full max-w-[480px] mx-auto bg-white sm:rounded-[2.5rem] sm:shadow-2xl overflow-hidden transition-all duration-300">
-    
-    <div class="p-6 md:p-8">
         <div class="space-y-4">
-            <!-- KASPI.KZ -->
-            <button onclick="confirmPayment('Kaspi')" class="w-full flex items-center justify-between p-4 md:p-5 border-2 border-gray-100 rounded-[1.5rem] hover:border-red-500 hover:bg-red-50/30 transition-all group shadow-sm active:scale-95">
+            <button onclick="selectPaymentMethod('Q-Wallet')" id="method-qwallet" class="payment-method-btn w-full flex items-center justify-between p-5 border-2 border-orange-500 bg-orange-50 rounded-3xl transition-all">
                 <div class="flex items-center gap-4">
-                    <div class="w-10 h-10 md:w-12 md:h-12 rounded-2xl overflow-hidden flex items-center justify-center shadow-md bg-white border border-gray-50 transition-transform group-hover:rotate-6">
-                        <img src="/images/kaspi.png" class="w-full h-full object-cover" onerror="this.src='https://itube.kz/wp-content/uploads/2024/04/Kaspi.kz-Logo-1.png'">
-                    </div>
-                    <div class="flex flex-col items-start text-left">
-                        <span class="font-black text-gray-900 uppercase text-[10px] md:text-xs tracking-[0.15em]">Kaspi.kz</span>
-                        <span class="text-[8px] font-bold text-red-500 uppercase tracking-tighter opacity-80">Быстрая оплата</span>
+                    <div class="w-12 h-12 bg-orange-600 rounded-2xl flex items-center justify-center text-white shadow-lg"><i class="fas fa-wallet text-xl"></i></div>
+                    <div class="flex flex-col items-start">
+                        <span class="font-black italic uppercase text-xs text-gray-900">Q-Wallet</span>
+                        <span id="modal-wallet-balance" class="text-[10px] text-orange-600 font-bold mt-1">Баланс: 0 ₸</span>
                     </div>
                 </div>
-                <i class="fa-solid fa-chevron-right text-gray-300 group-hover:text-red-500 group-hover:translate-x-1 transition-all text-xs md:text-base"></i>
+                <i class="fas fa-check-circle text-orange-600 text-xl method-icon"></i>
             </button>
-
-            <!-- HALYK BANK -->
-            <button onclick="confirmPayment('Halyk')" class="w-full flex items-center justify-between p-4 md:p-5 border-2 border-gray-100 rounded-[1.5rem] hover:border-green-600 hover:bg-green-50/30 transition-all group shadow-sm active:scale-95">
-                <div class="flex items-center gap-4">
-                    <div class="w-10 h-10 md:w-12 md:h-12 rounded-2xl overflow-hidden flex items-center justify-center shadow-md bg-white border border-gray-100 transition-transform group-hover:rotate-6">
-                        <img src="/images/halyk.png" class="w-full h-full object-contain p-2" onerror="this.src='https://halykbank.kz/storage/app/media/logos/halyk-logo.png'">
-                    </div>
-                    <div class="flex flex-col items-start text-left">
-                        <span class="font-black text-gray-900 uppercase text-[10px] md:text-xs tracking-[0.15em]">Halyk Bank</span>
-                        <span class="text-[8px] font-bold text-green-600 uppercase tracking-tighter opacity-80">Надежный перевод</span>
-                    </div>
-                </div>
-                <i class="fa-solid fa-chevron-right text-gray-300 group-hover:text-green-600 group-hover:translate-x-1 transition-all text-xs md:text-base"></i>
-            </button>
-
-            <!-- НАЛИЧНЫЙ -->
-            <button onclick="confirmPayment('Cash')" class="w-full flex items-center justify-between p-4 md:p-5 border-2 border-gray-100 rounded-[1.5rem] hover:border-orange-500 hover:bg-orange-50/30 transition-all group bg-white shadow-sm active:scale-95">
-                <div class="flex items-center gap-4">
-                    <div class="w-10 h-10 md:w-12 md:h-12 bg-gradient-to-br from-orange-400 to-orange-600 rounded-2xl flex items-center justify-center text-white shadow-lg transition-transform group-hover:-rotate-6">
-                        <i class="fa-solid fa-money-bill-wave text-lg md:text-xl"></i>
-                    </div>
-                    <div class="flex flex-col items-start text-left">
-                        <span class="font-black text-gray-900 uppercase text-[10px] md:text-xs tracking-[0.15em]">Наличными</span>
-                        <span class="text-[8px] font-bold text-gray-400 uppercase tracking-tighter">В магазине QulanShop</span>
-                    </div>
-                </div>
-                <i class="fa-solid fa-chevron-right text-gray-300 group-hover:text-orange-500 group-hover:translate-x-1 transition-all text-xs md:text-base"></i>
-            </button>
-
-            <hr class="my-6 border-gray-100">
-
-            <!-- ЖАҢАРТЫЛҒАН ОТМЕНА БАТЫРМАСЫ -->
-            <button onclick="closePaymentModal()" class="w-full py-4 bg-gray-50 border-2 border-gray-100 rounded-2xl text-gray-400 font-black text-[9px] md:text-[10px] uppercase tracking-[0.2em] hover:bg-gray-100 hover:text-gray-600 hover:border-gray-200 transition-all active:scale-95 flex items-center justify-center gap-2">
-                <i class="fa-solid fa-xmark text-xs"></i>
-                Отменить транзакцию
-            </button>
-        </div>
+            </div>
     </div>
 </div>
     <!-- Барлық беттің астына қосатын HTML -->
@@ -363,59 +320,83 @@ window.addEventListener('load', () => {
             preview.innerText = val ? Number(val).toLocaleString() + " ₸" : "0 ₸";
         }
 
-        function checkUser(val) {
-            const phone = val.replace(/\D/g, ''); 
-            document.getElementById('rec-phone').value = phone;
+       function checkUser(val) {
+    const phone = val.replace(/\D/g, ''); 
+    document.getElementById('rec-phone').value = phone;
 
-            const box = document.getElementById('user-status-box');
-            const nameDisp = document.getElementById('status-name');
-            const statusTxt = document.getElementById('status-text');
-            const btn = document.getElementById('buy-btn');
+    const box = document.getElementById('user-status-box');
+    const nameDisp = document.getElementById('status-name');
+    const statusTxt = document.getElementById('status-text');
+    const avatarImg = document.getElementById('found-user-avatar');
+    const avatarPlaceholder = document.getElementById('avatar-placeholder');
+    const onlineBadge = document.getElementById('online-badge');
+    const btn = document.getElementById('buy-btn');
 
-            const cardToBox = document.getElementById('preview-to-box');
-            const cardName = document.getElementById('preview-to-name');
-            const wishesToBox = document.getElementById('to-display-wishes');
-            const wishesToName = document.getElementById('found-user-wishes');
+    // Көрсетілімдер
+    const cardToBox = document.getElementById('preview-to-box');
+    const cardName = document.getElementById('preview-to-name');
+    const wishesToBox = document.getElementById('to-display-wishes');
+    const wishesToName = document.getElementById('found-user-wishes');
 
-            const registeredUsers = JSON.parse(localStorage.getItem('users')) || [];
-            const foundUser = registeredUsers.find(u => u.phone && u.phone.includes(phone));
+    const registeredUsers = JSON.parse(localStorage.getItem('users')) || [];
+    const foundUser = registeredUsers.find(u => u.phone && u.phone.includes(phone));
 
-            if (phone.length === 10) {
-                box.classList.remove('hidden');
+    if (phone.length === 10) {
+        box.classList.remove('hidden');
 
-                if (foundUser) {
-                    foundUserNameGlobal = foundUser.name;
-                    box.className = "mt-3 p-4 rounded-xl border-2 border-green-200 bg-green-50 flex items-center gap-3";
-                    nameDisp.innerText = foundUserNameGlobal; 
-                    nameDisp.className = "font-black text-sm text-green-700";
-                    statusTxt.innerText = "Клиент тіркелген ✅";
-                    statusTxt.className = "text-[9px] font-bold text-green-500 uppercase tracking-widest";
+        if (foundUser) {
+            foundUserNameGlobal = foundUser.name;
+            box.className = "mt-3 p-4 rounded-xl border-2 border-green-200 bg-green-50 flex items-center gap-3 animate-modal";
+            nameDisp.innerText = foundUserNameGlobal; 
+            nameDisp.className = "font-black text-sm text-green-700 leading-tight";
+            statusTxt.innerText = "Клиент табылды ✅";
+            statusTxt.className = "text-[9px] font-bold text-green-500 uppercase tracking-widest";
 
-                    cardToBox.classList.remove('hidden');
-                    cardName.innerText = foundUserNameGlobal;
-                    wishesToBox.classList.remove('hidden');
-                    wishesToName.innerText = foundUserNameGlobal;
-
-                    btn.disabled = false;
-                    btn.className = "w-full bg-orange-500 text-white py-6 rounded-3xl font-black uppercase italic shadow-xl active:scale-95";
-                } else {
-                    box.className = "mt-3 p-4 rounded-xl border-2 border-red-200 bg-red-50 flex items-center gap-3";
-                    nameDisp.innerText = "Пользователь не найден";
-                    nameDisp.className = "font-black text-sm text-red-700";
-                    statusTxt.innerText = "Тіркелу қажет ❌";
-                    statusTxt.className = "text-[9px] font-bold text-red-500 uppercase tracking-widest";
-
-                    cardToBox.classList.add('hidden');
-                    wishesToBox.classList.add('hidden');
-
-                    btn.disabled = true;
-                    btn.className = "w-full bg-gray-200 text-gray-400 py-6 rounded-3xl font-black uppercase italic cursor-not-allowed";
-                }
+            // --- АВАТАРКАНЫ ШЫҒАРУ ---
+            // Егер қолданушының базада суреті болса, соны көрсетеді, болмаса UI-Avatars сервисін қолданады
+            const userPhoto = foundUser.photo || foundUser.avatar;
+            if (userPhoto) {
+                avatarImg.src = userPhoto;
+                avatarImg.classList.remove('hidden');
+                avatarPlaceholder.classList.add('hidden');
             } else {
-                box.classList.add('hidden');
-                btn.disabled = true;
+                // Сурет болмаса, есімінің бірінші әрпімен әдемі аватар жасайды
+                avatarImg.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(foundUserNameGlobal)}&background=059669&color=fff&font-size=0.4`;
+                avatarImg.classList.remove('hidden');
+                avatarPlaceholder.classList.add('hidden');
             }
+            onlineBadge.classList.remove('hidden');
+
+            cardToBox.classList.remove('hidden');
+            cardName.innerText = foundUserNameGlobal;
+            wishesToBox.classList.remove('hidden');
+            wishesToName.innerText = foundUserNameGlobal;
+
+            btn.disabled = false;
+            btn.classList.replace('bg-gray-900', 'bg-orange-600');
+        } else {
+            box.className = "mt-3 p-4 rounded-xl border-2 border-red-200 bg-red-50 flex items-center gap-3";
+            nameDisp.innerText = "Пользователь не найден";
+            nameDisp.className = "font-black text-sm text-red-700";
+            statusTxt.innerText = "Тіркелу қажет ❌";
+            statusTxt.className = "text-[9px] font-bold text-red-500 uppercase tracking-widest";
+
+            // Бос аватарка
+            avatarImg.classList.add('hidden');
+            avatarPlaceholder.classList.remove('hidden');
+            onlineBadge.classList.add('hidden');
+
+            cardToBox.classList.add('hidden');
+            wishesToBox.classList.add('hidden');
+
+            btn.disabled = true;
+            btn.classList.replace('bg-orange-600', 'bg-gray-900');
         }
+    } else {
+        box.classList.add('hidden');
+        btn.disabled = true;
+    }
+}
 
         // --- ЖАҢАРТЫЛҒАН ФУНКЦИЯ: ТӨЛЕМГЕ ЖІБЕРУ ---
         async function generateGiftPDF() {
@@ -456,94 +437,91 @@ window.addEventListener('load', () => {
         }
 
         // --- ЖАҢА ФУНКЦИЯ: ТӨЛЕМДІ РАСТАУ ЖӘНЕ БАЗАҒА САҚТАУ ---
-        async function confirmPayment(method) {
-            const btn = document.getElementById('buy-btn');
-            const payModal = document.getElementById('payment-modal');
-            if (payModal) payModal.classList.add('hidden');
+      async function confirmPayment(method) {
+    const btn = document.getElementById('buy-btn');
+    const payModal = document.getElementById('payment-modal');
+    
+    const { amount, phone, name, wish } = currentPendingGift;
+    const price = Number(amount);
+    const uniqueNumber = generateCardNumber();
 
-            const { amount, phone, name, wish } = currentPendingGift;
-            const uniqueNumber = generateCardNumber();
+    // 1. САТЫП АЛУШЫНЫҢ ДЕРЕКТЕРІН АЛУ
+    const currentId = localStorage.getItem('currentUserId');
+    let users = JSON.parse(localStorage.getItem('users')) || [];
+    let buyerIdx = users.findIndex(u => String(u.id) === String(currentId));
+    
+    if (buyerIdx === -1) return;
+    const buyer = users[buyerIdx];
+    const buyerBalance = Number(buyer.userBalance || 0);
 
-            // 1. ЕГЕР ҚОЛМА-ҚОЛ АҚША ТАҢДАЛСА (Cash)
-            if (method === 'Cash') {
-                Swal.fire({
-                    title: 'Заявка қабылданды! 🤝',
-                    html: `
-                        <div class="text-center">
-                            <p class="text-sm text-gray-600 mb-4 font-medium uppercase tracking-wider">
-                                Төлемді <span class="text-orange-600 font-black">QulanShop</span> дүкеніне келіп жасаңыз.
-                            </p>
-                            <div class="bg-blue-50 p-4 rounded-2xl border border-blue-100 italic text-blue-800 text-[10px] font-bold uppercase tracking-tighter">
-                                Менеджер ақшаны қабылдаған соң, сыйлық автоматты түрде ${name} профиліне түседі.
-                            </div>
-                        </div>
-                    `,
-                    icon: 'info',
-                    confirmButtonText: 'Түсінікті',
-                    confirmButtonColor: '#3b82f6',
-                    customClass: {
-                        popup: 'rounded-[2.5rem]',
-                        confirmButton: 'px-10 py-3 rounded-xl font-black uppercase text-[10px] tracking-widest shadow-lg'
-                    }
-                });
-                return; 
-            }
+    // 2. БАЛАНСТЫ ТЕКСЕРУ (image_738696.png стилінде)
+    if (buyerBalance < price) {
+        Swal.fire({
+            target: document.getElementById('payment-modal'), 
+            html: `
+                <div class="p-2">
+                    <div class="w-20 h-20 border-4 border-orange-200 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <span class="text-orange-400 text-5xl font-light">!</span>
+                    </div>
+                    <h2 class="text-xl font-bold text-gray-600 mb-6">Ақша жеткіліксіз</h2>
+                    <div class="space-y-1 mb-8 text-center">
+                        <p class="text-xs font-bold text-gray-800">Баланста: <span class="text-orange-600">${buyerBalance.toLocaleString()} ₸</span></p>
+                        <p class="text-xs font-bold text-gray-800">К оплате осталось: <span class="text-gray-950">${(price - buyerBalance).toLocaleString()} ₸</span></p>
+                    </div>
+                    <div class="bg-blue-50 p-4 rounded-2xl mb-8 font-black text-blue-600 text-[9px] uppercase tracking-tighter text-center">
+                        ПОПОЛНИТЕ КОШЕЛЕК В ПРОФИЛЕ, ЧТОБЫ СОВЕРШИТЬ ПОКУПКУ!
+                    </div>
+                    <button onclick="Swal.close()" class="w-full bg-orange-600 text-white py-4 rounded-2xl font-black uppercase text-xs">ПОНЯТНО</button>
+                </div>
+            `,
+            showConfirmButton: false,
+            customClass: { popup: 'rounded-[2.5rem] border-none shadow-2xl' }
+        });
+        return;
+    }
 
-            // 2. ОНЛАЙН ТӨЛЕМ БОЛСА (Kaspi/Halyk/Auto)
-            btn.innerText = "Оформление...";
-            btn.disabled = true;
+    // 3. ТӨЛЕМ ПРОЦЕСІ (ТЕК САЙТ ІШІНДЕ)
+    // Сатып алушының ақшасын шегеру
+    users[buyerIdx].userBalance -= price;
 
-            let users = JSON.parse(localStorage.getItem('users')) || [];
-            const userIndex = users.findIndex(u => u.phone && u.phone.includes(phone));
-            
-            if (userIndex !== -1) {
-                if (!users[userIndex].certificates) users[userIndex].certificates = [];
-                users[userIndex].certificates.push({
-                    id: Date.now(),
-                    code: uniqueNumber,
-                    amount: amount,
-                    wish: wish,
-                    date: new Date().toLocaleDateString(),
-                    style: document.getElementById('gift-card-preview').className 
-                });
-                localStorage.setItem('users', JSON.stringify(users));
+    // Алушыны табу және оған картаны бірден тіркеу
+    let receiverIdx = users.findIndex(u => u.phone && u.phone.includes(phone));
+    if (receiverIdx !== -1) {
+        if (!users[receiverIdx].certificates) users[receiverIdx].certificates = [];
+        
+        users[receiverIdx].certificates.push({
+            id: Date.now(),
+            code: uniqueNumber,
+            amount: amount,
+            wish: wish,
+            date: new Date().toLocaleDateString(),
+            style: document.getElementById('gift-card-preview').className 
+        });
+    }
 
-                // WhatsApp хабарламасы
-                const waPhone = "7" + phone;
-                const message = `Привет, ${name}! Тебе подарок от QulanShop на сумму ${Number(amount).toLocaleString()} ₸! 🎁\n\nСыйлықты көру және жүктеп алу үшін профиліңізге кіріп, "Менің сертификаттарым" бөліміне өтіңіз.`;
-                window.open(`https://wa.me/${waPhone}?text=${encodeURIComponent(message)}`);
+    // 4. САҚТАУ
+    localStorage.setItem('users', JSON.stringify(users));
+    localStorage.setItem('userBalance', users[buyerIdx].userBalance);
+    localStorage.setItem('currentUser', JSON.stringify(users[buyerIdx]));
 
-                // СТАНДАРТТЫ ALERT ОРНЫНА ӘДЕМІ POPUP
-                Swal.fire({
-                    title: 'Сәтті аяқталды! ✨',
-                    html: `
-                        <div class="text-center">
-                            <p class="text-sm text-gray-600 mb-4 font-medium uppercase tracking-wider">
-                                Сыйлық <span class="text-orange-600 font-black">${name}</span> есімді қолданушыға жіберілді.
-                            </p>
-                            <div class="bg-orange-50 p-4 rounded-2xl border border-orange-100 italic text-orange-800 text-[10px] font-bold uppercase tracking-tighter">
-                                Алушы сыйлықты өз профиліндегі "Менің сертификаттарым" бөлімінен көре алады.
-                            </div>
-                        </div>
-                    `,
-                    icon: 'success',
-                    confirmButtonText: 'Жақсы',
-                    confirmButtonColor: '#ea580c',
-                    customClass: {
-                        popup: 'rounded-[2.5rem]',
-                        confirmButton: 'px-10 py-3 rounded-xl font-black uppercase text-[10px] tracking-widest shadow-lg transition-transform active:scale-95'
-                    }
-                });
-            }
+    // Модальканы жабу
+    if (payModal) payModal.classList.add('hidden');
+    
+    // Сәттілік хабарламасы
+    Swal.fire({
+        title: 'СӘТТІ АЯҚТАЛДЫ! ✅',
+        text: `Сыйлық картасы ${name} есімді қолданушының профиліне жіберілді.`,
+        icon: 'success',
+        confirmButtonColor: '#ea580c',
+        customClass: { popup: 'rounded-[2.5rem]' }
+    });
 
-            // Форманы тазалау
-            btn.innerText = "Оформить карту";
-            btn.disabled = false;
-            document.getElementById('amount-input').value = "";
-            document.getElementById('rec-phone').value = "";
-            document.getElementById('user-status-box').classList.add('hidden');
-            currentPendingGift = null;
-        }
+    // Форманы тазалау
+    document.getElementById('amount-input').value = "";
+    document.getElementById('rec-phone').value = "";
+    document.getElementById('user-status-box').classList.add('hidden');
+    currentPendingGift = null;
+}
 
         function closePaymentModal() {
             document.getElementById('payment-modal').classList.add('hidden');

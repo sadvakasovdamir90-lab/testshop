@@ -475,6 +475,37 @@ window.addEventListener('load', () => {
     const inputVal = document.getElementById(inputId).value.trim();
     const isEmail = inputVal.includes('@');
 
+    // --- ЖАҢА: ТЕКСЕРУ БӨЛІМІ (Тек тіркелу кезінде жұмыс істейді) ---
+    if (mode === 'reg') {
+        let users = JSON.parse(localStorage.getItem('users')) || [];
+        const cleanInput = inputVal.replace(/\D/g, ''); // Тек цифрлар (номер үшін)
+
+        const isExist = users.find(u => {
+            if (isEmail) {
+                return u.email && u.email.toLowerCase() === inputVal.toLowerCase();
+            } else {
+                // Номердің соңғы 10 цифрын салыстыру (базадағы нөмірлер әртүрлі форматта болуы мүмкін)
+                const userPhoneClean = u.phone ? u.phone.replace(/\D/g, '').slice(-10) : "";
+                const inputPhoneClean = cleanInput.slice(-10);
+                return userPhoneClean === inputPhoneClean && userPhoneClean !== "";
+            }
+        });
+
+        if (isExist) {
+            Swal.fire({
+                title: 'Аккаунт бар!',
+                text: 'Бұл деректермен қолданушы тіркеліп қойған. Кіру экранына өтіңіз.',
+                icon: 'warning',
+                confirmButtonText: 'Кіруге өту',
+                confirmButtonColor: '#f26522'
+            }).then(() => {
+                switchMode('login'); // Логин экранына лақтыру
+            });
+            return; // ФУНКЦИЯНЫ ТОҚТАТУ (код жіберілмейді)
+        }
+    }
+    // ----------------------------------------------------------
+
     // Деректерді сақтау
     window.tempUser = {
         identifier: inputVal,
@@ -508,10 +539,8 @@ window.addEventListener('load', () => {
         });
     } else {
         // --- FIREBASE SMS АРҚЫЛ КОД ЖІБЕРУ ---
-        // Нөмірді форматтау (+7...)
         const phoneNumber = inputVal.startsWith('+') ? inputVal : '+7' + inputVal.replace(/\D/g, '').slice(-10);
         
-        // reCAPTCHA дайындау (Көрінбейтін режим)
         const appVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', { 
             'size': 'invisible' 
         });
@@ -519,7 +548,7 @@ window.addEventListener('load', () => {
         signInWithPhoneNumber(auth, phoneNumber, appVerifier)
             .then((result) => {
                 window.toggleLoading(false);
-                window.confirmationResult = result; // Кодты тексеру үшін сақтаймыз
+                window.confirmationResult = result; 
                 Swal.fire('Успешно!', 'Код отправлен по SMS! 📱', 'success');
                 window.switchMode('verify');
                 window.startTimer();
@@ -527,7 +556,6 @@ window.addEventListener('load', () => {
                 window.toggleLoading(false);
                 console.error("Firebase SMS Error:", error);
                 Swal.fire('Ошибка SMS', 'Проверьте номер или настройки Firebase: ' + error.message, 'error');
-                // Қате болса да экранды ауыстыру (тест үшін)
                 window.switchMode('verify');
                 window.startTimer();
             });
@@ -693,70 +721,84 @@ window.signInWithGoogle = function() {
 
         if (!existingUser) {
             Swal.fire({
-                title: '<span style="font-family: \'Inter\', sans-serif; font-weight: 900; color: #1e293b; text-transform: uppercase; letter-spacing: -0.5px;">Завершение регистрации</span>',
+                title: '<span style="font-family: \'Inter\', sans-serif; font-weight: 900; color: #1e293b; text-transform: uppercase;">Завершение регистрации</span>',
                 html: `
                     <div style="margin-top: 20px; text-align: left;">
-                        <label style="display: block; font-size: 11px; font-weight: 800; color: #94a3b8; text-transform: uppercase; margin-bottom: 8px; margin-left: 4px; letter-spacing: 0.5px;">Полное ФИО</label>
-                        <input id="swal-name" class="swal2-input" placeholder="Иван Иванов" value="${user.displayName || ''}" 
-                            style="width: 100%; margin: 0; padding: 15px; border-radius: 12px; border: 2px solid #f1f5f9; font-size: 14px; font-weight: 600; font-family: 'Inter', sans-serif; transition: all 0.3s;">
+                        <label class="swal-label">Полное ФИО</label>
+                        <input id="swal-name" class="swal2-input custom-input" placeholder="Иван Иванов" value="${user.displayName || ''}">
                         
-                        <label style="display: block; font-size: 11px; font-weight: 800; color: #94a3b8; text-transform: uppercase; margin-bottom: 8px; margin-top: 20px; margin-left: 4px; letter-spacing: 0.5px;">Номер телефона</label>
-                        <input id="swal-phone" class="swal2-input" placeholder="+7 (707) 000-00-00" 
-                            style="width: 100%; margin: 0; padding: 15px; border-radius: 12px; border: 2px solid #f1f5f9; font-size: 14px; font-weight: 600; font-family: 'Inter', sans-serif; transition: all 0.3s;">
+                        <label class="swal-label">Номер телефона</label>
+                        <input id="swal-phone" class="swal2-input custom-input" placeholder="+7 (707) 000-00-00">
                         
-                        <label style="display: block; font-size: 11px; font-weight: 800; color: #94a3b8; text-transform: uppercase; margin-bottom: 8px; margin-top: 20px; margin-left: 4px; letter-spacing: 0.5px;">Адрес проживания</label>
-                        <input id="swal-address" class="swal2-input" placeholder="Район, улица, дом" 
-                            style="width: 100%; margin: 0; padding: 15px; border-radius: 12px; border: 2px solid #f1f5f9; font-size: 14px; font-weight: 600; font-family: 'Inter', sans-serif; transition: all 0.3s;">
+                        <label class="swal-label">Адрес проживания</label>
+                        <input id="swal-address" class="swal2-input custom-input" placeholder="Район, улица, дом">
                     </div>
+                    <style>
+                        .swal-label { display: block; font-size: 11px; font-weight: 800; color: #94a3b8; text-transform: uppercase; margin-bottom: 8px; margin-top: 15px; margin-left: 4px; }
+                        .custom-input { width: 100% !important; margin: 0 !important; padding: 15px !important; border-radius: 12px !important; border: 2px solid #f1f5f9 !important; font-size: 14px !important; }
+                    </style>
                 `,
                 focusConfirm: false,
                 confirmButtonText: 'Создать аккаунт',
                 confirmButtonColor: '#f26522',
-                background: '#ffffff',
-                padding: '2rem',
-                borderRadius: '24px',
-                customClass: {
-                    confirmButton: 'custom-swal-button'
-                },
+                allowOutsideClick: false, // Тексеріс бітпейінше жабылмайды
                 preConfirm: () => {
                     const name = document.getElementById('swal-name').value.trim();
                     const phone = document.getElementById('swal-phone').value.trim();
                     const address = document.getElementById('swal-address').value.trim();
 
+                    // 1. Бос өрістерді тексеру
                     if (!name || !phone || !address) {
-                        Swal.showValidationMessage('Пожалуйста, заполните все поля');
+                        Swal.showValidationMessage('Барлық жолдарды толтырыңыз!');
                         return false;
                     }
+
+                    // 2. Номердің базада бар-жоғын тексеру (ҚАТАҢ)
+                    const cleanPhone = phone.replace(/\D/g, '').slice(-10);
+                    const phoneExists = users.find(u => u.phone && u.phone.replace(/\D/g, '').slice(-10) === cleanPhone);
+                    
+                    if (phoneExists) {
+                        Swal.showValidationMessage('Бұл номер бұрын тіркелген!');
+                        return false;
+                    }
+
                     return { name: name, phone: phone, address: address };
                 }
             }).then((res) => {
                 if (res.isConfirmed) {
                     const newUser = { 
                         id: user.uid, 
-                        name: res.value.name, // Бұл жерде name дұрыс сақталып тұр
+                        name: res.value.name, 
                         email: user.email, 
                         phone: res.value.phone, 
                         address: res.value.address, 
+                        userBalance: 500, // 🎁 Сыйлық 500 тг
+                        bonus: 0,
                         debt: 0, 
                         giftCards: [], 
                         photo: user.photoURL, 
-                        twoFactorEnabled: false 
+                        twoFactorEnabled: false,
+                        notifications: [{
+                            id: Date.now(),
+                            message: "Сәлем! Google арқылы сәтті тіркелдіңіз. Балансыңызға 500 ₸ қосылды! 🎁",
+                            date: new Date().toLocaleString(),
+                            isNew: true
+                        }]
                     };
                     
                     users.push(newUser); 
                     localStorage.setItem('users', JSON.stringify(users)); 
+                    localStorage.setItem('userBalance', 500);
                     
-                    // МАҢЫЗДЫ ӨЗГЕРІС: Тек ID емес, бүкіл newUser нысанын жібереміз
                     loginUser(newUser); 
                 }
             });
         } else {
-            // МАҢЫЗДЫ ӨЗГЕРІС: Тек ID емес, базадан табылған пайдаланушыны толық жібереміз
             loginUser(existingUser); 
         }
     }).catch((error) => {
-        console.error("Google Sign-In Error:", error);
-        Swal.fire('Ошибка', 'Не удалось войти через Google', 'error');
+        console.error("Google Error:", error);
+        Swal.fire('Қате', 'Google арқылы кіру сәтсіз аяқталды', 'error');
     });
 };
 

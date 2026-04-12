@@ -106,7 +106,7 @@
         </div>
     </main>
 
-    <div id="payment-modal" class="hidden fixed inset-0 bg-black/70 z-[2000] flex items-center justify-center p-4 backdrop-blur-md">
+   <div id="payment-modal" class="hidden fixed inset-0 bg-black/70 z-[2000] flex items-center justify-center p-4 backdrop-blur-md"> 
     <div class="bg-white rounded-[2.5rem] w-full max-w-md p-8 shadow-2xl relative border border-orange-100 animate-slide-up">
         <button onclick="closeAllModals()" class="absolute top-6 right-6 text-gray-400 hover:text-red-500"><i class="fas fa-times text-lg"></i></button>
         <h2 class="text-xl font-black italic text-gray-900 mb-8 uppercase text-center tracking-tighter">Оплата <span class="text-orange-600">заказа</span></h2>
@@ -581,6 +581,80 @@ function applyCheckoutPromo() {
     }
     
     calculateFinalPrice();
+}
+
+async function processOrderPayment() {
+    const totalText = document.getElementById('display-total')?.innerText || "0";
+    const price = parseInt(totalText.replace(/\D/g, ''));
+// Ақша шегерілгеннен кейін бірден шақыр:
+addToHistory(price, 'minus', `Заказ төлемі: #${Date.now().toString().slice(-5)}`);
+    const currentId = localStorage.getItem('currentUserId');
+    let users = JSON.parse(localStorage.getItem('users')) || [];
+    let userIdx = users.findIndex(u => String(u.id) === String(currentId));
+
+    if (userIdx === -1) return;
+    const user = users[userIdx];
+    const balance = Number(user.userBalance || 0);
+
+    // 1. БАЛАНСТЫ ТЕКСЕРУ
+    if (balance < price) {
+        // ... (Ақша жетпесе шығатын хабарлама коды осы жерде қалады)
+        return;
+    }
+
+    // 2. АҚШАНЫ ШЕГЕРУ
+    user.userBalance -= price;
+    
+    // 3. БАЗАНЫ ЖАҢАРТУ (localStorage)
+    localStorage.setItem('users', JSON.stringify(users));
+    localStorage.setItem('currentUser', JSON.stringify(user));
+    localStorage.setItem('userBalance', user.userBalance);
+
+    // 4. 🔥 МАҢЫЗДЫ: ЭКРАНДАҒЫ ЦИФРЛАРДЫ БІРДЕН ЖАҢАРТУ
+    // Егер экранда баланс көрсетіліп тұрған элементтер болса, соларды жаңартамыз
+    const balanceElements = document.querySelectorAll('.user-balance-text, #modal-wallet-balance, #profile-balance');
+    balanceElements.forEach(el => {
+        if (el.id === 'modal-wallet-balance') {
+            el.innerText = `Баланс: ${user.userBalance.toLocaleString()} ₸`;
+        } else {
+            el.innerText = `${user.userBalance.toLocaleString()} ₸`;
+        }
+    });
+
+    // 5. ТӨЛЕМДІ АЯҚТАУ
+    closeAllModals();
+    finishOrder("Q-Wallet", price.toLocaleString() + " ₸");
+
+    // Егер Профиль бетінде болсаң, бетті жаңарту (міндетті емес, бірақ сенімді)
+    // location.reload(); 
+}
+
+function addToHistory(amount, type, description) {
+    let currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    if (!currentUser) return;
+
+    // Егер тарих әлі жоқ болса, бос массив ашамыз
+    if (!currentUser.transactions) currentUser.transactions = [];
+
+    // Жаңа транзакция қосу
+    currentUser.transactions.unshift({
+        id: 'TRX' + Date.now(),
+        date: new Date().toLocaleString(),
+        amount: amount,
+        type: type, // 'minus' немесе 'plus'
+        description: description // мысалы: "Покупка: Наушники AirPods"
+    });
+
+    // LocalStorage жаңарту
+    localStorage.setItem('currentUser', JSON.stringify(currentUser));
+    
+    // Жалпы қолданушылар базасында да жаңарту
+    let users = JSON.parse(localStorage.getItem('users')) || [];
+    let idx = users.findIndex(u => String(u.id) === String(currentUser.id));
+    if (idx !== -1) {
+        users[idx].transactions = currentUser.transactions;
+        localStorage.setItem('users', JSON.stringify(users));
+    }
 }
 
 

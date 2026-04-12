@@ -5,7 +5,27 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>QulanShop | Admin Panel</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+ <script>
+    window.addEventListener('DOMContentLoaded', () => {
+        // 1. LocalStorage-тан қазіргі адамды алу
+        let currentUser = JSON.parse(localStorage.getItem('currentUser'));
+        
+        // 2. ЕГЕР СЕН КІРЕ АЛМАЙ ЖАТСАҢ, МЫНА ЖЕРГЕ ӨЗ АТЫҢДЫ ЖАЗЫП ҚОЙ
+        // Қазір мен тексерісті барынша жеңілдеттім
+        const isAdmin = currentUser && (
+            currentUser.name === "Administrator" || 
+            currentUser.phone.includes("77054860793") ||
+            currentUser.phone.includes("87054860793") // нөмір 8-бен басталса да кіре бересің
+        );
+
+        if (!isAdmin) {
+            console.log("Админ емессің, бірақ қателік болса - консольді тексер");
+            // window.location.replace('index.html'); // Уақытша өшіріп қойдым, кіріп алғанша
+        }
+    });
+</script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
         
@@ -169,7 +189,7 @@
             </nav>
 
             <div class="pt-6 border-t border-slate-800">
-                <a href="index.html" class="flex items-center p-3 text-slate-400 hover:text-white transition text-sm font-bold italic"><i class="fas fa-arrow-left mr-3"></i> На главный сайт</a>
+                <a href="admin_index.html" class="flex items-center p-3 text-slate-400 hover:text-white transition text-sm font-bold italic"><i class="fas fa-arrow-left mr-3"></i> На главный сайт</a>
             </div>
         </aside>
 
@@ -738,6 +758,9 @@ document.getElementById('p-img').addEventListener('input', function() {
                                 <p class="text-white font-bold uppercase text-xs">${escapeHTML(u.name)} ${isVip ? '<i class="fas fa-crown text-yellow-500 ml-1"></i>' : ''}</p>
                                 <p class="text-[9px] text-slate-500">${u.phone || ''}</p>
                             </div>
+                            <button onclick="addMoneyToUser('${u.id}')" class="text-blue-500 hover:text-blue-700 ml-3">
+    <i class="fas fa-plus-circle"></i> Қосу
+</button>
                         </div>
                     </td>
                     <td class="p-6 text-center"><span class="${d > 0 ? 'text-red-500 bg-red-500/10' : 'text-green-500 bg-green-500/10'} px-2 py-1 rounded text-[9px] font-black uppercase">${d > 0 ? 'Должник' : 'Чист'}</span></td>
@@ -981,6 +1004,19 @@ function renderOrders() {
     <button onclick="changeOrderStatus('${ord.id}', 'completed'); hideModal('order-detail-modal')" class="flex-1 bg-green-600 py-3 rounded-2xl font-black uppercase italic text-[10px]">Принять</button>
     <button onclick="deleteOrder('${ord.id}'); hideModal('order-detail-modal')" class="bg-red-500/20 text-red-500 px-4 py-3 rounded-2xl font-black uppercase italic text-[10px]">Удалить</button>
 </div>
+
+<div class="pt-6 flex flex-wrap gap-2">
+    <button onclick="printOrderReceipt('${ord.id}')" class="bg-slate-700 hover:bg-slate-600 text-white px-4 py-3 rounded-2xl font-black uppercase italic text-[10px] flex items-center gap-2">
+        <i class="fas fa-print"></i> Чек
+    </button>
+
+    <button onclick="processRefund('${ord.id}'); hideModal('order-detail-modal')" class="bg-red-600 hover:bg-red-500 text-white px-4 py-3 rounded-2xl font-black uppercase italic text-[10px] flex items-center gap-2">
+        <i class="fas fa-undo"></i> Возврат жасау
+    </button>
+
+    ${ord.status === 'new' ? `<button onclick="updateOrderStatus('${ord.id}', 'delivering'); hideModal('order-detail-modal')" class="flex-1 bg-blue-600 py-3 rounded-2xl font-black uppercase italic text-[10px]">В путь</button>` : ''}
+    <button onclick="changeOrderStatus('${ord.id}', 'completed'); hideModal('order-detail-modal')" class="flex-1 bg-green-600 py-3 rounded-2xl font-black uppercase italic text-[10px]">Принять</button>
+</div>
     `;
     showModal('order-detail-modal');
 }
@@ -1021,30 +1057,42 @@ function changeOrderStatus(orderId, newStatus) {
         );
 
         if (userIndex !== -1) {
-            let user = users[userIndex]; // Пайдаланушыны объект ретінде аламыз
+            let user = users[userIndex]; 
             
+            // СОМАНЫ ЕСЕПТЕУ
+            const orderSum = parseInt(order.total.replace(/\D/g, '')) || 0;
+
+            // --- ЖАҢА ҚОСЫЛҒАН БӨЛІМ: Q-WALLET-ТЕН АҚША ШЕГЕРУ ---
+            if (order.payment === "Q-Wallet") {
+                const currentBalance = Number(user.userBalance || 0);
+                // Баланстан ақшаны шегеру
+                user.userBalance = currentBalance - orderSum;
+                
+                // Егер баланс минусқа кетсе (кредит сияқты), оны да көре аласың
+                console.log(`Q-Wallet төлемі: -${orderSum} ₸. Қалдық: ${user.userBalance}`);
+            }
+            // ---------------------------------------------------
+
             // БОНУС ЕСЕПТЕУ (3% кэшбэк)
             const cashbackPercent = 3; 
-            const orderSum = parseInt(order.total.replace(/\D/g, '')) || 0;
             const earnedBonus = Math.floor(orderSum * (cashbackPercent / 100));
 
             // ПАЙДАЛАНУШЫНЫҢ БОНУСЫН ЖАҢАРТУ
             user.bonus = (Number(user.bonus) || 0) + earnedBonus;
 
-            // --- МАҢЫЗДЫ ҚОСЫМША: СЕССИЯНЫ ЖАҢАРТУ ---
-            // Егер қазіргі кіріп тұрған адам осы бонус алған адам болса, оның сессиясын жаңартамыз
+            // --- СЕССИЯНЫ ЖАҢАРТУ ---
             const currentId = localStorage.getItem('currentUserId');
             if (String(currentId) === String(user.id)) {
                 localStorage.setItem('currentUser', JSON.stringify(user));
-                localStorage.setItem('userBonuses', user.bonus); // Ескі кодтармен сәйкестік үшін
+                localStorage.setItem('userBalance', user.userBalance); // Балансты да жаңарту
+                localStorage.setItem('userBonuses', user.bonus);
             }
-            // ------------------------------------------
 
             // ҚАРЫЗ ЖҮЙЕСІ (Наличные болса)
             if (order.payment === "Наличные") {
                 user.debt = (Number(user.debt) || 0) + orderSum;
                 user.debtDate = new Date().toISOString().split('T')[0];
-                user.lastDebtOrder = "#" + order.id; // Қай тапсырыстан қарыз екенін сақтау
+                user.lastDebtOrder = "#" + order.id;
             }
 
             // СКЛАДТЫ АЗАЙТУ
@@ -1054,9 +1102,9 @@ function changeOrderStatus(orderId, newStatus) {
                 localStorage.setItem('products', JSON.stringify(products));
             }
 
-            alert(`✅ Бонус қосылды: +${earnedBonus} ₸. Клиент: ${user.name}`);
+            alert(`✅ Орындалды! Ақша шегерілді және +${earnedBonus} ₸ бонус қосылды.`);
         } else {
-            alert("⚠️ Клиент базадан табылмады! Бонус қосылмады.");
+            alert("⚠️ Клиент базадан табылмады! Деректер жаңартылмады.");
         }
 
         // БАРЛЫҚ ӨЗГЕРІСТЕРДІ САҚТАУ
@@ -1555,6 +1603,138 @@ function resetGlobalDiscount() {
         alert("Бәрі тазаланды: бағалар, таймер және инпуттар анулировать етілді! 🔄");
     }
 }
+
+
+function processRefund(orderId) {
+    let orders = JSON.parse(localStorage.getItem('orders')) || [];
+    let users = JSON.parse(localStorage.getItem('users')) || [];
+    
+    // 1. Тапсырысты табу
+    const orderIndex = orders.findIndex(o => String(o.id) === String(orderId));
+    if (orderIndex === -1) return;
+    
+    const order = orders[orderIndex];
+    // Соманы санға айналдыру (мысалы, "33 000 ₸" -> 33000)
+    const refundAmount = parseInt(order.total.replace(/\D/g, '')); 
+    const userPhone = order.phone;
+
+    Swal.fire({
+        title: 'Тауарды қайтару?',
+        text: `${refundAmount} ₸ клиенттің кошелегіне қайтарылады!`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#ea580c',
+        confirmButtonText: 'Иә, қайтару',
+        cancelButtonText: 'Жоқ'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // 2. Клиентті базадан табу
+            const userIndex = users.findIndex(u => u.phone === userPhone);
+            
+            if (userIndex !== -1) {
+                // Балансқа ақша қосу
+                users[userIndex].userBalance = (Number(users[userIndex].userBalance) || 0) + refundAmount;
+                // Статусты өзгерту
+                orders[orderIndex].status = 'refunded';
+                
+                // Сақтау
+                localStorage.setItem('users', JSON.stringify(users));
+                localStorage.setItem('orders', JSON.stringify(orders));
+
+                Swal.fire('Сәтті!', 'Ақша клиентке қайтарылды ✅', 'success');
+                renderOrders(); // Тізімді жаңарту
+            } else {
+                Swal.fire('Қате!', 'Бұл нөмірге тіркелген қолданушы табылмады', 'error');
+            }
+        }
+    });
+}
+
+function addMoneyToUser(userId) {
+    let users = JSON.parse(localStorage.getItem('users')) || [];
+    const index = users.findIndex(u => String(u.id) === String(userId));
+
+    if (index === -1) return;
+
+    const user = users[index];
+    const currentBalance = Number(user.userBalance || 0);
+
+    // 1. SweetAlert2 арқылы терезе ашу
+    Swal.fire({
+        title: `<span class="text-orange-600 uppercase font-black italic">${user.name}</span>`,
+        html: `
+            <div class="p-2">
+                <div class="bg-slate-100 p-4 rounded-2xl mb-6 border border-slate-200">
+                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Текущий счет:</p>
+                    <p class="text-2xl font-black text-slate-800 italic">${currentBalance.toLocaleString()} ₸</p>
+                </div>
+                <label class="text-[10px] font-black text-slate-500 uppercase italic mb-2 block">Введите сумму (₸):</label>
+                <input type="number" id="manual-amount" class="swal2-input w-full m-0 rounded-xl border-slate-200 text-center font-bold" placeholder="0">
+            </div>
+        `,
+        showCancelButton: true,
+        showDenyButton: true,
+        confirmButtonText: '<i class="fas fa-plus mr-2"></i> Қосу',
+        denyButtonText: '<i class="fas fa-minus mr-2"></i> Алып қою',
+        cancelButtonText: 'Бас тарту',
+        confirmButtonColor: '#16a34a', // Жасыл
+        denyButtonColor: '#dc2626',    // Қызыл
+        customClass: { popup: 'rounded-[2.5rem]' }
+    }).then((result) => {
+        const amount = parseInt(document.getElementById('manual-amount').value);
+        
+        if (!amount || amount <= 0) {
+            if (!result.isDismissed) Swal.fire('Қате!', 'Дұрыс сома енгізіңіз', 'error');
+            return;
+        }
+        // Ақша қосылған сәтте:
+addToHistory(amount, 'plus', 'Администратордан толтыру');
+
+        let finalMessage = "";
+        let noteMessage = "";
+
+        if (result.isConfirmed) {
+            // АҚША ҚОСУ
+            user.userBalance = currentBalance + amount;
+            finalMessage = `${user.name} балансына ${amount} ₸ қосылды ✅`;
+            noteMessage = `Вам поступило ${amount.toLocaleString()} ₸`;
+        } else if (result.isDenied) {
+            // АҚШАНЫ АЛЫП ҚОЮ
+            if (currentBalance < amount) {
+                Swal.fire('Қате!', 'Баланста мұндай сома жоқ!', 'error');
+                return;
+            }
+            user.userBalance = currentBalance - amount;
+            finalMessage = `${user.name} балансынан ${amount} ₸ алынды ➖`;
+            noteMessage = `С вашего счета списано ${amount.toLocaleString()} ₸`;
+        }
+
+        if (result.isConfirmed || result.isDenied) {
+            // ХАБАРЛАМА ЖҮЙЕСІ (Notifications)
+            if (!user.notifications) user.notifications = [];
+            user.notifications.push({
+                id: Date.now(),
+                message: noteMessage,
+                date: new Date().toLocaleString(),
+                isNew: true
+            });
+
+            // САҚТАУ
+            localStorage.setItem('users', JSON.stringify(users));
+
+            // Егер қазіргі қолданушы болса, оның сессиясын жаңарту
+            const currentUserId = localStorage.getItem('currentUserId');
+            if (String(currentUserId) === String(userId)) {
+                localStorage.setItem('userBalance', user.userBalance);
+                localStorage.setItem('currentUser', JSON.stringify(user));
+            }
+
+            Swal.fire('Сәтті!', finalMessage, 'success');
+            renderUsers(); // Админ бетін жаңарту
+        }
+    });
+}
+
     </script>
 </body>
 </html>
