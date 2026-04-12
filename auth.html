@@ -579,7 +579,7 @@ window.handleConfirmCode = function() {
         }
     }
 
-   function saveFinalUser() {
+ function saveFinalUser() {
     let users = JSON.parse(localStorage.getItem('users')) || [];
     const urlParams = new URLSearchParams(window.location.search);
     const referrerId = urlParams.get('ref');
@@ -592,26 +592,43 @@ window.handleConfirmCode = function() {
         address: window.tempUser.address || "", 
         password: window.tempUser.password, 
         userBalance: 0, 
+        bonus: 0,
         debt: 0, 
+        referralCount: 0,
+        referralEarned: 0,
         giftCards: [], 
         twoFactorEnabled: false 
     };
 
     if (referrerId) {
-        // 1. БАЗАДАҒЫ ТІЗІМДІ ЖАҢАРТУ
         const refIndex = users.findIndex(u => String(u.id) === String(referrerId));
-        if (refIndex !== -1 && !users[refIndex].referralClaimed) {
-            users[refIndex].userBalance = (users[refIndex].userBalance || 0) + 500;
-            users[refIndex].referralEarned = 500;
-            users[refIndex].referralClaimed = true;
+        
+        // 1. БҰРЫН ТІРКЕЛМЕГЕНІН ТЕКСЕРУ
+        const alreadyExists = users.find(u => 
+            (u.phone && u.phone === newUser.phone && newUser.phone !== "") || 
+            (u.email && u.email === newUser.email && newUser.email !== "")
+        );
+
+        if (refIndex !== -1 && !alreadyExists) {
+            // 2. БАЗАДАҒЫ (ARRAY) БАЛАНСТЫ ЖАҢАРТУ
+            // Бұл ең маңызды жері! Шақырушы кіргенде осы жерден оқиды.
+            users[refIndex].userBalance = (Number(users[refIndex].userBalance) || 0) + 500;
+            users[refIndex].referralEarned = (Number(users[refIndex].referralEarned) || 0) + 500;
+            users[refIndex].referralCount = (Number(users[refIndex].referralCount) || 0) + 1;
             
-            // 2. ЕГЕР СЕН (ШАҚЫРУШЫ) ҚАЗІР ЖҮЙЕДЕ ОТЫРСАҢ, СЕНІҢ БАЛАНСЫҢДЫ БІРДЕН ЖАҢАРТУ
-            // Бұл сенің 'Мой кошелек' бөліміндегі ақшаны өзгертеді
+            if(!users[refIndex].referralHistory) users[refIndex].referralHistory = [];
+            users[refIndex].referralHistory.push({
+                from: newUser.name,
+                date: new Date().toLocaleString(),
+                amount: 500
+            });
+
+            // 3. ЕГЕР ШАҚЫРУШЫ ҚАЗІР ОСЫ БРАУЗЕРДЕ КІРІП ТҰРСА
             const currentId = localStorage.getItem('currentUserId');
             if (String(currentId) === String(referrerId)) {
-                let currentBalance = Number(localStorage.getItem('userBalance')) || 0;
-                localStorage.setItem('userBalance', currentBalance + 500);
+                localStorage.setItem('userBalance', users[refIndex].userBalance);
             }
+            console.log("Бонус базаға жазылды! ✅");
         }
     }
 

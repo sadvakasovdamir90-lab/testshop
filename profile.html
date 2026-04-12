@@ -790,35 +790,58 @@
     </div>
 </div>
 
-<div id="payment-modal" class="hidden fixed inset-0 bg-black/60 z-[200] flex items-center justify-center p-4 backdrop-blur-sm">
-    <div class="bg-white rounded-[2.5rem] max-w-md w-full p-8 shadow-2xl relative border border-orange-100">
-        <button onclick="closePayment(false)" class="absolute top-6 right-6 text-gray-400 hover:text-black transition-transform hover:rotate-0">
-            <i class="fas fa-times text-xl"></i>
+<div id="payment-modal" class="hidden fixed inset-0 bg-black/70 z-[1000] flex items-center justify-center p-4 backdrop-blur-md">
+    <div class="bg-white rounded-[2rem] md:rounded-[2.5rem] w-full max-w-md p-6 md:p-8 shadow-2xl relative border border-orange-100 animate-modal">
+        
+        <button onclick="closePayment(false)" class="absolute top-4 right-4 md:top-6 md:right-6 text-gray-400 hover:text-red-500 transition-all p-2 active:scale-90">
+            <i class="fas fa-times text-xl md:text-lg"></i>
         </button>
-        <h2 class="text-2xl font-black italic text-orange-600 mb-6 uppercase text-center">Оплата задолженности</h2>
-        <div class="space-y-4 mb-8">
-            <div class="p-4 bg-orange-50 rounded-2xl border border-orange-100 text-center">
-                <p class="text-[10px] text-orange-400 font-bold uppercase mb-1">Получатель:</p>
-                <p class="font-bold text-gray-800 italic uppercase">ИП "QulanShop"</p>
-            </div>
-            <div class="grid grid-cols-2 gap-4">
-                <a href="https://kaspi.kz" target="_blank" class="flex flex-col items-center p-5 border-2 border-gray-50 rounded-3xl hover:border-red-500 transition-all hover:bg-red-50 group">
-                    <img src="images/kaspi.png" class="h-16 mb-2" alt="Kaspi">
-                    <span class="text-[12px] font-black text-red-600 uppercase">Kaspi Kz</span>
-                </a>
-                <a href="https://halykbank.kz" target="_blank" class="flex flex-col items-center p-5 border-2 border-gray-50 rounded-3xl hover:border-green-500 transition-all hover:bg-green-50 group">
-                    <img src="images/halyk.png" class="h-16 mb-2" alt="Halyk">
-                    <span class="text-[12px] font-black text-green-600 uppercase">Halyk Bank</span>
-                    
-                <a href="НАПРАВЛЕНИЯ ДОЛГА" target="_blank" class="flex flex-col items-center p-5 border-2 border-gray-50 rounded-3xl hover:border-red-500 transition-all hover:bg-red-50 group">
-                    <span class="text-[12px] font-black text-red-600 italic uppercase">НАЛИЧНЫЕ</span>
-                </a>
+        
+        <h2 class="text-lg md:text-xl font-black italic text-gray-900 mb-6 uppercase text-center tracking-tighter leading-tight">
+            Погашение <span class="text-orange-600">задолженности</span>
+        </h2>
 
-                </a>
-            </div>
+        <div class="bg-gray-50 p-4 md:p-5 rounded-[1.5rem] md:rounded-[2rem] border border-gray-100 mb-5 md:mb-6">
+            <label class="text-[8px] md:text-[9px] font-black uppercase text-gray-400 mb-2 block tracking-widest italic">Сумма к оплате (₸):</label>
+            <input type="number" id="partial-pay-amount" placeholder="Введите сумму" 
+                   class="w-full bg-white border-2 border-orange-100 rounded-xl md:rounded-2xl py-3 md:py-4 px-5 md:px-6 text-xl md:text-2xl font-black text-gray-950 outline-none focus:border-orange-500 transition-all tracking-tighter">
+            <p class="text-[7px] md:text-[8px] text-gray-400 mt-2 uppercase font-bold italic">* Пустое поле = оплата всего долга</p>
         </div>
-        <p class="text-[11px] text-gray-400 text-center italic mb-6">После оплаты отправьте скриншот чека в чат поддержки. ИП зарегистрировано в с. Кулан.</p>
-        <button onclick="closePayment(true)" class="w-full bg-orange-600 text-white py-4 rounded-2xl font-bold hover:bg-orange-700 shadow-lg uppercase tracking-widest">Я оплатил(а)</button>
+        
+        <div class="space-y-3 md:space-y-4">
+            <div class="group w-full flex items-center justify-between p-4 md:p-5 border-2 border-orange-500 bg-orange-50 rounded-2xl md:rounded-3xl transition-all">
+                <div class="flex items-center gap-3 md:gap-4">
+                    <div class="w-10 h-10 md:w-12 md:h-12 bg-orange-600 rounded-xl md:rounded-2xl flex items-center justify-center text-white shadow-lg">
+                        <i class="fas fa-wallet text-lg md:text-xl"></i>
+                    </div>
+                    <div class="flex flex-col items-start">
+                        <span class="font-black italic uppercase text-[10px] md:text-xs text-gray-900">Кошелек Qulan</span>
+                        <span id="modal-wallet-balance" class="text-[9px] md:text-[10px] text-orange-600 font-bold mt-0.5 md:mt-1 italic">Баланс: 0 ₸</span>
+                    </div>
+                </div>
+                <div class="w-5 h-5 md:w-6 md:h-6 rounded-full bg-orange-600 flex items-center justify-center text-white text-[8px] md:text-[10px]">
+                    <i class="fas fa-check"></i>
+                </div>
+            </div>
+
+            <button onclick="window.open('https://wa.me/77054860793')" class="group w-full flex items-center justify-between p-4 md:p-5 border-2 border-gray-50 rounded-2xl md:rounded-3xl hover:border-green-500 active:bg-gray-100 transition-all">
+                <div class="flex items-center gap-3 md:gap-4">
+                    <div class="w-10 h-10 md:w-12 md:h-12 bg-gray-100 group-hover:bg-green-600 rounded-xl md:rounded-2xl flex items-center justify-center text-gray-400 group-hover:text-white transition-colors">
+                        <i class="fas fa-money-bill-wave text-lg md:text-xl"></i>
+                    </div>
+                    <div class="flex flex-col items-start text-left">
+                        <span class="font-black italic uppercase text-[10px] md:text-xs text-gray-900">Наличные</span>
+                        <span class="text-[8px] md:text-[9px] text-gray-400 font-bold mt-0.5 md:mt-1 uppercase italic">Связаться в WhatsApp</span>
+                    </div>
+                </div>
+                <i class="fab fa-whatsapp text-green-500 text-xl md:text-2xl"></i>
+            </button>
+        </div>
+
+        <button onclick="payDebtWithWallet()" class="w-full mt-6 md:mt-8 bg-orange-600 text-white py-4 md:py-5 rounded-[1.5rem] md:rounded-[2rem] font-black uppercase italic text-[10px] md:text-[11px] shadow-xl active:scale-95 transition-all flex items-center justify-center gap-3">
+            <span>Подтвердить оплату</span>
+            <i class="fas fa-arrow-right text-[9px] md:text-[10px]"></i>
+        </button>
     </div>
 </div>
 
@@ -1181,43 +1204,47 @@ function processTopUp(method) {
     }
 }
 
-        // --- 2. GEMINI AI CHAT ENGINE ---
-        const GEMINI_API_KEY = "AIzaSyBU1eWfKxsuIJshtMzUlR4YKucfuRTvWog"; 
-        const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+      async function queryGemini(userMessage) {
+    const GEMINI_API_KEY = "AIzaSyBJyIA13WXX0xEYk7gM1oPs8h_K4W1M8PM"; 
+    // Назар аудар: URL-ден модель атын алып тастап, тек жалпы нүктені қалдырдық
+    const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
 
-        function toggleAIChat() { 
-            document.getElementById('ai-chat-window').classList.toggle('hidden'); 
+    const storedData = localStorage.getItem('qulanProducts'); 
+    const products = storedData ? JSON.parse(storedData) : [];
+    const productContext = products.map(p => `- ${p.name}: ${p.price}₸`).join('\n');
+
+    try {
+        const response = await fetch(GEMINI_URL, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                contents: [{
+                    parts: [{
+                        text: `Сен QulanShop сатушысысың. Мына тауарлар тізіміне қарап қазақша жауап бер:\n${productContext}\n\nКлиент: ${userMessage}`
+                    }]
+                }]
+            })
+        });
+
+        const data = await response.json();
+
+        // Егер бұл да 404 берсе, біз "gemini-pro" деген ең алғашқы модельді қолданамыз
+        if (data.error && data.error.code === 404) {
+             const fallbackUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${GEMINI_API_KEY}`;
+             const fallbackRes = await fetch(fallbackUrl, {
+                 method: "POST",
+                 headers: { "Content-Type": "application/json" },
+                 body: JSON.stringify({ contents: [{ parts: [{ text: userMessage }] }] })
+             });
+             const fallbackData = await fallbackRes.json();
+             return fallbackData.candidates[0].content.parts[0].text;
         }
 
-        async function queryGemini(userMessage) {
-            const systemInstruction = `
-                Ты — Qulan AI, официальный помощник интернет-магазина QulanShop (село Кулан). 
-                Твоя задача: помогать клиентам. 
-                Информация о магазине: 
-                - График: 09:00 - 20:00 (ежедневно). 
-                - Доставка: по всему району Кулан. 
-                - Владелец: ИП "QulanShop".
-                - Оплата: Kaspi Pay, Halyk Bank.
-                Отвечай кратко, дружелюбно, используй эмодзи. 
-                Если клиент спрашивает на казахском, отвечай на казахском. Если на русском — на русском.
-                Текст пользователя: ${userMessage}
-            `;
-
-            try {
-                const response = await fetch(GEMINI_URL, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        contents: [{ parts: [{ text: systemInstruction }] }]
-                    })
-                });
-                const data = await response.json();
-                return data.candidates[0].content.parts[0].text;
-            } catch (e) {
-                return "Кешіріңіз, байланыс үзілді. Қайта байқап көріңізші. 🛠️";
-            }
-        }
-
+        return data.candidates[0].content.parts[0].text;
+    } catch (e) {
+        return "Жүйе қайта жүктелуде, сәлден соң жазыңыз. ✨";
+    }
+}
         async function sendMessage() {
             const input = document.getElementById('chat-input');
             const container = document.getElementById('chat-messages');
@@ -1806,6 +1833,125 @@ function uploadAvatar(input) {
             document.body.style.overflow = 'auto';
         }
 
+        // --- 13. ҚАРЫЗДЫ ӨТЕУ ЖҮЙЕСІ ---
+
+// Модальканы ашу
+function openPayment() {
+    const modal = document.getElementById('payment-modal');
+    const balance = localStorage.getItem('userBalance') || 0;
+    const balanceEl = document.getElementById('modal-wallet-balance');
+    
+    if (balanceEl) balanceEl.innerText = `Баланс: ${Number(balance).toLocaleString()} ₸`;
+    
+    modal.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+}
+
+// Модальканы жабу
+function closePayment(isPaid = false) {
+    const modal = document.getElementById('payment-modal');
+    if (modal) {
+        modal.classList.add('hidden');
+    }
+    document.body.style.overflow = 'auto';
+}
+
+// Төлем жасау және ақшаны тексеру
+async function payDebtWithWallet() {
+    const currentId = localStorage.getItem('currentUserId');
+    let users = JSON.parse(localStorage.getItem('users')) || [];
+    let userIndex = users.findIndex(u => String(u.id) === String(currentId));
+
+    if (userIndex === -1) return;
+
+    const user = users[userIndex];
+    const totalDebt = Number(user.debt || 0);
+    const balance = Number(user.userBalance || 0);
+    
+    // Инпуттан соманы аламыз
+    const payInput = document.getElementById('partial-pay-amount');
+    let amountToPay = payInput.value ? Number(payInput.value) : totalDebt;
+
+    // 1. Соманың дұрыстығын тексеру
+    if (amountToPay <= 0) {
+        Swal.fire({ text: 'Введите сумму больше 0', icon: 'warning', target: document.getElementById('payment-modal') });
+        return;
+    }
+
+    if (amountToPay > totalDebt) {
+        Swal.fire({ text: 'Сумма превышает ваш долг', icon: 'error', target: document.getElementById('payment-modal') });
+        return;
+    }
+
+    // 2. Балансты тексеру
+    if (balance < amountToPay) {
+        Swal.fire({
+            target: document.getElementById('payment-modal'),
+            html: `
+                <div class="p-2 text-center">
+                    <div class="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-4"><i class="fas fa-times text-red-500 text-2xl"></i></div>
+                    <h2 class="text-lg font-black uppercase text-gray-950 mb-2">ОШИБКА!</h2>
+                    <p class="text-[10px] font-bold text-gray-400 uppercase mb-4">Недостаточно средств</p>
+                    <div class="bg-gray-50 p-4 rounded-2xl border mb-4 text-left">
+                        <div class="flex justify-between text-[10px] mb-1"><span>БАЛАНС:</span><span class="font-black text-red-600">${balance.toLocaleString()} ₸</span></div>
+                        <div class="flex justify-between text-[10px]"><span>НУЖНО:</span><span class="font-black">${amountToPay.toLocaleString()} ₸</span></div>
+                    </div>
+                    <button onclick="Swal.close()" class="w-full bg-orange-600 text-white py-3 rounded-xl font-black uppercase text-[10px]">ПОНЯТНО</button>
+                </div>
+            `,
+            showConfirmButton: false,
+            customClass: { popup: 'rounded-[2rem]' }
+        });
+        return;
+    }
+
+    // 3. Төлемді растау
+    const confirm = await Swal.fire({
+        target: document.getElementById('payment-modal'),
+        title: 'ПОДТВЕРЖДЕНИЕ',
+        text: `Списать ${amountToPay.toLocaleString()} ₸?`,
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#ea580c',
+        confirmButtonText: 'ДА, ОПЛАТИТЬ',
+        cancelButtonText: 'ОТМЕНА',
+        customClass: { popup: 'rounded-[2rem]' }
+    });
+
+    if (confirm.isConfirmed) {
+        // Есептеу
+        users[userIndex].userBalance -= amountToPay;
+        users[userIndex].debt -= amountToPay;
+
+        // Егер қарыз толық жабылса
+        if (users[userIndex].debt <= 0) {
+            users[userIndex].debt = 0;
+            users[userIndex].debtDate = null;
+        }
+
+        // Сақтау
+        localStorage.setItem('users', JSON.stringify(users));
+        localStorage.setItem('currentUser', JSON.stringify(users[userIndex]));
+        localStorage.setItem('userBalance', users[userIndex].userBalance);
+
+        // Интерфейсті жаңарту
+        renderWallet();
+        updateDebtStatus();
+        updateMenuBadges();
+        updateNavBalance();
+        payInput.value = '';
+        closePayment(false);
+
+        Swal.fire({
+            icon: 'success',
+            title: 'ОПЛАТА ПРИНЯТА',
+            text: `Остаток долга: ${users[userIndex].debt.toLocaleString()} ₸`,
+            confirmButtonColor: '#ea580c',
+            customClass: { popup: 'rounded-[2rem]' }
+        });
+    }
+}
+
         async function downloadPDF(cert) {
             const element = document.getElementById('pdf-receipt');
             const btn = document.getElementById('download-pdf-btn');
@@ -2052,5 +2198,6 @@ showTab = function(event, tabId) {
     if (typeof originalShowTabWithRef === 'function') originalShowTabWithRef(event, tabId);
     if (tabId === 'tab-referral') initReferralSystem();
 };
+
     </script>
 </html>
