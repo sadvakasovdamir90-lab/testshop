@@ -177,6 +177,40 @@
     pointer-events: auto;
 }
 
+
+/* Мобильді адаптация */
+@media (max-width: 768px) {
+    #notify-dropdown {
+        position: fixed !important;
+        top: auto !important;
+        bottom: 20px !important; /* Астыңғы мәзірден жоғары */
+        left: 15px !important;
+        right: 15px !important;
+        width: auto !important;
+        max-width: none !important;
+        border-radius: 2.5rem !important;
+    }
+}
+
+/* Категория чиптері */
+.notify-tab {
+    font-size: 8px; font-weight: 900; text-transform: uppercase;
+    padding: 7px 14px; border-radius: 14px; background: #f1f5f9;
+    color: #94a3b8; cursor: pointer; white-space: nowrap; transition: 0.3s;
+}
+.notify-tab.active { background: #ea580c; color: white; box-shadow: 0 5px 15px rgba(234,88,12,0.2); }
+
+/* Хабарлама карточкасы */
+.notify-card {
+    background: #f8fafc; border: 1px solid #f1f5f9;
+    border-radius: 2rem; padding: 15px; cursor: pointer; transition: 0.2s;
+}
+.notify-card:hover { border-color: #ea580c; background: white; transform: translateY(-2px); }
+
+/* Скролл жасыру */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.custom-scroll::-webkit-scrollbar { width: 3px; }
+.custom-scroll::-webkit-scrollbar-thumb { background: #f1f5f9; }
     </style>
 </head>
 <body class="bg-gray-50 font-sans text-gray-800">
@@ -221,6 +255,26 @@
             <span class="text-[9px] md:text-[10px] mt-1 font-medium italic">Избранное</span>
         </button>
 
+<div id="notify-wrapper" class="hidden relative flex flex-col items-center">
+        <button onclick="toggleNotifyMenu()" class="relative flex flex-col items-center outline-none group">
+        <div class="relative">
+            <i class="far fa-bell text-xl md:text-2xl transition-transform group-active:scale-90 text-gray-600"></i>
+            <div id="notify-dot" class="hidden absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-red-600 rounded-full border-2 border-white animate-pulse"></div>
+        </div>
+        <span class="text-[9px] md:text-[10px] mt-1 font-bold italic uppercase tracking-tighter">Хабарлама</span>
+    </button>
+
+    <div id="notify-dropdown" class="hidden absolute top-full right-0 mt-4 w-[320px] bg-white rounded-[2.5rem] shadow-2xl border border-gray-100 z-[9999] overflow-hidden transform origin-top-right transition-all">
+        <div class="p-6 border-b border-gray-50 bg-gray-50/50">
+            <h4 class="font-black italic uppercase text-[12px] tracking-widest text-slate-800">Центр уведомлений</h4>
+            <div class="flex gap-2 mt-3 overflow-x-auto no-scrollbar" id="notify-tabs"></div>
+        </div>
+        <div id="notify-list" class="max-h-[380px] overflow-y-auto p-4 space-y-3 bg-white custom-scroll">
+            <div class="py-12 text-center text-gray-300 italic text-[10px] font-bold uppercase">Хабарламалар жоқ</div>
+        </div>
+    </div>
+</div>
+
         <button onclick="checkAuth('cart.html')" class="flex flex-col items-center hover:text-orange-600 transition text-gray-600 relative">
             <i class="fas fa-shopping-cart text-lg md:text-xl"></i>
             <span class="text-[9px] md:text-[10px] mt-1 font-medium italic">Корзина</span>
@@ -238,6 +292,8 @@
                class="w-full h-10 bg-gray-50 md:bg-white border-2 border-gray-100 rounded-xl pl-10 pr-4 outline-none focus:border-orange-500 transition text-sm md:text-base" 
                placeholder="Поиск товаров...">
     </div>
+
+    
 </div>
 </header>
 
@@ -1129,8 +1185,120 @@ function filterByCategory(categoryName) {
     toggleCategories();
 }
 
+// 1. Тіркелгенін тексеріп, батырманы көрсету
+document.addEventListener('DOMContentLoaded', () => {
+    const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+    const wrapper = document.getElementById('notify-wrapper');
+    
+    if (isLoggedIn && wrapper) {
+        wrapper.classList.remove('hidden'); // Тек тіркелгенде көрінеді
+        updateNotifyBadge();
+    }
+});
+
+// --- УВЕДОМЛЕНИЯ ЛОГИКАСЫ ---
+
+// 1. Менюді ашу/жабу функциясы
+function toggleNotifyMenu() {
+    const dropdown = document.getElementById('notify-dropdown');
+    if (!dropdown) return; // Егер терезе табылмаса, тоқтату
+
+    dropdown.classList.toggle('hidden');
+
+    // Егер меню ашылса
+    if (!dropdown.classList.contains('hidden')) {
+        // Қызыл нүктені өшіру
+        const dot = document.getElementById('notify-dot');
+        if (dot) dot.classList.add('hidden');
+        
+        // Хабарламаларды экранға шығару
+        renderNotifyContent('all');
+    }
+}
+
+// 2. Хабарламаларды және категорияларды шығару
+function renderNotifyContent(activeTab) {
+    const listContainer = document.getElementById('notify-list');
+    const tabsContainer = document.getElementById('notify-tabs');
+    if (!listContainer || !tabsContainer) return;
+
+    // LocalStorage-тан хабарламаларды алу
+    let list = JSON.parse(localStorage.getItem('qulanshop_notifications')) || [];
+
+    // Категорияларды жинау
+    const categories = ['all', ...new Set(list.map(n => n.category))];
+    
+    // Категория табтарын жасау
+    tabsContainer.innerHTML = categories.map(cat => {
+        const count = cat === 'all' ? list.length : list.filter(n => n.category === cat).length;
+        const label = cat === 'all' ? 'Бәрі' : cat;
+        return `<span onclick="event.stopPropagation(); renderNotifyContent('${cat}')" 
+                class="notify-tab ${activeTab === cat ? 'active' : ''}">${label} (${count})</span>`;
+    }).join('');
+
+    // Тізімді фильтрлеу
+    const filtered = activeTab === 'all' ? list : list.filter(n => n.category === activeTab);
+
+    if (filtered.length === 0) {
+        listContainer.innerHTML = `<div class="py-12 text-center text-gray-300 italic text-[10px] font-bold uppercase tracking-widest">Хабарлама жоқ</div>`;
+        return;
+    }
+
+    // Хабарламаларды шығару
+    listContainer.innerHTML = filtered.reverse().map(n => `
+        <div onclick="handleNotifyClick('${n.link}')" class="notify-card group animate__animated animate__fadeInInUp">
+            <div class="flex justify-between items-center mb-1">
+                <span class="text-[8px] font-black text-orange-600 uppercase italic tracking-widest">${n.category || 'Жалпы'}</span>
+                <span class="text-[8px] text-gray-300 font-bold italic">${n.time || ''}</span>
+            </div>
+            <p class="text-[12px] font-bold text-slate-700 leading-tight uppercase italic group-hover:text-orange-600 transition-colors">
+                ${n.message}
+            </p>
+        </div>
+    `).join('');
+}
+
+// 3. Хабарламаға басқанда сілтемеге лақтыру (Redirect)
+function handleNotifyClick(link) {
+    if (link && link !== '#') {
+        window.location.href = link;
+    }
+}
+
+// 4. Терезеден тыс жерді басқанда жабылуы үшін
+window.addEventListener('click', (e) => {
+    const dropdown = document.getElementById('notify-dropdown');
+    const wrapper = document.getElementById('notify-wrapper');
+    if (dropdown && !dropdown.classList.contains('hidden') && !wrapper.contains(e.target)) {
+        dropdown.classList.add('hidden');
+    }
+});
 
 
+window.addEventListener('storage', (e) => {
+    // Егер сигнал келсе
+    if (e.key === 'global_push_signal' && e.newValue) {
+        const data = JSON.parse(e.newValue);
+        
+        // Тек тіркелген қолданушы болса ғана сақтаймыз
+        if (localStorage.getItem('isLoggedIn') === 'true') {
+            let list = JSON.parse(localStorage.getItem('qulanshop_notifications')) || [];
+            
+            // Жаңа хабарламаны тізімге қосу
+            list.push(data);
+            localStorage.setItem('qulanshop_notifications', JSON.stringify(list));
+            
+            // Қызыл нүктені жағу
+            const dot = document.getElementById('notify-dot');
+            if (dot) dot.classList.remove('hidden');
+            
+            // Егер iPhone стиліндегі Push болса, оны да көрсету
+            if (typeof showMobileStyledPush === 'function') {
+                showMobileStyledPush(data.message);
+            }
+        }
+    }
+});
 
 </script>
 

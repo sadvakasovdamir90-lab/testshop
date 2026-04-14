@@ -132,6 +132,34 @@
         }
 
         .overlay.active { display: block; }
+
+
+        /* SweetAlert2-нің артық скроллдарын құрту */
+.swal2-shown {
+    padding-right: 0 !important;
+}
+
+body.swal2-height-auto {
+    height: 100% !important;
+}
+
+/* Нағыз iPhone Push стиліндегі контейнер */
+.mobile-push-popup {
+    border-radius: 1.5rem !important; /* Жұмсақ бұрыштар */
+    padding: 10px 15px !important;
+    border: none !important;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1) !important;
+    width: 90% !important; /* Экранның еніне қарай икемделеді */
+    max-width: 400px !important;
+    margin-top: 10px !important;
+    overflow: hidden !important; /* Ішіндегі заттар сыртқа шықпайды */
+}
+
+/* Хабарламаның мәтіні ұзын болса, автоматты түрде келесі жолға түседі */
+.mobile-push-popup .swal2-html-container {
+    margin: 0 !important;
+    overflow: visible !important;
+}
     </style>
 </head>
 <body class="custom-scroll">
@@ -176,6 +204,10 @@
                 <button onclick="openTab(event, 'tab-people')" class="sidebar-link w-full flex items-center p-3 rounded-xl hover:bg-slate-800 transition font-bold text-sm">
                     <i class="fas fa-user-edit mr-3 w-5 text-center"></i> Редактор имен
                 </button>
+                 <button onclick="openTab(event, 'tab-notifications')" class="sidebar-link w-full flex items-center p-3 rounded-xl hover:bg-slate-800 transition font-bold text-sm">
+                        <i class="fas fa-bullhorn mr-3 w-5 text-center text-wite-500"></i> Рассылка (Push)
+                </button>
+                
                 <!-- BACKUP БАТЫРМАСЫ (ОСЫ ЖЕРГЕ ҚОЙ) -->
 <div class="pt-4 mt-4 border-t border-slate-800 space-y-2">
     <button onclick="downloadBackup()" class="w-full text-left p-3 text-[10px] font-black uppercase text-blue-400 hover:bg-blue-500/10 rounded-xl transition">
@@ -426,8 +458,94 @@
                     </table>
                 </div>
             </div>
+
+
+            <div id="tab-notifications" class="tab-content space-y-6">
+    <h2 class="text-3xl font-black italic uppercase text-orange-500 mb-6 tracking-tighter">Управление уведомлениями</h2>
+    
+    <div class="bg-[#1e293b] p-8 rounded-[2.5rem] border border-slate-800 shadow-2xl relative overflow-hidden">
+        <div class="absolute -right-10 -top-10 w-40 h-40 bg-orange-600/10 rounded-full blur-3xl"></div>
+
+        <div class="relative z-10 space-y-6">
+            <div>
+                <label class="text-[10px] font-black text-slate-500 uppercase ml-2 tracking-widest italic mb-3 block">Выберите шаблон сообщения</label>
+                <div class="flex flex-wrap gap-2">
+                    <button onclick="setNotifyTemplate('🛍️ Жаңа тауарлар қосылды! Таңдауға асығыңыз.')" class="bg-slate-800 hover:bg-orange-600/20 hover:border-orange-500/50 border border-slate-700 text-[10px] font-black px-4 py-2 rounded-xl transition-all uppercase italic text-slate-300">New Items</button>
+                    <button onclick="setNotifyTemplate('🔥 Мега жеңілдіктер басталды! Тек бүгін 50%-ға дейін.')" class="bg-slate-800 hover:bg-orange-600/20 hover:border-orange-500/50 border border-slate-700 text-[10px] font-black px-4 py-2 rounded-xl transition-all uppercase italic text-slate-300">Mega Sale</button>
+                    <button onclick="setNotifyTemplate('🎁 Сізге жаңа бонус түсті! Профильден тексеріңіз.')" class="bg-slate-800 hover:bg-orange-600/20 hover:border-orange-500/50 border border-slate-700 text-[10px] font-black px-4 py-2 rounded-xl transition-all uppercase italic text-slate-300">Bonuses</button>
+                </div>
+            </div>
+
+            <div class="space-y-2">
+                <label class="text-[10px] font-black text-slate-500 uppercase ml-2 tracking-widest italic block">Текст уведомления</label>
+                <textarea id="admin-notify-text" rows="4" 
+                    class="w-full bg-[#0f172a] border border-slate-700 p-5 rounded-[2rem] text-sm font-bold text-white outline-none focus:border-orange-500 shadow-inner transition-all placeholder:text-slate-600" 
+                    placeholder="Жазатын мәтініңіз осы жерде..."></textarea>
+            </div>
+
+            <button onclick="sendGlobalNotification()" class="w-full bg-orange-600 hover:bg-orange-500 text-white py-5 rounded-[2rem] font-black uppercase italic tracking-[0.2em] transition-all active:scale-95 shadow-xl shadow-orange-900/20 flex items-center justify-center gap-4 group">
+                <i class="fas fa-paper-plane group-hover:translate-x-2 group-hover:-translate-y-1 transition-transform"></i>
+                Отправить всем (Broadcast)
+            </button>
+        </div>
+    </div>
+
+    <section class="mb-10 animate__animated animate__fadeIn">
+    <div class="flex items-center justify-between mb-6 px-4">
+        <div class="flex items-center gap-3">
+            <div class="w-2 h-8 bg-orange-600 rounded-full"></div>
+            <h2 class="text-xl font-black italic uppercase text-slate-800 tracking-tight">Хабарлама жіберу</h2>
+        </div>
+        <span class="text-[10px] font-bold text-gray-400 uppercase italic">Жүйелік хабарландырулар</span>
+    </div>
+
+    <div class="bg-white rounded-[2.5rem] p-8 shadow-xl border border-gray-50">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            
+            <div class="lg:col-span-2 space-y-4">
+                <div class="relative">
+                    <label class="block text-[10px] font-black uppercase text-gray-400 mb-3 ml-4 italic tracking-widest">Хабарлама мәтіні</label>
+                    <textarea id="admin-notify-msg" 
+                        class="w-full p-6 bg-gray-50 border-2 border-transparent focus:border-orange-500 focus:bg-white rounded-[2rem] outline-none transition-all text-sm font-bold uppercase italic h-32 resize-none shadow-inner" 
+                        placeholder="МЫСАЛЫ: СЕНБІ КҮНІ ҮЛКЕН ЖЕҢІЛДІКТЕР КҮТІЛУДЕ!"></textarea>
+                </div>
+            </div>
+
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-[10px] font-black uppercase text-gray-400 mb-3 ml-4 italic tracking-widest">Категория таңдау</label>
+                    <select id="admin-notify-cat" 
+                        class="w-full p-4 bg-gray-50 border-2 border-transparent focus:border-orange-500 rounded-[1.5rem] outline-none transition-all text-sm font-black uppercase italic cursor-pointer appearance-none shadow-inner">
+                        <option value="ЖАҢА ТАУАР">🆕 ЖАҢА ТАУАР</option>
+                        <option value="АКЦИЯ">🔥 АКЦИЯ</option>
+                        <option value="МАҢЫЗДЫ">⚠️ МАҢЫЗДЫ</option>
+                        <option value="ҚҰТТЫҚТАУ">🎉 ҚҰТТЫҚТАУ</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-[10px] font-black uppercase text-gray-400 mb-3 ml-4 italic tracking-widest">Сілтеме (Redirect)</label>
+                    <input type="text" id="admin-notify-link" 
+                        class="w-full p-4 bg-gray-50 border-2 border-transparent focus:border-orange-500 rounded-[1.5rem] outline-none transition-all text-sm font-black italic shadow-inner" 
+                        placeholder="index.html#sale">
+                </div>
+
+                <button onclick="sendGlobalPush()" 
+                    class="w-full py-5 bg-orange-600 text-white rounded-[1.5rem] font-black italic uppercase tracking-widest hover:bg-orange-700 active:scale-95 transition-all shadow-lg shadow-orange-100 flex items-center justify-center gap-2 mt-2">
+                    <i class="fas fa-paper-plane text-xs"></i> ЖІБЕРУ
+                </button>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+</div>
+
         </main>
     </div>
+
+    
     
 
     <!-- Модалкалар -->
@@ -1733,6 +1851,101 @@ addToHistory(amount, 'plus', 'Администратордан толтыру');
             renderUsers(); // Админ бетін жаңарту
         }
     });
+}
+
+
+function setNotifyTemplate(text) {
+    const area = document.getElementById('admin-notify-text');
+    area.value = text;
+    area.classList.add('border-orange-500');
+    setTimeout(() => area.classList.remove('border-orange-500'), 500);
+}
+
+function sendGlobalNotification() {
+    const text = document.getElementById('admin-notify-text').value.trim();
+    if (!text) {
+        Swal.fire({ icon: 'error', title: 'Қате', text: 'Мәтін жазыңыз!', background: '#1e293b', color: '#fff' });
+        return;
+    }
+
+    const notification = {
+        id: Date.now(),
+        message: text,
+        time: new Date().toLocaleTimeString(),
+        sender: 'QulanShop Admin'
+    };
+
+    // Қолданушыларға сигнал жіберу
+    localStorage.setItem('global_push_signal', JSON.stringify(notification));
+    
+    Swal.fire({
+        icon: 'success',
+        title: 'Жіберілді!',
+        text: 'Хабарлама барлық қолданушылардың экранында шығады ✅',
+        background: '#1e293b',
+        color: '#fff',
+        confirmButtonColor: '#ea580c'
+    });
+    
+    document.getElementById('admin-notify-text').value = '';
+}
+
+// Админ осылай жібереді
+const payload = {
+    message: "Дүкенге жаңа кроссовкалар келді!",
+    category: "Тауар",
+    link: "index.html#new-products" // Тауарларға лақтырады
+};
+localStorage.setItem('global_push_signal', JSON.stringify(payload));
+
+
+
+// ХАБАРЛАМА ЖІБЕРУ ФУНКЦИЯСЫ
+function sendGlobalPush() {
+    // 1. Формадағы мәліметтерді алу
+    const msgInput = document.getElementById('admin-notify-msg');
+    const catInput = document.getElementById('admin-notify-cat');
+    const linkInput = document.getElementById('admin-notify-link');
+
+    // 2. Тексеріс: Мәтін бос емес пе?
+    if (!msgInput || !msgInput.value.trim()) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Қате!',
+            text: 'Хабарлама мәтінін жазуды ұмыттыңыз.',
+            confirmButtonColor: '#ea580c',
+            customClass: { popup: 'rounded-[2rem]' }
+        });
+        return;
+    }
+
+    // 3. Хабарлама нысанын құрастыру
+    const pushData = {
+        id: Date.now(), // Әр хабарламаның бірегей коды
+        message: msgInput.value.trim().toUpperCase(), // Мәтінді үлкен әріпке айналдыру
+        category: catInput.value, // Таңдалған категория
+        link: linkInput.value.trim() || '#', // Егер сілтеме болмаса, жай тұра береді
+        time: new Date().toLocaleTimeString().slice(0, 5) // Қазіргі уақыт (мысалы 14:30)
+    };
+
+    // 4. ГЛОБАЛДЫ СИГНАЛ ЖІБЕРУ
+    // Бұл сигналды index.html беті бірден ұстап алады
+    localStorage.setItem('global_push_signal', JSON.stringify(pushData));
+
+    // 5. Сәтті жіберілгені туралы хабарлама
+    Swal.fire({
+        icon: 'success',
+        title: 'Жіберілді!',
+        text: 'Хабарлама барлық қолданушыларға сәтті жетті.',
+        confirmButtonColor: '#ea580c',
+        timer: 2000,
+        showConfirmButton: false,
+        customClass: { popup: 'rounded-[2.5rem]' }
+    });
+
+    // 6. Форманы тазалау
+    msgInput.value = '';
+    linkInput.value = '';
 }
 
     </script>
