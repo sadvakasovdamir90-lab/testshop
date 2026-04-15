@@ -612,6 +612,7 @@ window.handleConfirmCode = function() {
     const urlParams = new URLSearchParams(window.location.search);
     const referrerId = urlParams.get('ref');
 
+    // 1. ЖАҢА ҚОЛДАНУШЫ НЫСАНЫ
     const newUser = { 
         id: Date.now(), 
         name: window.tempUser.name, 
@@ -625,21 +626,19 @@ window.handleConfirmCode = function() {
         referralCount: 0,
         referralEarned: 0,
         giftCards: [], 
-        twoFactorEnabled: false 
+        twoFactorEnabled: false,
+        isWelcomed: false // МЫНАУ МІНДЕТТІ: Хабарлама келуі үшін керек
     };
 
+    // 2. РЕФЕРАЛДЫҚ ЖҮЙЕ (Сенің кодың өзгеріссіз қалды)
     if (referrerId) {
         const refIndex = users.findIndex(u => String(u.id) === String(referrerId));
-        
-        // 1. БҰРЫН ТІРКЕЛМЕГЕНІН ТЕКСЕРУ
         const alreadyExists = users.find(u => 
             (u.phone && u.phone === newUser.phone && newUser.phone !== "") || 
             (u.email && u.email === newUser.email && newUser.email !== "")
         );
 
         if (refIndex !== -1 && !alreadyExists) {
-            // 2. БАЗАДАҒЫ (ARRAY) БАЛАНСТЫ ЖАҢАРТУ
-            // Бұл ең маңызды жері! Шақырушы кіргенде осы жерден оқиды.
             users[refIndex].userBalance = (Number(users[refIndex].userBalance) || 0) + 500;
             users[refIndex].referralEarned = (Number(users[refIndex].referralEarned) || 0) + 500;
             users[refIndex].referralCount = (Number(users[refIndex].referralCount) || 0) + 1;
@@ -651,7 +650,6 @@ window.handleConfirmCode = function() {
                 amount: 500
             });
 
-            // 3. ЕГЕР ШАҚЫРУШЫ ҚАЗІР ОСЫ БРАУЗЕРДЕ КІРІП ТҰРСА
             const currentId = localStorage.getItem('currentUserId');
             if (String(currentId) === String(referrerId)) {
                 localStorage.setItem('userBalance', users[refIndex].userBalance);
@@ -660,8 +658,14 @@ window.handleConfirmCode = function() {
         }
     }
 
+    // 3. ДЕРЕКТЕРДІ САҚТАУ
     users.push(newUser);
     localStorage.setItem('users', JSON.stringify(users));
+
+    // 4. ҚАРСЫ АЛУ ХАБАРЛАМАСЫН ЖІБЕРУ (Сақталғаннан кейін)
+    sendWelcomeNotificationOnce(newUser);
+
+    // 5. ЖҮЙЕГЕ КІРГІЗУ
     loginUser(newUser); 
 }
 
@@ -820,6 +824,49 @@ function loginUser(userObject) {
     
     // Сессия уақыты (1 сағаттық бақылау осы жерден басталады)
     localStorage.setItem('lastAuthTime', new Date().getTime());
+
+    function sendWelcomeNotificationOnce(user) {
+    // 1. Қолданушының бұрын құттықтау алғанын тексеру
+    if (user.isWelcomed) return;
+
+    // 2. Қарсы алу хабарламасы
+   function sendWelcomeNotificationOnce(user) {
+    // Егер бұрын құттықтау алса, тоқтату
+    if (user.isWelcomed) return;
+
+    // Хабарлама мазмұны
+    const welcomePush = {
+        id: Date.now(),
+        message: `Қош келдіңіз, ${user.name}! ✨ QulanShop-ты таңдағаныңызға рахмет. Профиль бөлімінде сіздің жеке әмияныңыз бен бонустарыңыз дайын!`,
+        category: "🎉 ҚҰТТЫҚТАУ",
+        link: "profile.html",
+        time: new Date().toLocaleTimeString().slice(0, 5)
+    };
+
+    // 1. Хабарламалар тізіміне қосу
+    let notifications = JSON.parse(localStorage.getItem('qulanshop_notifications')) || [];
+    notifications.push(welcomePush);
+    localStorage.setItem('qulanshop_notifications', JSON.stringify(notifications));
+
+    // 2. Қолданушының статусын жаңарту
+    user.isWelcomed = true;
+    localStorage.setItem('currentUser', JSON.stringify(user));
+
+    let users = JSON.parse(localStorage.getItem('users')) || [];
+    const index = users.findIndex(u => String(u.id) === String(user.id));
+    if (index !== -1) {
+        users[index].isWelcomed = true;
+        localStorage.setItem('users', JSON.stringify(users));
+    }
+
+    // 3. "Уведомления" батырмасында қызыл нүкте жануы үшін сигнал жіберу
+    localStorage.setItem('global_push_signal', JSON.stringify(welcomePush));
+}
+
+    // Қызыл нүктені жағу
+    const dot = document.getElementById('notify-dot');
+    if (dot) dot.classList.remove('hidden');
+}
     
     // Профильге бағыттау
     window.location.href = 'profile.html';

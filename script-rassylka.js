@@ -168,7 +168,15 @@ window.addEventListener('storage', (e) => {
             let list = JSON.parse(localStorage.getItem('qulanshop_notifications')) || [];
             
             // Жаңа хабарламаны тізімге қосу
-            list.push(data);
+            // Мұнда data.message өзгеріссіз (кіші/үлкен әріп сақталып) қосылады
+            list.push({
+                id: data.id || Date.now(),
+                message: data.message, // Мәтін регистрі сақталады
+                category: data.category || 'Общее',
+                link: data.link || '#',
+                time: data.time || new Date().toLocaleTimeString().slice(0, 5)
+            });
+            
             localStorage.setItem('qulanshop_notifications', JSON.stringify(list));
             
             // Қызыл нүктені жағу

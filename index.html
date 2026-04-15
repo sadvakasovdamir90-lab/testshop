@@ -267,27 +267,9 @@
 
 
 /* Негізгі панель стилі (Dropdown) */
-.notify-dropdown-top {
-    position: absolute;
-    top: 100%; /* Батырманың дәл астынан бастау */
-    right: 0;
-    margin-top: 0.75rem;
-    width: 300px;
-    background-color: white;
-    border-radius: 1.5rem;
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-    border: 1px solid #f1f5f9;
-    z-index: 9999; /* Ассистенттен жоғары тұруы үшін */
-    overflow: hidden;
-    transform-origin: top right;
-    animation: notifyDropDown 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-
-/* Мобильді телефондар үшін арнайы түзету */
-/* Панельдің негізгі стилі - Әрқашан үстінде қалады */
 /* Уведомления терезесін батырманың астына байлау */
 .notify-dropdown-top {
-    position: absolute !important; /* Fixed-ті мүлдем өшіру */
+    position: absolute !important;
     top: 110% !important; /* Батырмадан сәл төмен */
     right: 0 !important;
     width: 300px;
@@ -303,19 +285,19 @@
 /* Мобильді телефондарда экран шетіне тірелмеуі үшін */
 @media (max-width: 768px) {
     .notify-dropdown-top {
-        right: -50px !important; /* Оң жаққа қарай жылжыту */
+        right: -50px !important; 
         width: 280px !important;
     }
 }
 
-/* Анимация: Жоғарыдан төмен түсу */
+/* Анимация */
+#notify-dropdown:not(.hidden) {
+    animation: notifyDropDown 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
 @keyframes notifyDropDown {
     from { opacity: 0; transform: translateY(-10px) scale(0.95); }
     to { opacity: 1; transform: translateY(0) scale(1); }
-}
-
-#notify-dropdown:not(.hidden) {
-    animation: notifyDropDown 0.2s ease-out forwards;
 }
     </style>
 </head>
@@ -353,7 +335,7 @@
 <div id="notify-wrapper" class="hidden relative">
     <button onclick="toggleNotifyMenu()" class="flex flex-col items-center outline-none group">
         <div class="relative">
-            <i class="far fa-bell text-xl md:text-2xl transition-transform group-active:scale-90 text-gray-600"></i>
+            <i class="far fa-bell text-xl md:text-2xl text-gray-600"></i>
             <div id="notify-dot" class="hidden absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-red-600 rounded-full border-2 border-white animate-pulse"></div>
         </div>
         <span class="text-[10px] md:text-[11px] mt-1 font-bold italic text-gray-600">Уведомления</span>
@@ -361,14 +343,11 @@
 
     <div id="notify-dropdown" class="hidden notify-dropdown-top">
         <div class="p-5 border-b border-gray-50 bg-gray-50/50">
-            <div class="flex justify-between items-center">
-                <h4 class="font-black italic text-[12px] text-slate-800">Центр уведомлений</h4>
-            </div>
+            <h4 class="font-black italic text-[12px] text-slate-800">Центр уведомлений</h4>
             <div class="flex gap-2 mt-3 overflow-x-auto no-scrollbar" id="notify-tabs"></div>
         </div>
-        
         <div id="notify-list" class="max-h-[350px] overflow-y-auto p-4 space-y-3 bg-white custom-scroll">
-            <div class="py-12 text-center text-gray-300 italic text-[10px] font-bold">Уведомлений пока нет</div>
+            <div class="py-12 text-center text-gray-300 italic text-[10px] font-bold uppercase">Уведомлений нет</div>
         </div>
     </div>
 </div>
@@ -1289,8 +1268,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const wrapper = document.getElementById('notify-wrapper');
     
     if (isLoggedIn && wrapper) {
-        wrapper.classList.remove('hidden'); // Тек тіркелгенде көрінеді
-        updateNotifyBadge();
+        // Егер логин жасалған болса, hidden класын өшіреді
+        wrapper.classList.remove('hidden');
+        wrapper.style.display = 'flex'; // Тікелей көрсету
+        
+        // Нүктені тексеру
+        const list = JSON.parse(localStorage.getItem('qulanshop_notifications')) || [];
+        if (list.length > 0) document.getElementById('notify-dot')?.classList.remove('hidden');
     }
 });
 
@@ -1317,42 +1301,44 @@ function renderNotifyContent(activeTab) {
     const tabsContainer = document.getElementById('notify-tabs');
     if (!listContainer || !tabsContainer) return;
 
-    // Получение уведомлений из LocalStorage
+    // 1. Хабарламаларды алу
     let list = JSON.parse(localStorage.getItem('qulanshop_notifications')) || [];
 
-    // Сбор категорий
+    // --- ҚАТЕЛІКТЕРДІ ЖОЮ: undefined және бос объектілерді сүзгіден өткізу ---
+    // Бұл код тізімдегі бүлінген деректерді өшіреді
+    list = list.filter(n => n && n.message && n.message !== "undefined");
+
+    // 2. Категорияларды жинау
     const categories = ['all', ...new Set(list.map(n => n.category))];
     
-    // Создание табов категорий
+    // 3. Табтарды шығару
     tabsContainer.innerHTML = categories.map(cat => {
         const count = cat === 'all' ? list.length : list.filter(n => n.category === cat).length;
-        // Тіл ауыстырылды: "Бәрі" -> "Все"
         const label = cat === 'all' ? 'Все' : cat; 
         return `<span onclick="event.stopPropagation(); renderNotifyContent('${cat}')" 
                 class="notify-tab ${activeTab === cat ? 'active' : ''}">${label} (${count})</span>`;
     }).join('');
 
-    // Фильтрация списка (внутри этой же функции)
+    // 4. Тізімді фильтрлеу
     const filtered = activeTab === 'all' ? list : list.filter(n => n.category === activeTab);
 
     if (filtered.length === 0) {
-        // Тіл ауыстырылды: "Хабарлама жоқ" -> "Уведомлений нет"
         listContainer.innerHTML = `<div class="py-12 text-center text-gray-300 italic text-[10px] font-bold uppercase tracking-widest">Уведомлений нет</div>`;
         return;
     }
 
-    // renderNotifyContent функциясының ішіндегі карточка рендері
-listContainer.innerHTML = filtered.reverse().map(n => `
-    <div onclick="handleNotifyClick('${n.link}')" class="notify-card group" style="margin-bottom: 8px;">
-        <div class="flex justify-between items-center mb-2">
-            <span class="text-[9px] font-black text-orange-600 uppercase italic tracking-widest">${n.category || 'Общее'}</span>
-            <span class="text-[8px] text-gray-300 font-bold">${n.time || ''}</span>
+    // 5. Хабарламаларды экранға шығару
+    listContainer.innerHTML = filtered.reverse().map(n => `
+        <div onclick="handleNotifyClick('${n.link}')" class="notify-card group" style="margin-bottom: 8px;">
+            <div class="flex justify-between items-center mb-2">
+                <span class="text-[9px] font-black text-orange-600 uppercase italic tracking-widest">${n.category || 'Общее'}</span>
+                <span class="text-[8px] text-gray-300 font-bold">${n.time || ''}</span>
+            </div>
+            <p class="text-[12px] font-bold text-slate-700 leading-normal italic pr-4" style="text-transform: none !important;">
+                ${n.message}
+            </p>
         </div>
-        <p class="text-[12px] font-bold text-slate-700 leading-normal italic pr-4">
-            ${n.message}
-        </p>
-    </div>
-`).join('');
+    `).join('');
 }
 // 3. Хабарламаға басқанда сілтемеге лақтыру (Redirect)
 function handleNotifyClick(link) {
@@ -1370,32 +1356,80 @@ window.addEventListener('click', (e) => {
     }
 });
 
-
 window.addEventListener('storage', (e) => {
-    // Егер сигнал келсе
-    if (e.key === 'global_push_signal' && e.newValue) {
+    if (e.key === 'global_push_signal' && e.newValue && e.newValue !== "null") {
         const data = JSON.parse(e.newValue);
         
-        // Тек тіркелген қолданушы болса ғана сақтаймыз
-        if (localStorage.getItem('isLoggedIn') === 'true') {
+        if (data.action === 'sync_list') {
+            localStorage.setItem('qulanshop_notifications', JSON.stringify(data.newList));
+            if (typeof renderNotifyContent === 'function') renderNotifyContent('all');
+            return;
+        }
+
+        if (localStorage.getItem('isLoggedIn') === 'true' && data.message) {
             let list = JSON.parse(localStorage.getItem('qulanshop_notifications')) || [];
-            
-            // Жаңа хабарламаны тізімге қосу
-            list.push(data);
-            localStorage.setItem('qulanshop_notifications', JSON.stringify(list));
-            
-            // Қызыл нүктені жағу
-            const dot = document.getElementById('notify-dot');
-            if (dot) dot.classList.remove('hidden');
-            
-            // Егер iPhone стиліндегі Push болса, оны да көрсету
-            if (typeof showMobileStyledPush === 'function') {
-                showMobileStyledPush(data.message);
+            if (!list.find(n => n.id === data.id)) {
+                list.push(data);
+                localStorage.setItem('qulanshop_notifications', JSON.stringify(list));
+                
+                const dot = document.getElementById('notify-dot');
+                if (dot) dot.classList.remove('hidden');
+                
+                // Егер SweetAlert немесе Push функциясы болса
+                if (typeof showMobileStyledPush === 'function') {
+                    showMobileStyledPush(data.message);
+                }
             }
         }
+        
+        // Сигналды тазалау (сәл кідіріспен, өйткені бірнеше вкладка ашық болуы мүмкін)
+        setTimeout(() => {
+            localStorage.setItem('global_push_signal', "null");
+        }, 500);
     }
 });
 
+function checkScheduledNotifications() {
+    let scheduledQueue = JSON.parse(localStorage.getItem('scheduled_notifications')) || [];
+    if (scheduledQueue.length === 0) return;
+
+    const now = new Date();
+    // Жергілікті уақытты YYYY-MM-DDTHH:mm форматында алу
+    const currentStr = now.getFullYear() + '-' + 
+                      String(now.getMonth() + 1).padStart(2, '0') + '-' + 
+                      String(now.getDate()).padStart(2, '0') + 'T' + 
+                      String(now.getHours()).padStart(2, '0') + ':' + 
+                      String(now.getMinutes()).padStart(2, '0');
+
+    let remainingQueue = [];
+    let updated = false;
+
+    scheduledQueue.forEach(task => {
+        if (task.scheduledAt <= currentStr) {
+            // 1. Хабарламаны "Историяға" қосу
+            let history = JSON.parse(localStorage.getItem('qulanshop_notifications')) || [];
+            if (!history.find(h => h.id === task.id)) {
+                history.push(task);
+                localStorage.setItem('qulanshop_notifications', JSON.stringify(history));
+            }
+
+            // 2. Сигнал жіберу
+            localStorage.setItem('global_push_signal', JSON.stringify(task));
+            setTimeout(() => localStorage.setItem('global_push_signal', "null"), 1000);
+            
+            updated = true;
+        } else {
+            remainingQueue.push(task);
+        }
+    });
+
+    if (updated) {
+        localStorage.setItem('scheduled_notifications', JSON.stringify(remainingQueue));
+        // Егер админ панель ашық болса, тізімді жаңарту
+        if(typeof renderScheduledList === 'function') renderScheduledList();
+    }
+}
+setInterval(checkScheduledNotifications, 10000); // 10 секунд сайын тексеру
 </script>
 
 
@@ -1410,6 +1444,8 @@ window.addEventListener('storage', (e) => {
     <button class="absolute top-6 right-6 text-white/50 hover:text-white text-4xl transition-all">&times;</button>
     <img id="full-res-image" src="" class="max-w-full max-h-full rounded-2xl shadow-2xl transform transition-transform duration-300 scale-95" onclick="event.stopPropagation()">
 </div>
+
+
 
 </body>
 
