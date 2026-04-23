@@ -3,106 +3,138 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QulanMedia — Official Portal</title>
+    <title>QulanMedia — Ultimate Multimedia Experience</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap');
+
+        :root {
+            --qulan-blue: #0f172a;
+            --qulan-accent: #3b82f6;
+        }
 
         body { 
-            background-color: #f0f4f8; 
-            color: #1e293b; 
+            background-color: #f8fafc; 
+            color: #0f172a; 
             font-family: 'Plus Jakarta Sans', sans-serif;
             -webkit-font-smoothing: antialiased;
         }
 
-        /* Кәсіби Көк Градиент */
-        .premium-blue {
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+        /* Кәсіби анимациялар */
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
         }
 
-        /* Карточка стилі */
+        .premium-blur {
+            backdrop-filter: blur(20px) saturate(180%);
+            background-color: rgba(255, 255, 255, 0.8);
+        }
+
+        /* Медиа контейнер стилі */
+        .media-wrapper {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            overflow: hidden;
+            background: #000;
+        }
+
+        .media-wrapper img, .media-wrapper video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+
+        .news-card:hover .media-wrapper img, 
+        .news-card:hover .media-wrapper video {
+            transform: scale(1.1);
+        }
+
+        /* Кәсіби карточка */
         .news-card {
             background: white;
-            border: 1px solid rgba(226, 232, 240, 0.8);
             border-radius: 2.5rem;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid rgba(226, 232, 240, 0.6);
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .news-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.1);
-            border-color: #3b82f6;
-        }
-
-        /* Пункттар (Категориялар) */
-        .badge {
-            font-size: 9px;
-            font-weight: 800;
-            padding: 6px 12px;
-            border-radius: 12px;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-
-        .badge-blue { background: #eff6ff; color: #1d4ed8; }
-        .badge-orange { background: #fff7ed; color: #ea580c; }
-        .badge-red { background: #fef2f2; color: #dc2626; animation: pulse 2s infinite; }
-
-        @keyframes pulse {
-            0% { opacity: 1; }
-            50% { opacity: 0.6; }
-            100% { opacity: 1; }
+            transform: translateY(-12px);
+            box-shadow: 0 40px 80px -15px rgba(15, 23, 42, 0.15);
+            border-color: var(--qulan-accent);
         }
 
         .no-scrollbar::-webkit-scrollbar { display: none; }
+        
+        /* Skeleton жүктеу анимациясы */
+        .skeleton {
+            background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+        }
+
+        @keyframes loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
     </style>
 </head>
-<body class="pb-24">
+<body class="pb-32">
 
-    <header class="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-slate-200">
-        <div class="max-w-5xl mx-auto px-6 py-5 flex items-center justify-between">
-            <div class="flex items-center gap-4">
-                <div class="w-12 h-12 premium-blue rounded-2xl flex items-center justify-center shadow-xl shadow-blue-900/20">
-                    <i class="fas fa-newspaper text-white text-xl"></i>
+    <header class="sticky top-0 z-[100] premium-blur border-b border-slate-200/60 px-6 py-5">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <div class="flex items-center gap-4 group cursor-pointer" onclick="location.reload()">
+                <div class="w-12 h-12 bg-slate-900 rounded-2xl flex items-center justify-center shadow-2xl group-hover:rotate-12 transition-transform duration-500">
+                    <i class="fas fa-play text-white text-sm"></i>
                 </div>
                 <div>
-                    <h1 class="text-2xl font-extrabold tracking-tighter text-slate-900">
-                        Qulan<span class="text-blue-600">Media</span>
-                    </h1>
-                    <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest italic">Official QulanShop Network</p>
+                    <h1 class="text-2xl font-extrabold tracking-tighter text-slate-900 uppercase italic">Qulan<span class="text-blue-600">Media</span></h1>
+                    <p class="text-[9px] font-black text-slate-400 uppercase tracking-[0.3em]">Official Store Network</p>
                 </div>
             </div>
 
-            <a href="index.html" class="hidden md:flex items-center gap-3 px-6 py-3 bg-slate-900 text-white rounded-2xl hover:bg-blue-600 transition-all duration-300 shadow-lg shadow-slate-900/20 active:scale-95">
-                <i class="fas fa-store text-xs"></i>
-                <span class="text-xs font-bold uppercase italic">Вернуться в магазин</span>
-            </a>
+            <nav class="hidden lg:flex items-center gap-8">
+                <a href="index.html" class="text-[11px] font-black uppercase italic tracking-widest text-slate-500 hover:text-blue-600 transition">Магазин</a>
+                <a href="#" class="text-[11px] font-black uppercase italic tracking-widest text-blue-600 border-b-2 border-blue-600 pb-1">Медиа</a>
+                <a href="#" class="text-[11px] font-black uppercase italic tracking-widest text-slate-500 hover:text-blue-600 transition">Реклама</a>
+            </nav>
+
+            <div class="flex items-center gap-4">
+                <button class="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-600 hover:bg-slate-900 hover:text-white transition-all">
+                    <i class="fas fa-search text-sm"></i>
+                </button>
+                <a href="index.html" class="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center text-white shadow-lg shadow-blue-200">
+                    <i class="fas fa-shopping-cart text-sm"></i>
+                </a>
+            </div>
         </div>
     </header>
 
-    <main class="max-w-5xl mx-auto px-4 py-12">
+    <main class="max-w-7xl mx-auto px-4 py-12">
         
-        <div class="mb-12">
-            <div class="flex items-center gap-3 mb-6 px-2">
-                <div class="w-2 h-2 bg-blue-600 rounded-full"></div>
-                <h2 class="text-[11px] font-black uppercase tracking-[0.3em] text-slate-400">Навигация по разделам</h2>
+        <div class="mb-16">
+            <div class="flex items-center justify-between mb-8 px-4">
+                <div class="flex items-center gap-4">
+                    <span class="w-12 h-0.5 bg-blue-600"></span>
+                    <h2 class="text-sm font-black uppercase italic tracking-[0.4em] text-slate-400">Featured Media</h2>
+                </div>
+                <div class="flex gap-2">
+                    <button class="w-10 h-10 rounded-full border border-slate-200 flex items-center justify-center hover:bg-white transition shadow-sm"><i class="fas fa-chevron-left text-xs"></i></button>
+                    <button class="w-10 h-10 rounded-full border border-slate-200 flex items-center justify-center hover:bg-white transition shadow-sm"><i class="fas fa-chevron-right text-xs"></i></button>
+                </div>
             </div>
-            <div id="category-filters" class="flex gap-3 overflow-x-auto no-scrollbar pb-4">
+
+            <div id="category-filters" class="flex gap-4 overflow-x-auto no-scrollbar pb-6 px-4">
                 </div>
         </div>
 
-        <div id="news-container" class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div id="news-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 px-4">
             </div>
     </main>
-
-    <footer class="max-w-5xl mx-auto px-6 py-16 text-center border-t border-slate-200 mt-20">
-        <div class="inline-flex items-center gap-2 mb-4">
-            <div class="w-1.5 h-1.5 bg-blue-600 rounded-full"></div>
-            <span class="text-[10px] font-black uppercase tracking-[0.4em] text-slate-400 italic">QulanShop Media Group</span>
-        </div>
-        <p class="text-[10px] text-slate-400 font-medium italic uppercase">Құланөтпес ауылы, 2026. Барлық мәліметтер қорғалған.</p>
-    </footer>
 
     <script>
         function loadNews(filter = 'all') {
@@ -110,75 +142,101 @@
             const filtersContainer = document.getElementById('category-filters');
             const news = JSON.parse(localStorage.getItem('village_news')) || [];
 
-            // 1. Фильтрлерді шығару (Кәсіби батырмалар)
+            // 1. Категориялық пункттарды рендерингтеу
             const categories = ['all', ...new Set(news.map(n => n.category))];
             filtersContainer.innerHTML = categories.map(cat => `
                 <button onclick="loadNews('${cat}')" 
-                    class="px-8 py-4 rounded-[1.5rem] text-[10px] font-black uppercase italic transition-all whitespace-nowrap
-                    ${filter === cat ? 'premium-blue text-white shadow-2xl shadow-blue-900/30' : 'bg-white text-slate-500 border border-slate-200 hover:border-blue-300'}">
-                    ${cat === 'all' ? 'Все новости' : cat}
+                    class="px-8 py-4 rounded-2xl text-[10px] font-black uppercase italic tracking-widest transition-all whitespace-nowrap border
+                    ${filter === cat ? 'bg-slate-900 text-white border-transparent shadow-2xl scale-105' : 'bg-white text-slate-500 border-slate-200 hover:border-blue-400'}">
+                    ${cat === 'all' ? 'Все потоки' : cat}
                 </button>
             `).join('');
 
-            // 2. Мәліметтерді сүзу
+            // 2. Сүзу
             const filteredNews = filter === 'all' ? news : news.filter(n => n.category === filter);
 
             if (filteredNews.length === 0) {
                 container.innerHTML = `
-                    <div class="col-span-full py-32 text-center bg-white rounded-[3rem] border-2 border-dashed border-slate-100">
-                        <i class="fas fa-inbox text-5xl text-slate-100 mb-6"></i>
-                        <p class="text-slate-400 font-black uppercase text-[10px] tracking-widest italic">В данном разделе пока нет публикаций</p>
+                    <div class="col-span-full py-40 text-center rounded-[3rem] border-2 border-dashed border-slate-200">
+                        <i class="fas fa-film text-6xl text-slate-200 mb-6 animate-pulse"></i>
+                        <p class="text-slate-400 font-black uppercase italic text-xs tracking-widest">Контент не найден</p>
                     </div>`;
                 return;
             }
 
-            // 3. Карточкаларды шығару
+            // 3. Мультимедиа карточкаларын шығару
             container.innerHTML = filteredNews.map(item => {
-                let badgeClass = "badge-blue";
-                if(item.category === "⚠️ МАҢЫЗДЫ") badgeClass = "badge-red";
-                if(item.category === "🛍️ ЖАҢА ТАУАР") badgeClass = "badge-orange";
+                // Видео немесе Сурет бар-жоғын тексеру
+                let mediaElement = "";
+                if (item.videoUrl) {
+                    // YouTube болса
+                    mediaElement = `<iframe class="w-full h-full" src="https://www.youtube.com/embed/${item.videoUrl}?autoplay=0&mute=1" frameborder="0" allowfullscreen></iframe>`;
+                } else if (item.imageUrl) {
+                    mediaElement = `<img src="${item.imageUrl}" class="w-full h-full" alt="MediaContent" loading="lazy">`;
+                } else {
+                    // Егер медиа жоқ болса, кәсіби градиент қоямыз
+                    mediaElement = `<div class="w-full h-full bg-gradient-to-br from-slate-800 to-slate-950 flex items-center justify-center"><i class="fas fa-newspaper text-white/10 text-6xl"></i></div>`;
+                }
 
                 return `
-                <div class="news-card p-8 flex flex-col justify-between group">
-                    <div>
-                        <div class="flex items-center justify-between mb-8">
-                            <span class="badge ${badgeClass}">
-                                ${item.category || 'Общее'}
+                <div class="news-card group flex flex-col">
+                    <div class="media-wrapper rounded-t-[2.5rem]">
+                        ${mediaElement}
+                        <div class="absolute top-4 right-4 z-10">
+                            <span class="bg-black/50 backdrop-blur-md text-white text-[8px] font-black px-3 py-1.5 rounded-lg uppercase italic tracking-widest border border-white/10">
+                                ${item.category}
                             </span>
-                            <div class="flex items-center gap-2 text-slate-300">
-                                <i class="far fa-clock text-[10px]"></i>
-                                <span class="text-[10px] font-bold uppercase italic">${item.date || 'Today'}</span>
-                            </div>
                         </div>
-                        
-                        <p class="text-slate-800 text-xl font-bold leading-relaxed mb-10 italic">
+                    </div>
+
+                    <div class="p-8 md:p-10 flex-1 flex flex-col">
+                        <div class="flex items-center gap-3 mb-6">
+                            <div class="w-8 h-8 bg-blue-600/10 rounded-lg flex items-center justify-center">
+                                <i class="far fa-calendar-alt text-blue-600 text-xs"></i>
+                            </div>
+                            <span class="text-[10px] font-bold text-slate-400 uppercase italic tracking-tighter">${item.date}</span>
+                        </div>
+
+                        <h3 class="text-xl font-black leading-tight text-slate-900 italic mb-6 group-hover:text-blue-600 transition-colors">
                             "${item.text}"
-                        </p>
-                    </div>
-                    
-                    <div class="flex items-center justify-between pt-6 border-t border-slate-50">
-                        <div class="flex items-center gap-4">
-                            <div class="w-12 h-12 bg-slate-50 rounded-2xl flex items-center justify-center border border-slate-100 group-hover:bg-blue-50 transition-colors">
-                                <i class="fas fa-shield-alt text-blue-600"></i>
+                        </h3>
+
+                        <div class="mt-auto pt-8 border-t border-slate-100 flex items-center justify-between">
+                            <div class="flex items-center gap-4">
+                                <div class="w-10 h-10 rounded-full border-2 border-white shadow-lg overflow-hidden bg-slate-100">
+                                    <img src="https://ui-avatars.com/api/?name=Admin&background=0f172a&color=fff" class="w-full h-full object-cover">
+                                </div>
+                                <div>
+                                    
+                                    <div class="flex items-center gap-1.5">
+    <p class="text-[10px] font-black uppercase italic text-slate-900">QulanShop Media</p>
+    <div class="flex items-center justify-center w-3 h-3 bg-blue-500 rounded-full shadow-sm shadow-blue-500/50">
+        <i class="fas fa-check text-[6px] text-white"></i>
+    </div>
+</div>
+                                </div>
                             </div>
-                            <div>
-                                <p class="text-[11px] font-black text-slate-900 uppercase italic leading-none mb-1">Редакция QulanShop</p>
-                                <p class="text-[8px] text-slate-400 font-bold uppercase tracking-widest">Verified Information</p>
+
+                            <div class="flex gap-2">
+                                ${item.link ? `<a href="${item.link}" target="_blank" class="w-12 h-12 rounded-2xl bg-slate-900 text-white flex items-center justify-center hover:bg-blue-600 transition-all shadow-xl shadow-slate-900/20"><i class="fas fa-external-link-alt text-sm"></i></a>` : ''}
+                                <button class="w-12 h-12 rounded-2xl bg-slate-100 text-slate-400 flex items-center justify-center hover:bg-white hover:text-blue-600 transition-all border border-transparent hover:border-blue-100"><i class="fas fa-share-alt"></i></button>
                             </div>
                         </div>
-                        
-                        <div class="flex gap-2">
-                            <button class="w-10 h-10 bg-slate-50 hover:bg-blue-600 hover:text-white rounded-xl flex items-center justify-center text-slate-400 transition-all active:scale-90">
-                                <i class="fas fa-share-alt text-sm"></i>
-                            </button>
-                        </div>
                     </div>
-                </div>
-            `;
+                </div>`;
             }).reverse().join('');
         }
 
-        window.onload = () => loadNews();
+        window.onload = () => {
+            loadNews();
+            // Плавный скролл эффектілері
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    document.querySelector(this.getAttribute('href')).scrollIntoView({ behavior: 'smooth' });
+                });
+            });
+        };
     </script>
 </body>
 </html>
