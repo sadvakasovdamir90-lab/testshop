@@ -2539,5 +2539,46 @@ function renderUserOrders() {
 // БЕТ ЖҮКТЕЛГЕНДЕ ІСКЕ ҚОСУ
 window.addEventListener('DOMContentLoaded', renderUserOrders);
 
+
+
+function initPeer() {
+    // Админ бетінде болсаң (URL-де 'admin' сөзі болса)
+    const isAdmin = window.location.href.includes('admin');
+    
+    // Админге тұрақты ID береміз, клиентке кездейсоқ ID
+    peer = new Peer(isAdmin ? adminPeerId : undefined);
+    
+    peer.on('open', (id) => {
+        console.log('Жүйеге қосылды. ID:', id);
+        if (isAdmin) alert("Админ жүйеге кірді, қоңырау қабылдауға дайын!");
+    });
+
+    peer.on('error', (err) => {
+        console.error('PeerJS қатесі:', err.type);
+        if (err.type === 'unavailable-id') {
+            alert("Қате: Бұл ID бос емес. Админ панель басқа жерде ашық тұрған болуы мүмкін.");
+        }
+    });
+
+    // Қоңырауды қабылдау бөлімі (Админде болуы керек)
+    peer.on('call', (call) => {
+        console.log("КІРІС ҚОҢЫРАУЫ!");
+        if (confirm("Жаңа қоңырау! Қабылдайсыз ба?")) {
+            navigator.mediaDevices.getUserMedia({ audio: true }).then((stream) => {
+                call.answer(stream);
+                document.getElementById('call-modal').classList.remove('hidden');
+                showCallUI("Сөйлесу жүріп жатыр...");
+                
+                call.on('stream', (remoteStream) => {
+                    const audio = new Audio();
+                    audio.srcObject = remoteStream;
+                    audio.play();
+                });
+                currentCall = call;
+            });
+        }
+    });
+}
+
     </script>
 </html>
