@@ -527,6 +527,19 @@
     </div>
 </section>
 
+<section class="px-4 py-8 bg-slate-900/50 rounded-[3rem] mt-10 border border-slate-800">
+    <div class="flex items-center justify-between mb-6 px-4">
+        <div class="flex items-center gap-3">
+            <div class="w-2 h-8 bg-orange-600 rounded-full"></div>
+            <h2 class="text-xl font-black italic uppercase text-white tracking-tight">Ауыл тынысы</h2>
+        </div>
+        <span class="text-[10px] font-bold text-slate-500 uppercase italic">Құланөтпес жаңалықтары</span>
+    </div>
+
+    <div id="village-news-list" class="flex gap-4 overflow-x-auto pb-6 px-4 custom-scroll scroll-smooth">
+        </div>
+</section>
+
 <section class="container mx-auto px-4 mt-16 mb-10">
     <h2 class="text-2xl font-black italic uppercase text-center mb-8">Вопросы и <span class="text-orange-600">ответы</span></h2>
     
@@ -646,7 +659,9 @@
                     <li><a href="delivery.html" class="footer-link hover:text-orange-600 transition-all">Доставка и оплата</a></li>
                     <li><a href="return.html" class="footer-link hover:text-orange-600 transition-all">Возврат товара</a></li>
                     <li><a href="gift-cards.html" class="footer-link hover:text-orange-600 transition-all">Подарочные карты</a></li>
+                    <li><a href="news.html" class="footer-link hover:text-orange-600 transition-all">Новости</a></li>
                 </ul>
+                
             </div>
 
             <div>
@@ -776,7 +791,22 @@
     </div>
 </div>
 
-
+<div id="call-modal" class="hidden fixed inset-0 bg-black/80 z-[9999] flex items-center justify-center backdrop-blur-sm">
+    <div class="bg-[#1e293b] p-8 rounded-[3rem] border border-slate-700 text-center w-80 shadow-2xl">
+        <div class="relative w-24 h-24 mx-auto mb-6">
+            <div class="absolute inset-0 bg-green-500 rounded-full animate-ping opacity-20"></div>
+            <div class="relative bg-green-500 w-full h-full rounded-full flex items-center justify-center shadow-lg shadow-green-500/50">
+                <i class="fas fa-phone-alt text-3xl text-white"></i>
+            </div>
+        </div>
+        <h3 id="call-status" class="text-white font-black italic uppercase mb-2">Звонок...</h3>
+        <p class="text-slate-500 text-[10px] uppercase font-bold mb-8">QulanShop Online</p>
+        
+        <button onclick="endCall()" class="bg-red-500 text-white w-16 h-16 rounded-full hover:scale-110 transition-all shadow-lg shadow-red-500/20 flex items-center justify-center mx-auto">
+            <i class="fas fa-phone-slash text-2xl rotate-[135deg]"></i>
+        </button>
+    </div>
+</div>
 
 <!-- Скрипт бөлімі -->
 <script>
@@ -1425,105 +1455,44 @@ window.addEventListener('storage', (e) => {
     }
 });
 
-const adminPeerId = 'qulanshop-admin-123'; // Сенің тұрақты ID-ің
-let peer;
-let currentCall;
+function renderVillageNews() {
+    const container = document.getElementById('village-news-list');
+    // LocalStorage-тан жаңалықтарды алу (егер жоқ болса, бос массив)
+    const news = JSON.parse(localStorage.getItem('village_news')) || [];
 
-// Peer-ді іске қосу
-function initPeer() {
-    peer = new Peer(window.location.href.includes('admin') ? adminPeerId : null);
-    
-    peer.on('open', (id) => {
-        console.log('Менің Peer ID:', id);
-    });
+    if (news.length === 0) {
+        container.innerHTML = `
+            <div class="min-w-full p-10 text-center border-2 border-dashed border-slate-800 rounded-[2rem]">
+                <p class="text-slate-600 italic font-bold uppercase text-[10px]">Қазірше жаңалықтар жоқ...</p>
+            </div>`;
+        return;
+    }
 
-    // Қоңырауды қабылдау (Админ үшін)
-    peer.on('call', (call) => {
-        navigator.mediaDevices.getUserMedia({ audio: true }).then((stream) => {
-            call.answer(stream); // Жауап беру
-            showCallUI("Қоңырау қабылданды...");
-            
-            call.on('stream', (remoteStream) => {
-                const audio = new Audio();
-                audio.srcObject = remoteStream;
-                audio.play();
-            });
-            currentCall = call;
-        });
-    });
+    container.innerHTML = news.map(item => `
+        <div class="min-w-[280px] bg-slate-800/80 p-6 rounded-[2rem] border border-slate-700 shadow-xl backdrop-blur-md">
+            <div class="flex items-center gap-2 mb-3">
+                <span class="bg-orange-600/20 text-orange-500 text-[8px] font-black px-2 py-1 rounded-lg uppercase italic">
+                    ${item.category}
+                </span>
+                <span class="text-[8px] text-slate-500 font-bold">${item.date}</span>
+            </div>
+            <p class="text-sm font-bold text-white leading-relaxed italic pr-2">
+                "${item.text}"
+            </p>
+            <div class="mt-4 flex items-center gap-2">
+                <div class="w-6 h-6 bg-slate-700 rounded-full flex items-center justify-center">
+                    <i class="fas fa-bullhorn text-[10px] text-orange-500"></i>
+                </div>
+                <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest">QulanShop Хабарлайды</span>
+            </div>
+        </div>
+    `).reverse().join(''); // Жаңаларын алдына шығару
 }
 
-// Қоңырау шалу (Клиент үшін)
-function startOnlineCall() {
-    document.getElementById('call-modal').classList.remove('hidden');
-    
-    navigator.mediaDevices.getUserMedia({ audio: true }).then((stream) => {
-        const call = peer.call(adminPeerId, stream);
-        showCallUI("Қоңырау шалынуда...");
-
-        call.on('stream', (remoteStream) => {
-            const audio = new Audio();
-            audio.srcObject = remoteStream;
-            audio.play();
-        });
-        currentCall = call;
-    }).catch(err => {
-        alert("Микрофонға рұқсат беріңіз!");
-        endCall();
-    });
-}
-
-function endCall() {
-    if (currentCall) currentCall.close();
-    document.getElementById('call-modal').classList.add('hidden');
-}
-
-function showCallUI(text) {
-    document.getElementById('call-status').innerText = text;
-}
-
-// Іске қосу
-initPeer();
+// Бет жүктелгенде іске қосу
+document.addEventListener('DOMContentLoaded', renderVillageNews);
 
 
-function initPeer() {
-    // Админ бетінде болсаң (URL-де 'admin' сөзі болса)
-    const isAdmin = window.location.href.includes('admin');
-    
-    // Админге тұрақты ID береміз, клиентке кездейсоқ ID
-    peer = new Peer(isAdmin ? adminPeerId : undefined);
-    
-    peer.on('open', (id) => {
-        console.log('Жүйеге қосылды. ID:', id);
-        if (isAdmin) alert("Админ жүйеге кірді, қоңырау қабылдауға дайын!");
-    });
-
-    peer.on('error', (err) => {
-        console.error('PeerJS қатесі:', err.type);
-        if (err.type === 'unavailable-id') {
-            alert("Қате: Бұл ID бос емес. Админ панель басқа жерде ашық тұрған болуы мүмкін.");
-        }
-    });
-
-    // Қоңырауды қабылдау бөлімі (Админде болуы керек)
-    peer.on('call', (call) => {
-        console.log("КІРІС ҚОҢЫРАУЫ!");
-        if (confirm("Жаңа қоңырау! Қабылдайсыз ба?")) {
-            navigator.mediaDevices.getUserMedia({ audio: true }).then((stream) => {
-                call.answer(stream);
-                document.getElementById('call-modal').classList.remove('hidden');
-                showCallUI("Сөйлесу жүріп жатыр...");
-                
-                call.on('stream', (remoteStream) => {
-                    const audio = new Audio();
-                    audio.srcObject = remoteStream;
-                    audio.play();
-                });
-                currentCall = call;
-            });
-        }
-    });
-}
 
 </script>
 
