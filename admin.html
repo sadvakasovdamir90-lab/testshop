@@ -692,20 +692,25 @@
 
     </div>
 
-    <div id="tab-news-manager" class="tab-content space-y-6">
+   <div id="tab-news-manager" class="tab-content space-y-8">
     <div class="flex justify-between items-center mb-8">
-        <h2 class="text-3xl font-black italic uppercase text-blue-500 tracking-tighter">Qulan Media Редактор</h2>
-        <p class="text-[10px] font-bold text-slate-500 uppercase italic">Жаңалықтарды басқару порталы</p>
+        <div>
+            <h2 class="text-3xl font-black italic uppercase text-blue-500 tracking-tighter">Qulan Media Editorial</h2>
+            <p class="text-[10px] font-bold text-slate-500 uppercase italic tracking-widest mt-1">Кәсіби жаңалықтарды басқару орталығы</p>
+        </div>
+        <div class="bg-blue-600/10 px-4 py-2 rounded-xl border border-blue-600/20">
+            <p id="live-clock" class="text-blue-500 text-xs font-black italic tracking-widest uppercase">22:35:12</p>
+        </div>
     </div>
 
-    <div class="bg-[#1e293b] p-8 rounded-[2.5rem] border border-slate-800 shadow-2xl relative overflow-hidden">
-        <div class="absolute -right-10 -top-10 w-40 h-40 bg-blue-600/10 rounded-full blur-3xl"></div>
+    <div class="bg-[#1e293b] p-8 rounded-[3rem] border border-slate-800 shadow-2xl relative overflow-hidden">
+        <div class="absolute -right-20 -top-20 w-64 h-64 bg-blue-600/5 rounded-full blur-3xl"></div>
         
-        <div class="relative z-10 space-y-6">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="relative z-10 space-y-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div>
-                    <label class="text-[10px] font-black text-slate-500 uppercase ml-2 tracking-widest italic mb-2 block">Категория (Пункт)</label>
-                    <select id="admin-news-cat" class="w-full p-4 rounded-2xl bg-[#0f172a] border border-slate-700 font-bold text-white outline-none focus:border-blue-500 transition-all">
+                    <label class="text-[10px] font-black text-slate-500 uppercase ml-4 tracking-[0.2em] italic mb-3 block text-blue-400">01. Санатты таңдау</label>
+                    <select id="admin-news-cat" class="w-full p-5 rounded-[1.5rem] bg-[#0f172a] border border-slate-700 font-bold text-white outline-none focus:border-blue-500 transition-all shadow-inner">
                         <option value="📢 ХАБАРЛАНДЫРУ">📢 ХАБАРЛАНДЫРУ</option>
                         <option value="🛍️ ЖАҢА ТАУАР">🛍️ ЖАҢА ТАУАР</option>
                         <option value="🎉 ҚҰТТЫҚТАУ">🎉 ҚҰТТЫҚТАУ</option>
@@ -713,34 +718,66 @@
                     </select>
                 </div>
                 <div>
-                    <label class="text-[10px] font-black text-slate-500 uppercase ml-2 tracking-widest italic mb-2 block">Дата</label>
-                    <input type="text" id="admin-news-date" class="w-full p-4 rounded-2xl bg-[#0f172a] border border-slate-700 font-bold text-white" readonly>
+                    <label class="text-[10px] font-black text-slate-500 uppercase ml-4 tracking-[0.2em] italic mb-3 block">02. Жариялау уақыты</label>
+                    <input type="text" id="admin-news-date" class="w-full p-5 rounded-[1.5rem] bg-[#0f172a] border border-slate-700 font-bold text-slate-400 cursor-not-allowed shadow-inner" readonly>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div>
+                    <label class="text-[10px] font-black text-slate-500 uppercase ml-4 tracking-[0.2em] italic mb-3 block">03. YouTube Video ID (мысалы: dQw4w9WgXcQ)</label>
+                    <div class="relative">
+                        <i class="fab fa-youtube absolute left-5 top-1/2 -translate-y-1/2 text-red-500"></i>
+                        <input type="text" id="admin-news-video" placeholder="ID-ді ғана енгізіңіз..." class="w-full pl-12 pr-6 py-5 rounded-[1.5rem] bg-[#0f172a] border border-slate-700 font-bold text-white outline-none focus:border-red-500/50 transition-all">
+                    </div>
+                </div>
+                <div>
+                    <label class="text-[10px] font-black text-slate-500 uppercase ml-4 tracking-[0.2em] italic mb-3 block">04. Сурет сілтемесі (Image URL)</label>
+                    <div class="relative">
+                        <i class="fas fa-image absolute left-5 top-1/2 -translate-y-1/2 text-blue-500"></i>
+                        <input type="text" id="admin-news-img" placeholder="https://image-link.jpg" class="w-full pl-12 pr-6 py-5 rounded-[1.5rem] bg-[#0f172a] border border-slate-700 font-bold text-white outline-none focus:border-blue-500 transition-all">
+                    </div>
                 </div>
             </div>
 
             <div>
-                <label class="text-[10px] font-black text-slate-500 uppercase ml-2 tracking-widest italic mb-2 block">Жаңалық мәтіні</label>
-                <textarea id="admin-news-text" rows="4" class="w-full bg-[#0f172a] border border-slate-700 p-5 rounded-[2rem] text-sm font-bold text-white outline-none focus:border-blue-500 shadow-inner" placeholder="Ауыл тұрғындарына не айтқыңыз келеді?"></textarea>
+                <label class="text-[10px] font-black text-slate-500 uppercase ml-4 tracking-[0.2em] italic mb-3 block">05. Толық мақалаға сілтеме (External Link)</label>
+                <div class="relative">
+                    <i class="fas fa-link absolute left-5 top-1/2 -translate-y-1/2 text-emerald-500"></i>
+                    <input type="text" id="admin-news-link" placeholder="https://instagram.com/p/..." class="w-full pl-12 pr-6 py-5 rounded-[1.5rem] bg-[#0f172a] border border-slate-700 font-bold text-white outline-none focus:border-emerald-500 transition-all">
+                </div>
             </div>
 
-            <button onclick="publishNews()" class="w-full bg-blue-600 hover:bg-blue-500 text-white py-5 rounded-[2rem] font-black uppercase italic tracking-[0.2em] transition-all active:scale-95 shadow-xl shadow-blue-900/20 flex items-center justify-center gap-4">
-                <i class="fas fa-paper-plane"></i> Жариялау (Publish)
+            <div>
+                <label class="text-[10px] font-black text-slate-500 uppercase ml-4 tracking-[0.2em] italic mb-3 block text-blue-400">06. Негізгі хабарлама мәтіні</label>
+                <textarea id="admin-news-text" rows="5" class="w-full bg-[#0f172a] border border-slate-700 p-6 rounded-[2.5rem] text-sm font-bold text-white outline-none focus:border-blue-500 shadow-inner resize-none" placeholder="Ауыл тұрғындарына не айтқыңыз келеді? Осында жазыңыз..."></textarea>
+            </div>
+
+            <button onclick="publishNews()" class="w-full bg-blue-600 hover:bg-blue-500 text-white py-6 rounded-[2.5rem] font-black uppercase italic tracking-[0.4em] transition-all active:scale-95 shadow-2xl shadow-blue-900/40 flex items-center justify-center gap-4 group">
+                <i class="fas fa-paper-plane group-hover:translate-x-2 group-hover:-translate-y-1 transition-transform"></i> 
+                Жариялауды растау (Confirm & Publish)
             </button>
         </div>
     </div>
 
-    <div class="bg-[#1e293b] rounded-[2.5rem] border border-slate-800 overflow-hidden shadow-2xl mt-10">
-        <table class="w-full text-left">
-            <thead class="bg-slate-800/50 text-[10px] font-black uppercase tracking-widest text-slate-500 italic">
-                <tr>
-                    <th class="p-6">Жаңалық мәтіні</th>
-                    <th class="p-6 text-center">Пункт</th>
-                    <th class="p-6 text-right">Әрекет</th>
-                </tr>
-            </thead>
-            <tbody id="admin-news-history" class="divide-y divide-slate-800">
-                </tbody>
-        </table>
+    <div class="bg-[#1e293b] rounded-[3rem] border border-slate-800 overflow-hidden shadow-2xl mt-12">
+        <div class="p-8 border-b border-slate-800 bg-slate-800/20">
+            <h3 class="text-xs font-black uppercase italic tracking-widest text-slate-400">Жарияланған материалдар тарихы</h3>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+                <thead class="bg-slate-800/50 text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 italic">
+                    <tr>
+                        <th class="p-8">Материал</th>
+                        <th class="p-8 text-center">Мультимедиа</th>
+                        <th class="p-8 text-center">Пункт</th>
+                        <th class="p-8 text-right">Басқару</th>
+                    </tr>
+                </thead>
+                <tbody id="admin-news-history" class="divide-y divide-slate-800">
+                    </tbody>
+            </table>
+        </div>
     </div>
 </div>
 
@@ -2514,6 +2551,114 @@ function deleteNews(id) {
 // Таб ашылғанда функцияларды іске қосу
 // Бұрынғы openTab функциясына мына жолдарды қосу керек:
 // if (tabId === 'tab-news-manager') { renderAdminNewsHistory(); setTodayDate(); }
+
+
+// 1. Live Clock & Auto Date
+function updateAdminMeta() {
+    const clock = document.getElementById('live-clock');
+    const dateInput = document.getElementById('admin-news-date');
+    
+    if (clock) {
+        setInterval(() => {
+            clock.innerText = new Date().toLocaleTimeString('kk-KZ');
+        }, 1000);
+    }
+    
+    if (dateInput) {
+        dateInput.value = new Date().toLocaleDateString('kk-KZ', { 
+            day: 'numeric', month: 'long', year: 'numeric' 
+        });
+    }
+}
+
+// 2. Publish Logic (Multimedia Support)
+function publishNews() {
+    const text = document.getElementById('admin-news-text').value.trim();
+    const cat = document.getElementById('admin-news-cat').value;
+    const vid = document.getElementById('admin-news-video').value.trim();
+    const img = document.getElementById('admin-news-img').value.trim();
+    const link = document.getElementById('admin-news-link').value.trim();
+    const date = document.getElementById('admin-news-date').value;
+
+    if (!text) {
+        Swal.fire({ icon: 'warning', title: 'Мәтін бос!', background: '#1e293b', color: '#fff' });
+        return;
+    }
+
+    let news = JSON.parse(localStorage.getItem('village_news')) || [];
+    
+    const newEntry = {
+        id: Date.now(),
+        text: text,
+        category: cat,
+        videoUrl: vid || null,
+        imageUrl: img || null,
+        link: link || null,
+        date: date
+    };
+
+    news.push(newEntry);
+    localStorage.setItem('village_news', JSON.stringify(news));
+
+    Swal.fire({
+        icon: 'success',
+        title: 'Жарияланды!',
+        text: 'Мультимедиа контент сәтті қосылды ✅',
+        background: '#1e293b',
+        color: '#fff',
+        confirmButtonColor: '#2563eb'
+    });
+
+    // Форманы тазалау
+    document.getElementById('admin-news-text').value = '';
+    document.getElementById('admin-news-video').value = '';
+    document.getElementById('admin-news-img').value = '';
+    document.getElementById('admin-news-link').value = '';
+    
+    renderAdminNewsHistory();
+}
+
+// 3. Render Admin History
+function renderAdminNewsHistory() {
+    const container = document.getElementById('admin-news-history');
+    if (!container) return;
+    const news = JSON.parse(localStorage.getItem('village_news')) || [];
+
+    if (news.length === 0) {
+        container.innerHTML = `<tr><td colspan="4" class="p-20 text-center text-slate-600 font-bold italic uppercase text-xs tracking-widest">Тарих бос...</td></tr>`;
+        return;
+    }
+
+    container.innerHTML = news.map(item => `
+        <tr class="hover:bg-slate-800/30 transition-all group">
+            <td class="p-8">
+                <p class="text-xs font-bold text-slate-300 italic mb-1 line-clamp-1">"${item.text}"</p>
+                <span class="text-[8px] font-black text-slate-600 uppercase tracking-tighter">${item.date}</span>
+            </td>
+            <td class="p-8 text-center">
+                <div class="flex justify-center gap-3">
+                    <i class="fab fa-youtube ${item.videoUrl ? 'text-red-500' : 'text-slate-800'}"></i>
+                    <i class="fas fa-image ${item.imageUrl ? 'text-blue-500' : 'text-slate-800'}"></i>
+                    <i class="fas fa-link ${item.link ? 'text-emerald-500' : 'text-slate-800'}"></i>
+                </div>
+            </td>
+            <td class="p-8 text-center">
+                <span class="text-[9px] font-black text-blue-400 border border-blue-500/20 px-3 py-1 rounded-lg uppercase italic">${item.category}</span>
+            </td>
+            <td class="p-8 text-right">
+                <button onclick="deleteNews(${item.id})" class="w-10 h-10 bg-red-500/10 text-red-500 rounded-xl hover:bg-red-500 hover:text-white transition-all active:scale-90">
+                    <i class="fas fa-trash-alt text-xs"></i>
+                </button>
+            </td>
+        </tr>
+    `).reverse().join('');
+}
+
+// Таб ашылғанда орындау
+document.addEventListener('DOMContentLoaded', () => {
+    updateAdminMeta();
+    renderAdminNewsHistory();
+});
         </script>
     </body>
     </html>

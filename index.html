@@ -14,6 +14,8 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
 
+    
+
 <script>
   // Service Worker-ді тіркеу
   if ('serviceWorker' in navigator) {
@@ -579,6 +581,8 @@
 
 
 <script>
+
+    
     // Тауар бетіне өту функциясы
     function goToProduct(url) {
         window.location.href = url;
@@ -1480,6 +1484,32 @@ function renderVillageNews() {
 document.addEventListener('DOMContentLoaded', renderVillageNews);
 
 
+function checkAuth(targetUrl) {
+    const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+    
+    if (isLoggedIn) {
+        // Егер логин жасалған болса, бірден сол бетке жібереміз
+        window.location.href = targetUrl;
+    } else {
+        // Егер тіркелмеген болса, SweetAlert арқылы ескерту шығарамыз
+        Swal.fire({
+            title: 'Кіру қажет',
+            text: 'Бұл бөлімді көру үшін алдымен тіркелуіңіз керек!',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#ea580c',
+            cancelButtonColor: '#1e293b',
+            confirmButtonText: 'Кіру / Тіркелу',
+            cancelButtonText: 'Болдырмау',
+            background: '#ffffff',
+            borderRadius: '2rem'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = 'login.html'; // Тіркелу бетіне жіберу
+            }
+        });
+    }
+}
 
 </script>
 
@@ -1490,11 +1520,6 @@ document.addEventListener('DOMContentLoaded', renderVillageNews);
 <!-- 2. Сосын сенің тексеруші файлың -->
 <script src="./auth-guard.js"></script>
 
-
-<div id="image-viewer-modal" class="hidden fixed inset-0 bg-black/95 backdrop-blur-xl z-[3000] flex items-center justify-center p-4 md:p-10" onclick="closeImageViewer()">
-    <button class="absolute top-6 right-6 text-white/50 hover:text-white text-4xl transition-all">&times;</button>
-    <img id="full-res-image" src="" class="max-w-full max-h-full rounded-2xl shadow-2xl transform transition-transform duration-300 scale-95" onclick="event.stopPropagation()">
-</div>
 
 
 
