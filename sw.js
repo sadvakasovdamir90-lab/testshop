@@ -21,3 +21,28 @@ self.addEventListener('fetch', event => {
     })
   );
 });
+
+importScripts('https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js');
+importScripts('https://www.gstatic.com/firebasejs/10.7.1/firebase-messaging-compat.js');
+
+const firebaseConfig = {
+    apiKey: "AIzaSyDyRiRE8tgUF-OANANOYQUzYSfl9vtsjuM",
+    authDomain: "qulanmedia-96282.firebaseapp.com",
+    projectId: "qulanmedia-96282",
+    messagingSenderId: "1085151021799",
+    appId: "1:1085151021799:web:4475b38903d829c560b042"
+};
+
+firebase.initializeApp(firebaseConfig);
+const messaging = firebase.messaging();
+
+messaging.onBackgroundMessage((payload) => {
+    const notificationTitle = payload.notification.title;
+    const notificationOptions = {
+        body: payload.notification.body,
+        icon: 'https://i.yapx.ru/ddHXU.png',
+        data: { url: payload.data ? payload.data.url : '/news.html' }
+    };
+
+    self.registration.showNotification(notificationTitle, notificationOptions);
+});

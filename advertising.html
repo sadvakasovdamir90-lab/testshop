@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Реклама | QulanMedia</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,600;0,700;0,800;1,800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <style>
+        :root { --accent: #0095F6; }
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            background-color: #f8fafc; 
+            -webkit-font-smoothing: antialiased;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .dark body { background-color: #020617; }
+        
+        /* 📱 Адаптивные карточки */
+        .premium-card {
+            background: #ffffff;
+            border-radius: 2.5rem;
+            border: 1px solid rgba(241, 245, 249, 1);
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .dark .premium-card {
+            background: #0f172a;
+            border-color: rgba(30, 41, 59, 0.5);
+        }
+        .premium-card:active { transform: scale(0.96); }
+
+        /* Глянцевый эффект заголовка */
+        .glass-nav {
+            backdrop-filter: blur(25px) saturate(200%);
+            background: rgba(255, 255, 255, 0.8);
+            -webkit-backdrop-filter: blur(25px) saturate(200%);
+        }
+        .dark .glass-nav { background: rgba(15, 23, 42, 0.8); }
+
+        /* Анимация появления */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade { animation: fadeInUp 0.6s ease forwards; }
+    </style>
+</head>
+<body class="selection:bg-blue-100 dark:selection:bg-blue-900/30">
+
+    <header class="sticky top-0 z-[1000] glass-nav border-b border-slate-200/60 dark:border-slate-800/50 px-6 py-5">
+        <div class="max-w-5xl mx-auto flex items-center justify-between">
+            <a href="news.html" class="w-11 h-11 rounded-2xl bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-slate-900 dark:text-white active:scale-90 transition-all border border-slate-100 dark:border-slate-700">
+                <i class="fas fa-chevron-left text-xs"></i>
+            </a>
+            <div class="text-center">
+                <span class="text-[9px] font-black uppercase tracking-[0.5em] text-blue-600 block mb-1">Партнерство</span>
+                <h1 class="text-[11px] font-[900] uppercase tracking-widest text-slate-900 dark:text-white italic leading-none">Реклама на портале</h1>
+            </div>
+            <div class="w-11"></div>
+        </div>
+    </header>
+
+    <main class="max-w-4xl mx-auto px-6 py-12 pb-32">
+        
+        <div class="mb-16 animate-fade">
+            <div class="inline-block px-4 py-2 bg-blue-50 dark:bg-blue-900/20 rounded-full mb-6 border border-blue-100/50 dark:border-blue-800/50">
+                <span class="text-[9px] font-black text-blue-600 uppercase tracking-widest italic">Медиа-Кит 2026</span>
+            </div>
+            <h2 class="text-3xl md:text-5xl font-[900] text-slate-900 dark:text-white italic uppercase tracking-tighter leading-[0.95] mb-8">
+                Твой бизнес заслуживает <span class="text-blue-600">максимум</span> внимания
+            </h2>
+            <p class="text-xs md:text-sm text-slate-400 dark:text-slate-500 font-bold italic uppercase tracking-wide leading-relaxed">
+                QulanMedia — это голос Куланөтпеса. Мы объединяем тысячи жителей района в одной цифровой экосистеме.
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-5 mb-16">
+            <div class="premium-card p-8 group hover:border-blue-500 transition-all">
+                <p class="text-3xl font-[900] italic text-slate-900 dark:text-white mb-1 group-hover:text-blue-600 transition-colors">10K+</p>
+                <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest italic">Просмотров в месяц</p>
+            </div>
+            <div class="premium-card p-8 group hover:border-blue-500 transition-all">
+                <p class="text-3xl font-[900] italic text-slate-900 dark:text-white mb-1 group-hover:text-blue-600 transition-colors">85%</p>
+                <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest italic">Лояльная аудитория</p>
+            </div>
+            <div class="premium-card p-8 group hover:border-blue-500 transition-all">
+                <p class="text-3xl font-[900] italic text-slate-900 dark:text-white mb-1 group-hover:text-blue-600 transition-colors">24/7</p>
+                <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest italic">Доступность ресурса</p>
+            </div>
+        </div>
+
+        <div class="space-y-4 mb-16">
+            <h3 class="text-[10px] font-black text-slate-400 uppercase tracking-[0.4em] italic mb-8 ml-2">Наши возможности</h3>
+            
+            <div class="premium-card p-8 flex flex-col sm:flex-row sm:items-center justify-between gap-6 hover:shadow-xl hover:shadow-slate-200/50 dark:hover:shadow-none transition-all">
+                <div class="flex items-center gap-6">
+                    <div class="w-14 h-14 rounded-3xl bg-blue-600 text-white flex items-center justify-center text-xl shadow-lg shadow-blue-500/20">
+                        <i class="fas fa-layer-group"></i>
+                    </div>
+                    <div>
+                        <h4 class="text-sm font-black text-slate-900 dark:text-white uppercase italic">Рекламный Баннер</h4>
+                        <p class="text-[10px] text-slate-400 font-bold uppercase mt-1">Главная страница, под новостями</p>
+                    </div>
+                </div>
+                <div class="text-left sm:text-right px-2">
+                    <span class="text-lg font-[900] text-blue-600 italic tracking-tight">5 000 ₸ / нед</span>
+                </div>
+            </div>
+
+            <div class="premium-card p-8 flex flex-col sm:flex-row sm:items-center justify-between gap-6 hover:shadow-xl hover:shadow-slate-200/50 dark:hover:shadow-none transition-all">
+                <div class="flex items-center gap-6">
+                    <div class="w-14 h-14 rounded-3xl bg-emerald-500 text-white flex items-center justify-center text-xl shadow-lg shadow-emerald-500/20">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <div>
+                        <h4 class="text-sm font-black text-slate-900 dark:text-white uppercase italic">Срочный Stories-пост</h4>
+                        <p class="text-[10px] text-slate-400 font-bold uppercase mt-1">Верхняя лента, охват 100%</p>
+                    </div>
+                </div>
+                <div class="text-left sm:text-right px-2">
+                    <span class="text-lg font-[900] text-emerald-500 italic tracking-tight">2 000 ₸ / 24ч</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="premium-card p-12 bg-slate-950 border-none relative overflow-hidden">
+            <div class="relative z-10">
+                <h3 class="text-white text-2xl md:text-3xl font-[900] uppercase italic tracking-tighter leading-none mb-6">Готовы запустить <br> продажи?</h3>
+                <p class="text-slate-500 text-[10px] font-black uppercase italic mb-10 tracking-widest">Персональный менеджер ответит в течение 5 минут</p>
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <a href="https://wa.me/77001234567" class="px-10 py-6 bg-white text-slate-950 rounded-[2rem] font-black uppercase italic text-[11px] tracking-widest flex items-center justify-center gap-3 active:scale-95 transition-all shadow-2xl">
+                        <i class="fab fa-whatsapp text-lg"></i> Написать сейчас
+                    </a>
+                </div>
+            </div>
+            <div class="absolute -right-10 -bottom-10 w-48 h-48 bg-blue-600/20 rounded-full blur-[80px]"></div>
+        </div>
+
+    </main>
+
+    <footer class="py-12 border-t border-slate-100 dark:border-slate-800/50 text-center">
+        <p class="text-[9px] font-black text-slate-300 dark:text-slate-700 uppercase tracking-[0.5em] italic">QulanMedia Commercial Hub © 2026</p>
+    </footer>
+
+    <script>
+        // Поддержка темной темы
+        if (localStorage.getItem('theme') === 'dark') document.documentElement.classList.add('dark');
+    </script>
+</body>
+</html>
