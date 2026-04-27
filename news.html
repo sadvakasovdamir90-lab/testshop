@@ -9,6 +9,10 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,700;0,800;1,400&display=swap" rel="stylesheet">
+    <meta name="description" content="QulanMedia - Құланөтпес ауылының ресми мультимедиялық порталы. Жаңалықтар, дүкен және хабарландырулар.">
+    <meta name="keywords" content="Құланөтпес, Нура, QulanShop, QulanMedia, ауыл жаңалықтары">
+    <meta property="og:title" content="QulanMedia | Құланөтпес порталы">
+    <meta property="og:image" content="https://sadvakasovdamir90-lab.github.io/images/news.png">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         :root {
@@ -560,52 +564,56 @@
 </script>
 
     <script>
-   // 1. НЕГІЗГІ ЖҮКТЕУ ФУНКЦИЯСЫ
+      // 1. НЕГІЗГІ ЖҮКТЕУ ФУНКЦИЯСЫ
+// 1. ОСНОВНАЯ ФУНКЦИЯ ЗАГРУЗКИ НОВОСТЕЙ
+// ГАРАНТИРОВАННО ИСПРАВЛЕННАЯ ФУНКЦИЯ
 function loadNews(filter = 'all') {
     const container = document.getElementById('news-container');
-    const sidebar = document.getElementById('sidebar-news-list');
+    const sidebar = document.getElementById('sidebar-news-list'); // ID-ді тексер: sidebar-news-list
     const filters = document.getElementById('category-filters');
     const news = JSON.parse(localStorage.getItem('village_news')) || [];
 
-    // Категория фильтрлерін шығару
+    // 1. Фильтрлерді шығару (Орысша)
     if (filters) {
-        const categories = ['all', ...new Set(news.map(n => n.category))];
-        filters.innerHTML = categories.map(cat => `
-            <button onclick="loadNews('${cat}')" 
-                class="px-8 py-4 rounded-2xl text-[10px] font-black uppercase italic tracking-widest transition-all border-2
-                ${filter === cat ? 'bg-blue-600 text-white border-blue-600 shadow-xl' : 'bg-white text-slate-400 border-slate-100 dark:bg-slate-800 dark:border-slate-700'}">
-                ${cat === 'all' ? 'Все потоки' : cat}
-            </button>
-        `).join('');
+        const categories = ['Все потоки', ...new Set(news.map(n => n.category))];
+        filters.innerHTML = categories.map(cat => {
+            const currentCat = cat === 'Все потоки' ? 'all' : cat;
+            return `
+                <button onclick="loadNews('${currentCat}')" 
+                    class="px-8 py-4 rounded-2xl text-[10px] font-black uppercase italic tracking-widest transition-all border-2 shrink-0
+                    ${filter === currentCat ? 'bg-blue-600 text-white border-blue-600 shadow-xl' : 'bg-white text-slate-400 border-slate-100'}">
+                    ${cat}
+                </button>
+            `;
+        }).join('');
     }
 
-    // Сүзгілеу
     const filteredNews = filter === 'all' ? news : news.filter(n => n.category === filter);
     
-    // Жаңалықтарды экранға шығару (Бұл функция файлда бар екеніне көз жеткіз)
+    // Негізгі контент
     if (typeof renderFilteredNews === 'function') {
         renderFilteredNews(filteredNews);
     }
 
-    // SIDEBAR-ДЫ ШЫҒАРУ (ДИЗАЙНЫ ТҮЗЕТІЛГЕН)
+    // 2. SIDEBAR - СУРЕТ ПЕН МӘТІНДІ ҚАТАР ҚОЮ ( flex-row )
     if (sidebar) {
         sidebar.innerHTML = news.slice(-8).reverse().map(item => `
-            <a href="${item.link || '#'}" class="group block p-4 hover:bg-blue-50/50 transition-all border-l-4 border-transparent hover:border-blue-600 border-b border-slate-50 last:border-0">
-                <div class="flex items-start gap-4"> <div class="w-16 h-16 shrink-0 rounded-2xl overflow-hidden bg-slate-100 border border-slate-100/50 shadow-sm flex items-center justify-center">
+            <a href="${item.link || '#'}" class="group block p-4 hover:bg-slate-50 transition-all border-b border-slate-100 last:border-0">
+                <div class="flex flex-row items-center gap-4"> <div class="w-16 h-16 shrink-0 rounded-2xl overflow-hidden bg-slate-100 border border-slate-100 shadow-sm flex items-center justify-center">
                         ${item.imageUrl ? 
-                            `<img src="${item.imageUrl}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">` : 
+                            `<img src="${item.imageUrl}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">` : 
                             `<i class="fas fa-image text-slate-300 text-[10px]"></i>`
                         }
                     </div>
 
                     <div class="flex flex-col gap-1 min-w-0">
                         <div class="flex items-center gap-2 mb-0.5">
-                            <span class="text-[8px] font-black text-blue-600 uppercase italic tracking-wider">${item.category}</span>
+                            <span class="text-[8px] font-black text-blue-600 uppercase italic tracking-wider">${item.category || 'Медиа'}</span>
                             <span class="w-1 h-1 bg-slate-200 rounded-full"></span>
-                            <span class="text-[8px] font-bold text-slate-400 italic uppercase">${item.date}</span>
+                            <span class="text-[8px] font-bold text-slate-400 italic uppercase">${item.date || ''}</span>
                         </div>
-                        <h4 class="text-[11px] font-extrabold leading-snug text-slate-800 group-hover:text-blue-600 transition-colors italic line-clamp-2">
-                            ${item.text}
+                        <h4 class="text-[11px] font-bold leading-tight text-slate-800 group-hover:text-blue-600 transition-colors italic line-clamp-2 uppercase tracking-tighter">
+                            ${item.text || 'Без названия'}
                         </h4>
                     </div>
 
@@ -614,71 +622,67 @@ function loadNews(filter = 'all') {
         `).join('');
     }
 }
-
-// 2. РЕНДЕРИНГ ФУНКЦИЯСЫ (РЕАКЦИЯЛАРМЕН)
-function renderFilteredNews(list) {
+// 5. ОСНОВНОЙ КОНТЕНТТІ ШЫҒАРУ (Орыс тілінде)
+   function renderFilteredNews(newsList) {
     const container = document.getElementById('news-container');
     if (!container) return;
 
-    if (list.length === 0) {
+    if (newsList.length === 0) {
         container.innerHTML = `
-            <div class="col-span-full py-20 px-6 flex flex-col items-center justify-center border-4 border-dashed border-slate-100 rounded-[3rem] mt-10">
-                <div class="w-24 h-24 bg-slate-50 rounded-full flex items-center justify-center mb-6">
-                    <i class="fas fa-search-minus text-3xl text-slate-200"></i>
-                </div>
-                <h3 class="text-xs font-black uppercase italic tracking-[0.4em] text-slate-300">Ничего не найдено</h3>
+            <div class="col-span-full py-20 text-center">
+                <i class="fas fa-newspaper text-5xl text-slate-100 mb-4"></i>
+                <p class="text-slate-400 italic uppercase font-black text-[10px] tracking-widest">Новостей пока нет...</p>
             </div>`;
         return;
     }
 
-    container.innerHTML = list.map(item => {
-        let mediaBlock = `<div class="media-holder aspect-[16/10] bg-slate-100 flex items-center justify-center"><i class="fas fa-image text-slate-300 text-5xl"></i></div>`;
-        if (item.videoUrl) {
-            mediaBlock = `<div class="media-holder aspect-[16/10] bg-black"><iframe class="w-full h-full" src="https://www.youtube.com/embed/${item.videoUrl}" frameborder="0" allowfullscreen></iframe></div>`;
-        } else if (item.imageUrl) {
-            mediaBlock = `<div class="media-holder aspect-[16/10] overflow-hidden"><img src="${item.imageUrl}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"></div>`;
-        }
-
-        return `
-        <div class="news-card-main group bg-white dark:bg-slate-900 flex flex-col h-full border border-slate-200 dark:border-slate-800 rounded-[2rem] overflow-hidden hover:shadow-2xl transition-all duration-500">
-            <div class="relative">${mediaBlock}
-                <div class="absolute top-5 left-5 z-10">
-                    <span class="bg-white/90 backdrop-blur-md text-slate-900 text-[10px] font-bold px-4 py-2 rounded-full uppercase tracking-widest shadow-sm border border-slate-200/50">${item.category}</span>
-                </div>
-            </div>
-
-            <div class="p-8 flex-1 flex flex-col">
-                <div class="flex items-center gap-3 mb-5">
-                    <div class="w-8 h-8 bg-blue-50 rounded-lg flex items-center justify-center"><i class="far fa-calendar-alt text-blue-600 text-[10px]"></i></div>
-                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-tight">${item.date}</p>
-                </div>
-
-                <a href="${item.link && item.link !== 'null' ? item.link : '#'}" target="_blank">
-                    <h3 class="text-lg font-bold leading-snug text-slate-900 dark:text-white mb-4 group-hover/title:text-blue-600 transition-colors">${item.text}</h3>
-                </a>
-
-                <div class="flex gap-2 mb-6">
-                    <button onclick="addReaction(this)" class="px-4 py-2 rounded-full bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 text-[13px] hover:scale-110 transition-transform flex items-center shadow-sm">
-                        🔥 <span class="reaction-count font-black ml-2 text-slate-600 dark:text-slate-300">0</span>
-                    </button>
-                    <button onclick="addReaction(this)" class="px-4 py-2 rounded-full bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 text-[13px] hover:scale-110 transition-transform flex items-center shadow-sm">
-                        ❤️ <span class="reaction-count font-black ml-2 text-slate-600 dark:text-slate-300">0</span>
-                    </button>
-                </div>
-
-                <div class="mt-auto pt-6 border-t border-slate-50 dark:border-slate-800 flex items-center justify-between">
-                    <div class="flex items-center gap-3">
-                        <img src="/images/news.png" class="w-8 h-8 object-contain bg-blue-50 rounded-lg p-1">
-                        <p class="text-[11px] font-[800] uppercase italic text-slate-900 dark:text-slate-300 tracking-tight">QulanShop новости</p>
-                    </div>
-                    <div class="flex gap-2">
-                        <button onclick="copyNewsLink('${item.link}')" class="w-10 h-10 rounded-xl bg-slate-900 text-white flex items-center justify-center hover:bg-blue-600 transition-all"><i class="fas fa-link text-[12px]"></i></button>
-                        <button onclick="shareContent('${item.text}', '${item.link}')" class="w-10 h-10 rounded-xl bg-slate-50 text-slate-400 flex items-center justify-center hover:bg-slate-200 transition-all border border-slate-100"><i class="fas fa-share-alt text-[12px]"></i></button>
+    container.innerHTML = newsList.slice().reverse().map(item => `
+        <article class="bg-white rounded-[2.5rem] overflow-hidden shadow-sm border border-slate-100 hover:shadow-2xl transition-all duration-500 group">
+            ${item.imageUrl ? `
+                <div class="relative h-56 overflow-hidden">
+                    <img src="${item.imageUrl}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
+                    <div class="absolute top-5 left-5">
+                        <span class="px-4 py-2 bg-white/90 backdrop-blur-md rounded-xl text-[9px] font-black text-blue-600 uppercase italic shadow-sm">
+                            ${item.category}
+                        </span>
                     </div>
                 </div>
+            ` : ''}
+            <div class="p-8">
+                <div class="flex items-center gap-3 mb-4 text-[9px] font-bold text-slate-400 uppercase italic">
+                    <i class="far fa-calendar-alt text-blue-500"></i>
+                    <span>${item.date}</span>
+                </div>
+                <h3 class="text-lg font-black text-slate-800 mb-4 leading-tight group-hover:text-blue-600 transition-colors italic uppercase tracking-tighter">
+                    ${item.text}
+                </h3>
             </div>
-        </div>`;
-    }).reverse().join('');
+        </article>
+    `).join('');
+}
+
+// Sidebar бөлігі loadNews функциясының ішінде осылай болуы керек:
+if (sidebar) {
+    sidebar.innerHTML = news.slice(-8).reverse().map(item => `
+        <a href="#" class="group block p-4 hover:bg-slate-50 transition-all border-b border-slate-100 last:border-0">
+            <div class="flex flex-row items-center gap-4"> <div class="w-16 h-16 shrink-0 rounded-2xl overflow-hidden bg-slate-100 border border-slate-100 shadow-sm flex items-center justify-center">
+                    ${item.imageUrl ? 
+                        `<img src="${item.imageUrl}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">` : 
+                        `<i class="fas fa-image text-slate-300 text-[10px]"></i>`
+                    }
+                </div>
+                <div class="flex flex-col gap-1 min-w-0">
+                    <div class="flex items-center gap-2 mb-0.5">
+                        <span class="text-[8px] font-black text-blue-600 uppercase italic tracking-wider">${item.category || 'Медиа'}</span>
+                        <span class="text-[8px] font-bold text-slate-400 italic uppercase">${item.date || ''}</span>
+                    </div>
+                    <h4 class="text-[11px] font-[800] leading-tight text-slate-800 group-hover:text-blue-600 transition-colors italic line-clamp-2 uppercase tracking-tighter">
+                        ${item.text}
+                    </h4>
+                </div>
+            </div>
+        </a>
+    `).join('');
 }
 
 // 3. БАСҚА ФУНКЦИЯЛАР (Іздеу, Реакция, Меню)
