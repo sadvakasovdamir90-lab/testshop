@@ -283,11 +283,11 @@
     </div>
 
     <div class="flex flex-col">
-        <h1 class="text-xl md:text-2xl font-[900] tracking-tighter text-slate-900 dark:text-gray-600 uppercase  leading-none transition-colors duration-300">
+        <h1 class="text-xl md:text-2xl font-[900] tracking-tighter text-slate-400 dark:text-gray-600 uppercase  leading-none transition-colors duration-300">
             Qulan<span class="text-blue-600">Media</span>
         </h1>
         
-        <p class="text-[8px] md:text-[9px] font-[800] text-slate-400 dark:text-slate-500 uppercase tracking-[0.4em] mt-1.5  leading-none transition-colors duration-300">
+        <p class="text-[8px] md:text-[9px] font-[800] text-slate-900 dark:text-slate-500 uppercase tracking-[0.1em] mt-1.5  leading-none transition-colors duration-300">
             Официальный портал
         </p>
     </div>
@@ -336,8 +336,8 @@
             <nav class="flex flex-col gap-6">
                 <a href="index.html" class="text-sm font-[800] uppercase italic tracking-wider text-slate-900 hover:text-blue-600 transition-colors">Магазин</a>
                 <a href="news.html" class="text-sm font-[800] uppercase italic tracking-wider text-blue-600">Медиа</a>
-                <a href="#" class="text-sm font-[800] uppercase italic tracking-wider text-slate-900 hover:text-blue-600 transition-colors">Объявления</a>
-                <a href="#" class="text-sm font-[800] uppercase italic tracking-wider text-slate-900 hover:text-blue-600 transition-colors">Реклама</a>
+                <a href="announcements.html" class="text-sm font-[800] uppercase italic tracking-wider text-slate-900 hover:text-blue-600 transition-colors">Объявления</a>
+                <a href="advertising.html" class="text-sm font-[800] uppercase italic tracking-wider text-slate-900 hover:text-blue-600 transition-colors">Реклама</a>
             </nav>
 
             <div class="absolute bottom-10 left-8 right-8">
@@ -398,10 +398,10 @@
                     </button>
                 </div>
             </div>
-
   
 
             <aside class="lg:col-span-4 space-y-8">
+                
 
 <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] p-8 border border-slate-100 dark:border-slate-800 qulan-shadow mb-8 flex items-center justify-between transition-all duration-500">
     <div class="space-y-2">
@@ -516,9 +516,6 @@
 </footer>
 
 <script type="module">
-    // 1. СЕНІҢ БҰРЫНҒЫ КОДТАРЫҢ (loadNews, renderFilteredNews, т.б.)
-    // ... барлық функцияларың осы жерде қала береді ...
-
     // 2. FIREBASE MESSAGING LOGIC (Осы жерге қосамыз)
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getMessaging, getToken } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-messaging.js";
@@ -597,6 +594,7 @@ function loadNews(filter = 'all') {
 
     // 2. SIDEBAR - СУРЕТ ПЕН МӘТІНДІ ҚАТАР ҚОЮ ( flex-row )
     if (sidebar) {
+    
         sidebar.innerHTML = news.slice(-8).reverse().map(item => `
             <a href="${item.link || '#'}" class="group block p-4 hover:bg-slate-50 transition-all border-b border-slate-100 last:border-0">
                 <div class="flex flex-row items-center gap-4"> <div class="w-16 h-16 shrink-0 rounded-2xl overflow-hidden bg-slate-100 border border-slate-100 shadow-sm flex items-center justify-center">
@@ -622,68 +620,7 @@ function loadNews(filter = 'all') {
         `).join('');
     }
 }
-// 5. ОСНОВНОЙ КОНТЕНТТІ ШЫҒАРУ (Орыс тілінде)
-   function renderFilteredNews(newsList) {
-    const container = document.getElementById('news-container');
-    if (!container) return;
 
-    if (newsList.length === 0) {
-        container.innerHTML = `
-            <div class="col-span-full py-20 text-center">
-                <i class="fas fa-newspaper text-5xl text-slate-100 mb-4"></i>
-                <p class="text-slate-400 italic uppercase font-black text-[10px] tracking-widest">Новостей пока нет...</p>
-            </div>`;
-        return;
-    }
-
-    container.innerHTML = newsList.slice().reverse().map(item => `
-        <article class="bg-white rounded-[2.5rem] overflow-hidden shadow-sm border border-slate-100 hover:shadow-2xl transition-all duration-500 group">
-            ${item.imageUrl ? `
-                <div class="relative h-56 overflow-hidden">
-                    <img src="${item.imageUrl}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
-                    <div class="absolute top-5 left-5">
-                        <span class="px-4 py-2 bg-white/90 backdrop-blur-md rounded-xl text-[9px] font-black text-blue-600 uppercase italic shadow-sm">
-                            ${item.category}
-                        </span>
-                    </div>
-                </div>
-            ` : ''}
-            <div class="p-8">
-                <div class="flex items-center gap-3 mb-4 text-[9px] font-bold text-slate-400 uppercase italic">
-                    <i class="far fa-calendar-alt text-blue-500"></i>
-                    <span>${item.date}</span>
-                </div>
-                <h3 class="text-lg font-black text-slate-800 mb-4 leading-tight group-hover:text-blue-600 transition-colors italic uppercase tracking-tighter">
-                    ${item.text}
-                </h3>
-            </div>
-        </article>
-    `).join('');
-}
-
-// Sidebar бөлігі loadNews функциясының ішінде осылай болуы керек:
-if (sidebar) {
-    sidebar.innerHTML = news.slice(-8).reverse().map(item => `
-        <a href="#" class="group block p-4 hover:bg-slate-50 transition-all border-b border-slate-100 last:border-0">
-            <div class="flex flex-row items-center gap-4"> <div class="w-16 h-16 shrink-0 rounded-2xl overflow-hidden bg-slate-100 border border-slate-100 shadow-sm flex items-center justify-center">
-                    ${item.imageUrl ? 
-                        `<img src="${item.imageUrl}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">` : 
-                        `<i class="fas fa-image text-slate-300 text-[10px]"></i>`
-                    }
-                </div>
-                <div class="flex flex-col gap-1 min-w-0">
-                    <div class="flex items-center gap-2 mb-0.5">
-                        <span class="text-[8px] font-black text-blue-600 uppercase italic tracking-wider">${item.category || 'Медиа'}</span>
-                        <span class="text-[8px] font-bold text-slate-400 italic uppercase">${item.date || ''}</span>
-                    </div>
-                    <h4 class="text-[11px] font-[800] leading-tight text-slate-800 group-hover:text-blue-600 transition-colors italic line-clamp-2 uppercase tracking-tighter">
-                        ${item.text}
-                    </h4>
-                </div>
-            </div>
-        </a>
-    `).join('');
-}
 
 // 3. БАСҚА ФУНКЦИЯЛАР (Іздеу, Реакция, Меню)
 function addReaction(btn) {
@@ -865,50 +802,30 @@ function toggleSearch() {
     }
 }
 
-// 2. Жаңалықтарды іздеу логикасы
-// 1. Іздеу логикасы
-function searchNews(query) {
-    const news = JSON.parse(localStorage.getItem('village_news')) || [];
-    const term = query.toLowerCase().trim();
-    
-    // Егер іздеу жолағы бос болса, бәрін қайта жүктейміз
-    if (term.length < 1) {
-        loadNews(); 
-        return;
-    }
-
-    const filtered = news.filter(n => 
-        n.text.toLowerCase().includes(term) || 
-        n.category.toLowerCase().includes(term)
-    );
-
-    renderFilteredNews(filtered);
-}
 
 // 2. Іздеу нәтижелерін рендеринг жасау (Сенің дизайныңмен)
 function renderFilteredNews(list) {
     const container = document.getElementById('news-container');
+    const sidebar = document.getElementById('sidebar-news-list');
     
+    if (!container) return;
+
     if (list.length === 0) {
-        // ✨ СЕНЕ ҰНАҒАН ПУНКТИРЛІ ДИЗАЙН (Сайтты бұзбайды)
         container.innerHTML = `
             <div class="col-span-full py-20 px-6 flex flex-col items-center justify-center border-4 border-dashed border-slate-100 rounded-[3rem] mt-10">
                 <div class="w-24 h-24 bg-slate-50 rounded-full flex items-center justify-center mb-6">
                     <i class="fas fa-search-minus text-3xl text-slate-200"></i>
                 </div>
-                <h3 class="text-xs font-black uppercase italic tracking-[0.4em] text-slate-300">
-                    Ничего не найдено
-                </h3>
-                <p class="text-[10px] font-bold text-slate-200 uppercase mt-2 italic">
-                    Попробуйте изменить запрос
-                </p>
+                <h3 class="text-xs font-black italic tracking-[0.4em] text-slate-300">Ничего не найдено</h3>
+                <p class="text-[10px] font-bold text-slate-200 mt-2 italic">Попробуйте изменить запрос</p>
             </div>`;
         return;
     }
 
-    // Тізімді сенің "news-card-main" стиліңмен шығарамыз
-    container.innerHTML = list.map(item => {
-        // Медиа блогы (Видео немесе Сурет)
+    const reversedList = [...list].reverse();
+
+    // 1. НЕГІЗГІ ТАСПА
+    container.innerHTML = reversedList.map(item => {
         let mediaBlock = `
             <div class="media-holder aspect-[16/10] bg-slate-100 flex items-center justify-center">
                 <i class="fas fa-image text-slate-300 text-5xl"></i>
@@ -931,7 +848,7 @@ function renderFilteredNews(list) {
             <div class="relative">
                 ${mediaBlock}
                 <div class="absolute top-5 left-5 z-10">
-                    <span class="bg-white/90 backdrop-blur-md text-slate-900 text-[10px] font-bold px-4 py-2 rounded-full uppercase tracking-widest shadow-sm">
+                    <span class="bg-white/90 backdrop-blur-md text-slate-900 text-[10px] font-bold px-4 py-2 rounded-full tracking-widest shadow-sm border border-white/20 italic">
                         ${item.category}
                     </span>
                 </div>
@@ -939,39 +856,60 @@ function renderFilteredNews(list) {
 
             <div class="p-8 flex-1 flex flex-col">
                 <div class="flex items-center gap-3 mb-5">
-                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-tight">${item.date}</p>
+                    <p class="text-[10px] font-bold text-slate-400 tracking-tight">${item.date}</p>
                 </div>
 
                 <a href="${item.link && item.link !== 'null' ? item.link : '#'}" target="_blank" class="block">
-                    <h3 class="text-lg font-bold leading-snug text-slate-900 mb-8 hover:text-blue-600 transition-colors">
+                    <h3 class="text-lg font-[800] leading-snug text-slate-900 mb-8 hover:text-blue-600 transition-colors italic tracking-tighter">
                         ${item.text}
                     </h3>
                 </a>
 
-              <div class="mt-auto pt-6 border-t border-slate-50 dark:border-slate-800 flex items-center ">
-    <div class="flex items-center gap-3">
-        <div class="w-8 h-8 rounded-lg">
-            <img src="images/news.png" class="w-full h-full object-contain" alt="Qulan">
-        </div>
-        
-        <div class="flex flex-col">
-            <div class="flex items-center gap-1.5">
-                <p class="text-[11px] font-[800] uppercase ">
-                    QulanShop новости
-                </p>
-                <svg width="12" height="12" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" class="shrink-0">
-                    <path d="M19.998 3.094 14.638 0l-2.972 5.15H5.432v6.354L0 14.64 3.094 20 0 25.359l5.432 3.137v5.905h5.975L14.638 40l5.36-3.094L25.358 40l3.232-5.6h6.162v-6.01L40 25.359 36.905 20 40 14.641l-5.248-3.03v-6.46h-6.419L25.358 0l-5.36 3.094Z" fill="#0095F6"></path>
-                    <path d="M27.413 14.319 29.667 16.606 18.237 28.106 11.402 21.176 13.646 18.918 18.233 23.499 27.413 14.319Z" fill="white"></path>
-                </svg>
+                <div class="mt-auto pt-6 border-t border-slate-50 dark:border-slate-800 flex items-center">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-lg overflow-hidden">
+                            <img src="images/news.png" class="w-full h-full object-contain" alt="Qulan">
+                        </div>
+                        <div class="flex flex-col">
+                            <div class="flex items-center gap-1.5">
+                                <p class="text-[11px] uppercase leading-none">QulanShop новости</p>
+                                <svg width="12" height="12" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" class="shrink-0">
+                                    <path d="M19.998 3.094 14.638 0l-2.972 5.15H5.432v6.354L0 14.64 3.094 20 0 25.359l5.432 3.137v5.905h5.975L14.638 40l5.36-3.094L25.358 40l3.232-5.6h6.162v-6.01L40 25.359 36.905 20 40 14.641l-5.248-3.03v-6.46h-6.419L25.358 0l-5.36 3.094Z" fill="#0095F6"></path>
+                                    <path d="M27.413 14.319 29.667 16.606 18.237 28.106 11.402 21.176 13.646 18.918 18.233 23.499 27.413 14.319Z" fill="white"></path>
+                                </svg>
+                            </div>
+                            <p class="text-[8px] font-bold text-slate-400 tracking-wider mt-1 uppercase leading-none">Официальный источник</p>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <p class="text-[8px] font-bold text-slate-400 uppercase tracking-wider mt-0.5 leading-none">
-                Официальный источник
-            </p>
-        </div>
-    </div>
-</div>
         </div>`;
-    }).reverse().join('');
+    }).join('');
+
+    // 2. SIDEBAR
+    if (sidebar) {
+        sidebar.innerHTML = reversedList.slice(0, 8).map(item => `
+            <a href="${item.link || '#'}" class="group block p-4 hover:bg-slate-50 transition-all border-b border-slate-100 last:border-0">
+                <div class="flex flex-row items-center gap-4"> 
+                    <div class="w-16 h-16 shrink-0 rounded-2xl overflow-hidden bg-slate-100 border border-slate-100 shadow-sm flex items-center justify-center">
+                        ${item.imageUrl ? 
+                            `<img src="${item.imageUrl}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">` : 
+                            `<i class="fas fa-image text-slate-300 text-[10px]"></i>`
+                        }
+                    </div>
+                    <div class="flex flex-col gap-1 min-w-0 flex-1">
+                        <div class="flex items-center gap-2 mb-0.5">
+                            <span class="text-[8px] font-black text-blue-600 italic tracking-wider">${item.category || 'Медиа'}</span>
+                            <span class="text-[8px] font-bold text-slate-400 italic">${item.date || ''}</span>
+                        </div>
+                        <h4 class="text-[11px] font-[800] leading-tight text-slate-800 group-hover:text-blue-600 transition-colors italic line-clamp-2 tracking-tighter">
+                            ${item.text}
+                        </h4>
+                    </div>
+                </div>
+            </a>
+        `).join('');
+    }
 }
 
 function handleSearchInput(value) {
