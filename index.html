@@ -1484,33 +1484,6 @@ function renderVillageNews() {
 document.addEventListener('DOMContentLoaded', renderVillageNews);
 
 
-function checkAuth(targetUrl) {
-    const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
-    
-    if (isLoggedIn) {
-        // Егер логин жасалған болса, бірден сол бетке жібереміз
-        window.location.href = targetUrl;
-    } else {
-        // Егер тіркелмеген болса, SweetAlert арқылы ескерту шығарамыз
-        Swal.fire({
-            title: 'Кіру қажет',
-            text: 'Бұл бөлімді көру үшін алдымен тіркелуіңіз керек!',
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#ea580c',
-            cancelButtonColor: '#1e293b',
-            confirmButtonText: 'Кіру / Тіркелу',
-            cancelButtonText: 'Болдырмау',
-            background: '#ffffff',
-            borderRadius: '2rem'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                window.location.href = 'login.html'; // Тіркелу бетіне жіберу
-            }
-        });
-    }
-}
-
 </script>
 
 
