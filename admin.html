@@ -242,6 +242,16 @@
                     <button onclick="openTab(event, 'tab-ad-manager')" class="sidebar-link w-full flex items-center p-3 rounded-xl hover:bg-slate-800 transition font-bold text-sm">
                         <i class="fas fa-ad mr-3 w-5 text-center text-orange-500"></i> Реклама и монетизация
                     </button>
+                    <button onclick="openTab(event, 'tab-themes-manager')" class="sidebar-link w-full flex items-center p-3 rounded-xl hover:bg-slate-800 transition font-bold text-sm group">
+                        <div class="relative mr-3 w-5 h-5 flex items-center justify-center">
+                            <i class="fas fa-magic text-purple-500 group-hover:scale-110 transition-transform"></i>
+                            <span class="absolute -top-1 -right-1 flex h-2 w-2">
+                                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-purple-400 opacity-75"></span>
+                                <span class="relative inline-flex rounded-full h-2 w-2 bg-purple-500"></span>
+                            </span>
+                        </div>
+                        <span class="flex-1 text-left">Темы и Праздники</span>
+                    </button>
                     
                     <!-- BACKUP БАТЫРМАСЫ (ОСЫ ЖЕРГЕ ҚОЙ) -->
     <div class="pt-4 mt-4 border-t border-slate-800 space-y-2">
@@ -855,6 +865,29 @@
                     </tbody>
             </table>
         </div>
+    </div>
+</div>
+
+
+<div id="tab-themes-manager" class="tab-content hidden animate-fadeIn px-4">
+    <div class="flex items-center gap-3 mb-8">
+        <div class="w-2 h-8 bg-purple-600 rounded-full"></div>
+        <h2 class="text-2xl font-black italic uppercase tracking-tighter">Оформление и Темы</h2>
+    </div>
+    
+    <div class="bg-[#0f172a] border border-slate-800 rounded-[2rem] p-6 md:p-8">
+        <label class="text-slate-400 text-[10px] font-black uppercase italic mb-4 block tracking-widest">Выберите текущее событие:</label>
+        
+        <select id="theme-selector" class="w-full p-4 rounded-xl bg-slate-900 border border-slate-700 text-white font-black italic outline-none focus:border-purple-500 transition-all mb-6">
+            <option value="none">✨ Стандартный стиль</option>
+            <option value="newyear">❄️ Новый Год</option>
+            <option value="nauryz">🌸 Наурыз Мейрамы</option>
+            <option value="victory">🎖 День Победы</option>
+        </select>
+
+        <button onclick="saveWebsiteTheme()" class="w-full md:w-auto px-8 py-4 bg-purple-600 hover:bg-purple-700 text-white rounded-xl font-black uppercase italic text-[10px] tracking-widest transition-all active:scale-95 shadow-lg flex items-center justify-center gap-3">
+            <i class="fas fa-save"></i> Сохранить и применить
+        </button>
     </div>
 </div>
 
@@ -2896,7 +2929,26 @@ function renderAdStats() {
     activeAdTimer = setInterval(updateTimer, 1000); // Таймерді айнымалыға сақтаймыз
 }
 
+// 1. Сақтау функциясы
+function saveWebsiteTheme() {
+    const theme = document.getElementById('theme-selector').value;
+    localStorage.setItem('current_holiday_theme', theme);
 
+    Swal.fire({
+        icon: 'success',
+        title: 'Стиль обновлен!',
+        background: '#0f172a',
+        color: '#fff',
+        confirmButtonColor: '#9333ea'
+    });
+}
+
+// 2. Синхронизация (openTab ішіне қосу керек)
+function syncThemeSelector() {
+    const savedTheme = localStorage.getItem('current_holiday_theme') || 'none';
+    const selector = document.getElementById('theme-selector');
+    if (selector) selector.value = savedTheme;
+}
 
         </script>
     </body>

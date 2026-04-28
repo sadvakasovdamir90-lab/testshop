@@ -2597,5 +2597,23 @@ function initPeer() {
     });
 }
 
+// Профиль беті ашылғанда балансты жаңарту
+document.addEventListener('DOMContentLoaded', () => {
+    syncProfileBalance();
+});
+
+function syncProfileBalance() {
+    // 1. LocalStorage-тан ұпайды аламыз (жоқ болса 0)
+    const currentBalance = localStorage.getItem('qulan_balance') || '0';
+    
+    // 2. Сенің кодындағы нақты ID-ді тауып аламыз
+    const balanceDisplay = document.getElementById('wallet-bonuses');
+    
+    // 3. Форматты бұзбай (мысалы 20 емес, 20.00 етіп) жазамыз
+    if (balanceDisplay) {
+        balanceDisplay.innerText = Number(currentBalance).toFixed(2);
+    }
+}
+
     </script>
 </html>

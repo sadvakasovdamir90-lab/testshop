@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Qulan Games — Ойындар</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: 'Inter', sans-serif; background: #f8fafc; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        
+        /* CS:GO Рулетка стилі */
+        .case-container {
+            width: 100%; height: 120px; overflow: hidden; position: relative;
+            background: #0f172a; border-radius: 1.5rem;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.8);
+            border: 2px solid #334155;
+        }
+        .case-slider {
+            display: flex; height: 100%; width: max-content;
+            /* Анимация JS арқылы қосылады */
+        }
+        .case-item {
+            min-width: 100px; max-width: 100px; height: 100%;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            border-right: 1px solid #1e293b;
+            background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+        }
+        .case-pointer {
+            position: absolute; top: 0; bottom: 0; left: 50%; width: 4px;
+            background: #ea580c; transform: translateX(-50%); z-index: 10;
+            box-shadow: 0 0 15px #ea580c;
+        }
+        
+        /* Таймер жолағы */
+        .timer-bar-container { width: 100%; background: #e2e8f0; height: 8px; border-radius: 4px; overflow: hidden; }
+        .timer-bar { height: 100%; background: #ea580c; width: 100%; transition: width 1s linear, background-color 0.3s; }
+    </style>
+</head>
+<body class="p-4 md:p-6 no-scrollbar">
+
+    <div class="flex items-center justify-between mb-8 pt-4">
+        <button onclick="window.location.href='index.html'" class="w-10 h-10 bg-white rounded-2xl shadow-sm flex items-center justify-center text-slate-400 active:scale-90 transition-all">
+            <i class="fas fa-arrow-left"></i>
+        </button>
+        <h1 class="text-xl font-black italic uppercase tracking-tighter">Qulan <span class="text-orange-600">Games</span></h1>
+        <div class="bg-orange-100 text-orange-600 px-3 py-1.5 rounded-xl font-bold text-[10px] flex items-center gap-1 shadow-sm">
+            <i class="fas fa-coins"></i> <span id="game-balance">0.00</span>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div onclick="openRoulette()" class="bg-white p-6 rounded-[2rem] border border-orange-50 shadow-sm active:scale-95 transition-transform cursor-pointer relative overflow-hidden group">
+            <div class="flex items-center gap-4 relative z-10">
+                <div class="w-16 h-16 bg-orange-600 text-white rounded-[1.5rem] flex items-center justify-center text-3xl shadow-lg shadow-orange-200">
+                    <i class="fas fa-box-open"></i>
+                </div>
+                <div>
+                    <h2 class="text-lg font-black italic uppercase text-slate-800">Кейс ашу</h2>
+                    <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1">Күнделікті бонус</p>
+                </div>
+            </div>
+        </div>
+
+        <div onclick="openQuiz()" class="bg-[#0f172a] p-6 rounded-[2rem] border border-slate-800 shadow-xl active:scale-95 transition-transform cursor-pointer relative overflow-hidden group">
+            <div class="flex items-center gap-4 relative z-10">
+                <div class="w-16 h-16 bg-blue-600 text-white rounded-[1.5rem] flex items-center justify-center text-3xl shadow-lg shadow-blue-900/50">
+                    <i class="fas fa-stopwatch"></i>
+                </div>
+                <div>
+                    <h2 class="text-lg font-black italic uppercase text-white">Блиц-Сұрақ</h2>
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">10 сек / 10 сұрақ</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="roulette-modal" class="fixed inset-0 bg-[#020617]/95 backdrop-blur-md z-50 hidden flex-col items-center justify-center p-4">
+        <button onclick="closeModal('roulette-modal')" class="absolute top-8 right-8 text-white/50 hover:text-white text-2xl"><i class="fas fa-times"></i></button>
+        
+        <h2 class="text-3xl font-black italic uppercase text-white mb-2">Бонус <span class="text-orange-500">Кейс</span></h2>
+        <p class="text-slate-400 text-xs font-bold uppercase tracking-widest mb-10">Бағыңды сынап көр</p>
+
+        <div id="case-container" class="case-container mb-10 max-w-3xl mx-auto">
+            <div class="case-pointer"></div>
+            <div id="case-slider" class="case-slider">
+                </div>
+        </div>
+
+        <button id="spin-btn" onclick="spinRoulette()" class="bg-orange-600 text-white px-12 py-4 rounded-2xl font-black uppercase italic text-sm tracking-widest shadow-lg shadow-orange-600/30 hover:scale-105 transition-all">
+            Кейсті ашу
+        </button>
+    </div>
+
+    <div id="quiz-modal" class="fixed inset-0 bg-white z-50 hidden flex-col p-6 overflow-y-auto">
+        <div class="flex justify-between items-center mb-6">
+            <button onclick="closeModal('quiz-modal')" class="w-10 h-10 bg-slate-100 rounded-2xl flex items-center justify-center text-slate-500 hover:bg-slate-200 transition-colors"><i class="fas fa-arrow-left"></i></button>
+            <div class="text-[10px] font-black italic bg-slate-100 px-4 py-2 rounded-xl text-slate-800 tracking-widest uppercase shadow-sm">Сұрақ <span id="q-current" class="text-blue-600">1</span>/10</div>
+        </div>
+
+        <div class="flex-1 flex flex-col justify-start max-w-md mx-auto w-full pt-4">
+            <div class="flex justify-between items-end mb-2">
+                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Уақыт</span>
+                <span id="quiz-timer-text" class="text-2xl font-black text-orange-600 italic">00:10</span>
+            </div>
+            <div class="timer-bar-container mb-10 shadow-inner">
+                <div id="quiz-timer-bar" class="timer-bar"></div>
+            </div>
+
+            <h2 id="question-text" class="text-2xl md:text-3xl font-black italic text-slate-800 leading-tight mb-8">Сұрақ осында тұрады?</h2>
+            
+            <div id="answers-container" class="space-y-3">
+                </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="games.js"></script>
+</body>
+</html>

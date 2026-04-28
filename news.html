@@ -396,11 +396,47 @@
 
             <aside class="lg:col-span-4 space-y-8">
                 
+                <div class="bg-white rounded-[1.5rem] p-4 pt-5 shadow-[0_4px_20px_rgba(0,0,0,0.04)] border border-slate-300 flex flex-col">
+    
+    <div id="currency-date" class="text-center text-[10px] md:text-xs font-bold text-slate-500 uppercase tracking-widest mb-4">
+        Курс валют к тенге на сегодня ...
+    </div>
+
+    <div class="flex justify-between items-center relative pb-2">
+        <div class="flex flex-col items-center flex-1">
+            <div class="flex items-center gap-1 mb-1">
+                <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">USD</span>
+                <i class="fas fa-caret-up text-[10px] text-green-500"></i>
+            </div>
+            <span id="val-usd" class="text-lg md:text-xl font-black text-slate-800 leading-none animate-pulse">...</span>
+        </div>
+
+        <div class="w-px h-10 bg-slate-100"></div>
+
+        <div class="flex flex-col items-center flex-1">
+            <div class="flex items-center gap-1 mb-1">
+                <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">EUR</span>
+                <i class="fas fa-caret-down text-[10px] text-red-500"></i>
+            </div>
+            <span id="val-eur" class="text-lg md:text-xl font-black text-slate-800 leading-none animate-pulse">...</span>
+        </div>
+
+        <div class="w-px h-10 bg-slate-100"></div>
+
+        <div class="flex flex-col items-center flex-1">
+            <div class="flex items-center gap-1 mb-1">
+                <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">RUB</span>
+                <i class="fas fa-caret-up text-[10px] text-green-500"></i>
+            </div>
+            <span id="val-rub" class="text-lg md:text-xl font-black text-slate-800 leading-none animate-pulse">...</span>
+        </div>
+    </div>
+</div>
 
 <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] p-8 border border-slate-100 dark:border-slate-800 qulan-shadow mb-8 flex items-center justify-between transition-all duration-500">
     <div class="space-y-2">
         <h4 class="text-[10px] font-[800] uppercase tracking-[0.4em] text-slate-400 dark:text-slate-500 italic leading-none">
-            Куланөтпес
+            Куланотпес
         </h4>
         
         <div class="flex items-baseline gap-2">
@@ -1124,6 +1160,59 @@ const adBtn = document.getElementById('ad-btn');
 if (adBtn) {
     adBtn.onclick = trackAdClick; // Батырманы басқанда "Клик" деп санау
 }
+
+
+async function loadRealRates() {
+    // 1. Бүгінгі күнді шығару (Мысалы: "29 апреля")
+    const today = new Date();
+    const options = { day: 'numeric', month: 'long' };
+    const dateString = today.toLocaleDateString('ru-RU', options);
+    const dateEl = document.getElementById('currency-date');
+    if (dateEl) {
+        dateEl.innerText = `Курс валют к тенге на сегодня ${dateString}`;
+    }
+
+    // 2. Интернеттен курсты тарту
+    try {
+        const res = await fetch('https://open.er-api.com/v6/latest/USD');
+        const data = await res.json();
+
+        if (data && data.rates) {
+            const kzt = data.rates.KZT; 
+            const eur = data.rates.EUR; 
+            const rub = data.rates.RUB; 
+
+            const usdToKzt = kzt.toFixed(2); 
+            const eurToKzt = (kzt / eur).toFixed(2);
+            const rubToKzt = (kzt / rub).toFixed(2);
+
+            const elUsd = document.getElementById('val-usd');
+            const elEur = document.getElementById('val-eur');
+            const elRub = document.getElementById('val-rub');
+
+            // Осы жерде санның қасына ₸ символын тіркеп қоямыз
+            if (elUsd) { elUsd.innerText = usdToKzt + ' ₸'; elUsd.classList.remove('animate-pulse'); }
+            if (elEur) { elEur.innerText = eurToKzt + ' ₸'; elEur.classList.remove('animate-pulse'); }
+            if (elRub) { elRub.innerText = rubToKzt + ' ₸'; elRub.classList.remove('animate-pulse'); }
+        }
+    } catch (error) {
+        console.error('API қатесі:', error);
+        // Запасной вариант (Интернет жоқ болса)
+        const elUsd = document.getElementById('val-usd');
+        const elEur = document.getElementById('val-eur');
+        const elRub = document.getElementById('val-rub');
+        
+        if(elUsd) { elUsd.innerText = '450.50 ₸'; elUsd.classList.remove('animate-pulse'); }
+        if(elEur) { elEur.innerText = '490.20 ₸'; elEur.classList.remove('animate-pulse'); }
+        if(elRub) { elRub.innerText = '4.85 ₸'; elRub.classList.remove('animate-pulse'); }
+    }
+}
+
+document.addEventListener('DOMContentLoaded', loadRealRates);
+
+
     </script>
+
+<script src="themes.js"></script>
 </body>
 </html>
